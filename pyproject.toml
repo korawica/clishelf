@@ -1,5 +1,5 @@
 [project]
-name = "cliutil"
+name = "clishelf"
 description = "Utility CLI Tools that reuseable for develop any Python Package"
 readme = "README.md"
 requires-python = ">=3.8.10"
@@ -30,8 +30,8 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/korawica/cliutil/"
-"Source Code" = "https://github.com/korawica/cliutil/"
+Homepage = "https://github.com/korawica/clishelf/"
+"Source Code" = "https://github.com/korawica/clishelf/"
 
 [project.optional-dependencies]
 test = [
@@ -41,7 +41,7 @@ test = [
     "types-python-dateutil",
 ]
 dev = [
-    "cliutil[test]",
+    "clishelf[test]",
     "pre-commit>=3.4.0",
     "bump2version>=1.0.1"
 ]
@@ -51,10 +51,10 @@ requires = ["hatchling>=1.8.0"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-cliutil = "cliutil.__main__:main"
+clishelf = "clishelf.__main__:main"
 
 [tool.utils.version]
-version = "./cliutil/__about__.py"
+version = "./clishelf/__about__.py"
 changelog = "CHANGELOG.md"
 
 [tool.coverage.run]
@@ -63,22 +63,22 @@ concurrency = ["thread", "multiprocessing"]
 parallel = true
 context = '${CONTEXT}'
 source = [
-    "cliutil",
+    "clishelf",
 ]
 omit = [
     "tests/perfs/",
     "scripts/",
-    "cliutil/__main__.py",
-    "cliutil/cli.py",
-    "cliutil/__about__.py",
-    "cliutil/utils.py",
+    "clishelf/__main__.py",
+    "clishelf/cli.py",
+    "clishelf/__about__.py",
+    "clishelf/utils.py",
 ]
 relative_files = true
 
 [tool.hatch.version]
 scheme = "standard"
 source = "code"
-path = "cliutil/__about__.py"
+path = "clishelf/__about__.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -88,7 +88,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["cliutil"]
+packages = ["clishelf"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -107,7 +107,7 @@ addopts = [
 
 [tool.mypy]
 python_version = "3.8"
-files = ["cliutil"]
+files = ["clishelf"]
 show_error_codes = true
 pretty = true
 strict = true

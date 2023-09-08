@@ -2,7 +2,7 @@ import unittest
 
 from click.testing import CliRunner
 
-from cliutil.cli import say
+from clishelf.cli import say
 
 
 class MainTestCase(unittest.TestCase):

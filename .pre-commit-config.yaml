@@ -113,7 +113,7 @@ repos:
             - commit-msg
         types: [python]
 #        entry: venv/Scripts/python.exe scripts/commit-msg-2.py
-        entry: venv/Scripts/cliutil.exe git cm -e -l -o
+        entry: venv/Scripts/clishelf.exe git cm -e -l -o
         language: system
 #        args: [.git/COMMIT_EDITMSG]
         always_run: true
