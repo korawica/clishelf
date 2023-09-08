@@ -1,4 +1,4 @@
-# # Utility Package: *CLI*
+# Utility Package: *CLI*
 
 **Table of Contents**:
 
