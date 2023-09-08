@@ -43,7 +43,7 @@ requires = ["hatchling>=1.8.0"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-clishelf = "clishelf.__main__:main"
+shelf = "clishelf.__main__:main"
 
 [tool.utils.version]
 version = "./clishelf/__about__.py"

@@ -2,6 +2,16 @@
 
 ## Latest Changes
 
+## 0.0.2
+
+### Documents
+
+- :page_facing_up: docs: update README and deps package on pyproject. (_2023-09-08_)
+
+### Build & Workflow
+
+- :toolbox: build: change install deps package GitHub workflow. (_2023-09-08_)
+
 ## 0.0.1
 
 ### Features
