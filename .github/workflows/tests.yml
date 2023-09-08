@@ -1,0 +1,73 @@
+name: test
+
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
+  pull_request:
+    branches: [
+      "main",
+      "*.*.*"
+    ]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache-dependency-path: pyproject.toml
+
+      # Cache your dependencies (i.e. all the stuff in your `pyproject.toml`).
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${{ env.pythonLocation }}
+          key:  ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-test-v03
+
+      # The `if` statement ensures this only runs on a cache miss.
+      - name: Install Dependencies
+        if:  steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pip install --upgrade pip
+          pip install -e .[test]
+
+      - name: Check git is working
+        run: |
+          git config --global user.email "korawica@github.actions"
+          git config --global user.name "Testing Git on Travis CI"
+          git --version
+          git config --list
+
+      - name: Test with pytest
+        run: |
+          pytest -v
