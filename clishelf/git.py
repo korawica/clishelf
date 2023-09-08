@@ -25,10 +25,14 @@ REGEX_PROJECT_IDS = "|".join(PROJECT_IDS)
 REGEX_BRANCH_TYPES = "|".join(BRANCH_TYPES)
 
 # Should contain a capturing group to extract the reference:
-REGEX_BRANCH = rf"^(?:{REGEX_BRANCH_TYPES})/((?:{REGEX_PROJECT_IDS})-[\d]{{1,5}})-[a-z]+(?:-[a-z]+)*$"
+REGEX_BRANCH: str = (
+    rf"^(?:{REGEX_BRANCH_TYPES})/"
+    rf"((?:{REGEX_PROJECT_IDS})-[\d]{{1,5}})-[a-z]+(?:-[a-z]+)*$"
+)
 
-# Should contain a capturing group to extract the reference (note the dot at the end
-# is optional as this script will add it automatically for us):
+# Should contain a capturing group to extract the reference
+# (note the dot at the end is optional as this script will add it
+# automatically for us):
 REGEX_MESSAGE = rf"^((?:{REGEX_PROJECT_IDS})-[\d]{{1,5}}): .+\.?$"
 
 # No capturing group. Just checking for the bare minimum:
@@ -36,14 +40,16 @@ REGEX_BASIC_MESSAGE = "^.+$"
 
 REGEX_COMMIT_MESSAGE = r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
 
-# These branch names are not validated with this same rules (permissions should be configured
-# on the server if you want to prevent pushing to any of these):
+# These branch names are not validated with this same rules
+# (permissions should be configured on the server if you want to prevent
+# pushing to any of these):
 BRANCH_EXCEPTIONS = [
     "feature",
     "dev",
     "main",
     "stable",
-    "hotfix",  # for quickly fixing critical issues, usually with a temporary solution
+    # for quickly fixing critical issues, usually with a temporary solution.
+    "hotfix",
     "bugfix",  # for fixing a bug
     "feature",  # for adding, removing or modifying a feature
     "test",  # for experimenting something which is not an issue
@@ -219,7 +225,7 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
         )
     except subprocess.CalledProcessError:
         if default:
-            from ..__about__ import __version__
+            from .__about__ import __version__
 
             return f"v{__version__}"
         return None

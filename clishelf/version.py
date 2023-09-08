@@ -11,51 +11,9 @@ from typing import Any, Dict, List, Optional
 import click
 
 from .git import CommitLog
+from .settings import BumpVersionConfig
 
 BUMP_VERSION = (("bump", ":bookmark:"),)  # 🔖 :bookmark:
-
-BUMP_REGEX = (
-    r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
-    r"(\.(?P<prekind>a|alpha|b|beta|d|dev|rc)(?P<pre>\d+))?"
-    r"(\.(?P<postkind>post)(?P<post>\d+))?"
-)
-
-BUMP_VERSION_CONFIG = r"""[bumpversion]
-current_version = {version}
-commit = True
-tag = False
-parse = ^
-    (?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)
-    (\.(?P<prekind>a|alpha|b|beta|d|dev|rc)(?P<pre>\d+))?
-    (\.(?P<postkind>post)(?P<post>\d+))?
-serialize =
-    {{major}}.{{minor}}.{{patch}}.{{prekind}}{{pre}}.{{postkind}}{{post}}
-    {{major}}.{{minor}}.{{patch}}.{{prekind}}{{pre}}
-    {{major}}.{{minor}}.{{patch}}.{{postkind}}{{post}}
-    {{major}}.{{minor}}.{{patch}}
-message = :bookmark: Bump up to version {{current_version}} -> {{new_version}}.
-
-[bumpversion:part:prekind]
-optional_value = _
-values =
-    _
-    dev
-    a
-    b
-    rc
-
-[bumpversion:part:postkind]
-optional_value = _
-values =
-    _
-    post
-
-[bumpversion:file:{file}]
-
-[bumpversion:file:{changelog}]
-search = ## Latest Changes
-replace = ## {{new_version}}
-"""
 
 cli_vs: click.Command
 
@@ -90,7 +48,7 @@ def writer_changelog(file: str):
         if line.startswith("## Latest Changes"):
             skip_line = False
 
-        if re.match(rf"## {BUMP_REGEX}", line):
+        if re.match(rf"## {BumpVersionConfig.V1_REGEX}", line):
             if not written:
                 writer.write(f"## Latest Changes{os.linesep}{os.linesep}")
                 written = True
@@ -133,7 +91,7 @@ def bump2version(
 
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
-            BUMP_VERSION_CONFIG.format(
+            BumpVersionConfig.V1.format(
                 file=file,
                 version=current_version(file),
                 changelog=changelog_file,
@@ -191,7 +149,7 @@ def bump2version(
 
 def current_version(file: str) -> str:
     with Path(file).open(encoding="utf-8") as f:
-        if search := re.search(BUMP_REGEX, f.read()):
+        if search := re.search(BumpVersionConfig.V1_REGEX, f.read()):
             return search[0]
     raise NotImplementedError(f"{file} does not implement version value.")
 
