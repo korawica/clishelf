@@ -1,0 +1,159 @@
+[project]
+name = "cliutil"
+description = "Utility CLI Tools that reuseable for develop any Python Package"
+readme = "README.md"
+requires-python = ">=3.8.10"
+license = "MIT"
+keywords = [
+    'utility',
+    'cli',
+]
+authors = [
+    { name = "korawica", email = "korawich.anu@gmail.com" },
+]
+classifiers = [
+    "Topic :: Utilities",
+    "Natural Language :: English",
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "click>=8.1.7",
+    "tomli>=2.0.1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/korawica/cliutil/"
+"Source Code" = "https://github.com/korawica/cliutil/"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.2",
+    "coverage[toml]>=7.0.0",
+    "mypy>=0.982",
+    "types-python-dateutil",
+    "memory_profiler>=0.61.0",
+    "perfplot>=0.10.2",
+]
+dev = [
+    "cliutil[test]",
+    "ruff>=0.0.138",
+    "pre-commit>=3.4.0",
+    "bump2version>=1.0.1"
+]
+
+[build-system]
+requires = ["hatchling>=1.8.0"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+cliutil = "cliutil.__main__:main"
+
+[tool.utils.version]
+version = "./cliutil/__about__.py"
+changelog = "./docs/en/docs/CHANGELOG.md"
+
+[tool.coverage.run]
+branch = true
+concurrency = ["thread", "multiprocessing"]
+parallel = true
+context = '${CONTEXT}'
+source = [
+    "cliutil",
+]
+omit = [
+    "tests/perfs/",
+    "scripts/",
+    "cliutil/__main__.py",
+    "cliutil/cli.py",
+    "cliutil/__about__.py",
+    "cliutil/utils.py",
+]
+relative_files = true
+
+[tool.hatch.version]
+scheme = "standard"
+source = "code"
+path = "cliutil/__about__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/docs",
+    "/.pre-commit-config.yaml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["cliutil"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "no cov",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+
+[tool.pytest.ini_options]
+console_output_style = "count"
+filterwarnings = ["error"]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+]
+
+[tool.mypy]
+python_version = "3.8"
+files = ["cliutil"]
+show_error_codes = true
+pretty = true
+strict = true
+warn_unreachable = true
+
+
+[tool.black]
+line-length = 80
+target-version = ['py38']
+exclude = """
+/(
+    \\.git
+    | \\.__pycache__
+    | \\.idea
+    | \\.ruff_cache
+    | \\.mypy_cache
+    | \\.pytest_cache
+    | \\.venv
+)/
+"""
+
+[tool.ruff]
+line-length = 80
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    "venv",
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
