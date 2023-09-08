@@ -1,0 +1,135 @@
+default_install_hook_types: [pre-commit, commit-msg]  # pre-push
+default_language_version:
+    python: python3.8
+
+ci:
+    autofix_commit_msg: |
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
+    autofix_prs: true
+    autoupdate_schedule: weekly
+    autoupdate_commit_msg: |
+        [pre-commit.ci] pre-commit autoupdate
+
+repos:
+-   repo: https://github.com/asottile/pyupgrade
+    rev:  v3.10.1
+    hooks:
+    -   id: pyupgrade
+        args: ["--py38-plus", "--keep-runtime-typing"]
+        stages: [commit]
+
+# Python package sorting
+# ---
+# -   repo: https://github.com/asottile/reorder_python_imports
+#     rev:  v3.9.0
+#     hooks:
+#         -   id: reorder-python-imports
+#             args: ["--application-directories", "deutil"]
+#             additional_dependencies: ["setuptools>60.9"]
+# -   repo: https://github.com/pycqa/isort
+#     rev:  5.12.0
+#     hooks:
+#         -   id:   isort
+#             name: isort (python)
+#         -   id:   isort
+#             name: isort (cython)
+#             core: [cython]
+#         -   id:   isort
+#             name: isort (pyi)
+#             core: [pyi]
+
+# Python code formatter
+# ---
+# -   repo: https://github.com/pre-commit/mirrors-autopep8
+#     rev: v2.0.2
+#     hooks:
+#         -   id: autopep8
+-   repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+    -   id: black
+        stages: [commit]
+
+# Python linter
+# ---
+# (Note: Flake is slower than Ruff)
+# -   repo: https://github.com/PyCQA/flake8
+#     rev: 6.0.0
+#     hooks:
+#         -   id: flake8
+#             additional_dependencies:
+#                 - flake8-bugbear
+#                 - flake8-implicit-str-concat
+#             args:
+#                 - --max-line-length=80
+#                 - --max-complexity=18
+#                 - --config=pyproject.toml
+#                 - --ignore=E203,E501,E722,B905,B028,B907
+#                 - --select=B,B9,ISC
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev:  v0.0.287
+    hooks:
+    -   id: ruff
+        args:
+        - --fix
+        stages: [commit]
+
+# Python doc-string
+# ---
+# -   repo: https://github.com/pycqa/pydocstyle
+#     rev: 6.3.0
+#     hooks:
+#         -   id: pydocstyle
+#             args:
+#                 - --ignore=D100
+#                 - --convention=pep257
+
+# Pre-commit main hook repo
+# ---
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev:  v4.4.0
+    hooks:
+    -   id: fix-byte-order-marker
+        stages: [commit]
+    -   id: trailing-whitespace
+        stages: [commit]
+        exclude: ".bumpversion.cfg"
+    -   id: end-of-file-fixer
+        stages: [commit]
+    -   id: check-yaml
+        stages: [commit]
+        args: ["--unsafe"]
+#         -   id: check-added-large-files
+    -   id: check-toml
+        stages: [commit]
+
+# Pre-commit local
+# ---
+-   repo: local
+    hooks:
+    -   id: commit-msg-hook
+        name: Prepare Commit Message
+        stages:
+            - commit-msg
+        types: [python]
+#        entry: venv/Scripts/python.exe scripts/commit-msg-2.py
+        entry: venv/Scripts/cliutil.exe git cm -e -l -o
+        language: system
+#        args: [.git/COMMIT_EDITMSG]
+        always_run: true
+
+    -   id: pytest-check
+        name: PyTest Runner
+        stages:
+            - commit
+            - push
+        # alternatively you could `core: [python]` so it only runs when python files change
+        types: [python]
+        # entry: pytest -v
+        entry: venv/Scripts/pytest.exe -v
+        language: system
+        # language: script
+        pass_filenames: false
+        # though tests might be invalidated if you were to say change a data file
+        always_run: true
+        # additional_dependencies: [pytest]
