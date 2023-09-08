@@ -9,6 +9,8 @@ ci:
     autoupdate_schedule: weekly
     autoupdate_commit_msg: |
         [pre-commit.ci] pre-commit autoupdate
+    skip: [commit-msg-hook]
+    submodules: false
 
 repos:
 -   repo: https://github.com/asottile/pyupgrade
@@ -112,10 +114,8 @@ repos:
         stages:
             - commit-msg
         types: [python]
-#        entry: venv/Scripts/python.exe scripts/commit-msg-2.py
-        entry: venv/Scripts/clishelf.exe git cm -e -l -o
+        entry: venv/Scripts/shelf.exe git cm -e -l -o
         language: system
-#        args: [.git/COMMIT_EDITMSG]
         always_run: true
 
     -   id: pytest-check
@@ -123,7 +123,8 @@ repos:
         stages:
             - commit
             - push
-        # alternatively you could `core: [python]` so it only runs when python files change
+        # alternatively you could `core: [python]` so it only runs
+        # when python files change.
         types: [python]
         # entry: pytest -v
         entry: venv/Scripts/pytest.exe -v
