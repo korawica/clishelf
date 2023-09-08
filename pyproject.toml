@@ -55,7 +55,7 @@ cliutil = "cliutil.__main__:main"
 
 [tool.utils.version]
 version = "./cliutil/__about__.py"
-changelog = "./CHANGELOG.md"
+changelog = "CHANGELOG.md"
 
 [tool.coverage.run]
 branch = true
