@@ -15,3 +15,12 @@ updates:
       timezone: "UTC"
     commit-message:
       prefix: ⬆
+  # Pip
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Include a list of updated dependencies
+    # with a prefix determined by the dependency group
+    commit-message:
+      prefix: 📦
