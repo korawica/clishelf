@@ -4,7 +4,7 @@ import os
 import re
 import subprocess
 import sys
-from dataclasses import InitVar, dataclass
+from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -83,8 +83,8 @@ COMMIT_PREFIX_TYPE = (
 @dataclass
 class CommitMsg:
     content: InitVar[str]
-    mtype: InitVar[str] = None
-    body: str = None  # Mark new-line with |
+    mtype: InitVar[str] = field(default=None)
+    body: str = field(default=None)  # Mark new-line with |
 
     def __str__(self):
         return f"{self.mtype}: {self.content}"
