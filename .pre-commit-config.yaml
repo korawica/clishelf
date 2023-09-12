@@ -3,13 +3,13 @@ default_language_version:
     python: python3.8
 
 ci:
+    skip: [pytest-check, commit-msg-hook]
     autofix_commit_msg: |
-        [pre-commit.ci] auto fixes from pre-commit.com hooks
+        🚧 [pre-commit.ci] auto fixes from pre-commit.com hooks
     autofix_prs: true
     autoupdate_schedule: weekly
     autoupdate_commit_msg: |
-        [pre-commit.ci] pre-commit autoupdate
-    skip: [commit-msg-hook]
+        🚧 [pre-commit.ci] pre-commit autoupdate
     submodules: false
 
 repos:
@@ -47,7 +47,7 @@ repos:
 #     hooks:
 #         -   id: autopep8
 -   repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
     -   id: black
         stages: [commit]
@@ -68,8 +68,8 @@ repos:
 #                 - --config=pyproject.toml
 #                 - --ignore=E203,E501,E722,B905,B028,B907
 #                 - --select=B,B9,ISC
--   repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev:  v0.0.287
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev:  v0.0.288
     hooks:
     -   id: ruff
         args:
