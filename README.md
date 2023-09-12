@@ -1,4 +1,4 @@
-# Utility Package: *CLI*
+# Utility Package: *CLI Shelf*
 
 [![test](https://github.com/korawica/clishelf/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/korawica/clishelf/actions/workflows/tests.yml)
 [![python support version](https://img.shields.io/pypi/pyversions/clishelf)](https://pypi.org/project/clishelf/)
@@ -6,13 +6,24 @@
 
 **Table of Contents**:
 
-- [Feature](#feature)
+- [Features](#features)
   - [Extended Git](#extended-git)
-  - [Version](#version)
+  - [Versioning](#versioning)
 
-This is CLI Utility Package.
+This is the **CLI Utility** Python package for help me to make versioning and
+logging on my any Python package repositories, because I do not want to hard
+code or set up the development flow every time that I create the new Python
+package project :tired_face:.
 
-## Feature
+```shell
+pip install clishelf
+```
+
+In the future, I will add more the CLI tools that able to dynamic with many
+style of config such as I want to make changelog file with style B by my
+custom message code.
+
+## Features
 
 This Utility Package provide some CLI tools for handler development process.
 
@@ -36,7 +47,7 @@ Commands:
   tl               Show the Latest Tag
 ```
 
-### Version
+### Versioning
 
 ```text
 Usage: utils.exe vs [OPTIONS] COMMAND [ARGS]...
