@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict
@@ -56,3 +57,9 @@ class Level(str, Enum):
 def make_color(message: str, level: Level) -> str:
     """Print the message with a color for the corresponding level."""
     return f"{Bcolors[level]}{Bcolors.BOLD}{level}: {message}{Bcolors.ENDC}"
+
+
+@dataclass
+class Profile:
+    name: str
+    email: str

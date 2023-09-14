@@ -7,12 +7,13 @@ import sys
 from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import click
 
 from .utils import (
     Level,
+    Profile,
     make_color,
 )
 
@@ -78,6 +79,34 @@ COMMIT_PREFIX_TYPE = (
     ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
     ("Build & Workflow", ":package:"),  # 📦
 )
+
+
+def load_profile() -> Profile:
+    from .utils import load_pyproject
+
+    _authors: Dict[str, str] = load_pyproject().get("authors", {})
+    return Profile(
+        name=_authors.get(
+            "name",
+            (
+                subprocess.check_output(
+                    ["git", "config", "--local", "user.name"]
+                )
+                .decode(sys.stdout.encoding)
+                .strip()
+            ),
+        ),
+        email=_authors.get(
+            "email",
+            (
+                subprocess.check_output(
+                    ["git", "config", "--local", "user.email"]
+                )
+                .decode(sys.stdout.encoding)
+                .strip()
+            ),
+        ),
+    )
 
 
 @dataclass
@@ -437,12 +466,35 @@ def clear_branch():
         if ": gone]" in branch:
             subprocess.run(["git", "branch", "-D", branch.strip().split()[0]])
     subprocess.run(["git", "checkout", "-"])
+    sys.exit(0)
 
 
 @cli_git.command()
-def init_conf():
+@click.option("--store", is_flag=True)
+def init_conf(store: bool):
     """Initialize local GIT config"""
-    return 0
+    pf: Profile = load_profile()
+    subprocess.run(
+        ["git", "config", "--local", "user.name", f'"{pf.name}"'],
+        stdout=subprocess.DEVNULL,
+    )
+    subprocess.run(
+        ["git", "config", "--local", "user.email", f'"{pf.email}"'],
+        stdout=subprocess.DEVNULL,
+    )
+    st = "store" if store else '""'
+    subprocess.run(
+        ["git", "config", "--local", "credential.helper", st],
+        stdout=subprocess.DEVNULL,
+    )
+    sys.exit(0)
+
+
+@cli_git.command()
+def profile():
+    """Show Profile object that contain Name and Email of Author"""
+    print(load_profile(), file=sys.stdout)
+    sys.exit(0)
 
 
 if __name__ == "__main__":

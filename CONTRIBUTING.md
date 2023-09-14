@@ -69,11 +69,10 @@ Third, I will install this package dependencies on my local environment.
 Finally, I will set up the test and development packages for helping me when I
 develop this code.
 
-- Pre-Commit Installation
-
-  ```shell
-  pre-commit install
-  ```
+```shell
+shelf git init-conf
+pre-commit install
+```
 
 ## Develop Feature
 

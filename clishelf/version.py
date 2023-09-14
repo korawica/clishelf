@@ -168,7 +168,7 @@ def load_config() -> Dict[str, Any]:
 
 @click.group(name="vs")
 def cli_vs():
-    """Version commands"""
+    """Versioning commands"""
     pass
 
 
