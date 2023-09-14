@@ -19,8 +19,8 @@ package project :tired_face:.
 pip install clishelf
 ```
 
-In the future, I will add more the CLI tools that able to dynamic with many
-style of config such as I want to make changelog file with style B by my
+In the future :dart:, I will add more the CLI tools that able to dynamic with
+many style of config such as I want to make changelog file with style B by my
 custom message code.
 
 ## Features
@@ -30,11 +30,12 @@ This Utility Package provide some CLI tools for handler development process.
 ### Extended Git
 
 ```text
-Usage: utils.exe git [OPTIONS] COMMAND [ARGS]...
+Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
 
   Extended Git commands
 
 Options:
+
   --help  Show this message and exit.
 
 Commands:
@@ -44,15 +45,17 @@ Commands:
   cm               Show the latest Commit message
   commit-previous  Commit changes to the Previous Commit with same message
   commit-revert    Revert the latest Commit on this Local
+  init-conf        Initialize local GIT config
+  profile          Show Profile object that contain Name and Email of Author
   tl               Show the Latest Tag
 ```
 
 ### Versioning
 
 ```text
-Usage: utils.exe vs [OPTIONS] COMMAND [ARGS]...
+Usage: shelf.exe vs [OPTIONS] COMMAND [ARGS]...
 
-  Version commands
+  Versioning commands
 
 Options:
   --help  Show this message and exit.
@@ -62,7 +65,6 @@ Commands:
   changelog  Make Changelogs file
   conf       Return Configuration for Bump version
   current    Return Current Version
-
 ```
 
 ## License
