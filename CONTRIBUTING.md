@@ -38,7 +38,12 @@ git clone https://github.com/korawica/clishelf.git
 >   --author="Korawich Anuttra <korawich.anu@gmail.com>"
 > ```
 
-> Warning: \
+> ```Note: \
+> git filter-branch -f --env-filter "GIT_AUTHOR_NAME='Korawich Anuttra'; GIT_AUTHOR_EMAIL='korawich.anu@gmail.com'; GIT_COMMITTER_NAME='Korawich Anuttra'; GIT_COMMITTER_EMAIL='korawich.anu@gmail.com';" HEAD
+> git push --force --tags origin 'refs/heads/*'
+> ```
+
+> **Warning**: \
 > If you want to store your credential, you can set git config by
 > ```shell
 > git config credential.helper store
