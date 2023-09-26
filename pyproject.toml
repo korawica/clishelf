@@ -58,12 +58,9 @@ source = [
     "clishelf",
 ]
 omit = [
-    "tests/perfs/",
-    "scripts/",
     "clishelf/__main__.py",
-    "clishelf/cli.py",
     "clishelf/__about__.py",
-    "clishelf/utils.py",
+    "clishelf/cli.py",
 ]
 relative_files = true
 

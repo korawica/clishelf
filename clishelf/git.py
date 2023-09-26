@@ -57,22 +57,24 @@ BRANCH_EXCEPTIONS = [
     "wip",  # for a work in progress
 ]
 
-COMMIT_PREFIX = (
+COMMIT_PREFIX: Tuple[Tuple[str, str, str]] = (
     ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:
     ("hotfix", "Fix Bugs", ":fire:"),  # 🔥
     ("fixed", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
     ("fix", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
     ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
+    ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
     ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
     ("refactored", "Code Changes", ":construction:"),  # 🚧, 💬 :speech_balloon:
     ("refactor", "Code Changes", ":construction:"),  # 🚧, 💬 :speech_balloon:
     ("perf", "Code Changes", ":chart_with_upwards_trend:"),  # 📈, ⌛ :hourglass:
+    ("tests", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
     ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
     ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
     ("workflow", "Build & Workflow", ":rocket:"),  # 🚀, 🕹️ :joystick:
 )
 
-COMMIT_PREFIX_TYPE = (
+COMMIT_PREFIX_TYPE: Tuple[Tuple[str, str]] = (
     ("Features", ":clipboard:"),  # 📋
     ("Code Changes", ":black_nib:"),  # ✒️
     ("Documents", ":bookmark_tabs:"),  # 📑
@@ -111,6 +113,8 @@ def load_profile() -> Profile:
 
 @dataclass
 class CommitMsg:
+    """Commit Message object that prepare un-emoji-prefix in that message."""
+
     content: InitVar[str]
     mtype: InitVar[str] = field(default=None)
     body: str = field(default=None)  # Mark new-line with |
@@ -124,7 +128,7 @@ class CommitMsg:
             self.mtype: str = self.__gen_msg_type()
 
     def __gen_msg_type(self) -> str:
-        if s := re.search(r"^:\w+:\s(?P<prefix>\w+):", self.content):
+        if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
                 (cp[1] for cp in COMMIT_PREFIX if prefix == cp[0]),
@@ -136,18 +140,18 @@ class CommitMsg:
     def mtype_icon(self):
         return next(
             (cpt[1] for cpt in COMMIT_PREFIX_TYPE if cpt[0] == self.mtype),
-            ":black_nib:",
+            ":black_nib:",  # ✒️
         )
 
     @staticmethod
     def __prepare_msg(content: str) -> str:
-        if re.match(r"^:\w+:", content):
+        if re.match(r"^(?P<emoji>:\w+:)", content):
             return content
 
         prefix, content = (
             content.split(":", maxsplit=1)
             if ":" in content
-            else ("refactor", content)
+            else ("refactored", content)
         )
         icon: str = ""
         for cp in COMMIT_PREFIX:
@@ -161,7 +165,7 @@ class CommitLog:
     hash: str
     date: date
     msg: CommitMsg
-    author: str
+    author: Profile
 
     def __str__(self) -> str:
         return "|".join(
@@ -169,7 +173,8 @@ class CommitLog:
                 self.hash,
                 self.date.strftime("%Y-%m-%d"),
                 self.msg.content,
-                self.author,
+                self.author.name,
+                self.author.email,
             )
         )
 
@@ -210,7 +215,7 @@ def validate_commit_msg(
             Level.ERROR,
         )
 
-    rs = validate_for_warning(lines)
+    rs: List[str] = validate_for_warning(lines)
     if rs:
         return rs, Level.WARNING
 
@@ -270,7 +275,7 @@ def prepare_commit_logs(tag2head: str):
                 "git",
                 "log",
                 tag2head,
-                "--pretty=format:%h|%ad|%an%n%s%n%b%-C()%n(END)",
+                "--pretty=format:%h|%ad|%an|%ae%n%s%n%b%-C()%n(END)",
                 "--date=short",
             ]
         )
@@ -298,7 +303,7 @@ def get_commit_logs(
         tag2head = f"{tag}..HEAD"
     msgs: List[CommitLog] = []
     for _ in prepare_commit_logs(tag2head):
-        if "Merge" in _[1]:
+        if re.match(r"^Merge", _[1]):
             continue
 
         _s: List[str] = _[0].split("|")
@@ -306,8 +311,14 @@ def get_commit_logs(
             CommitLog(
                 hash=_s[0],
                 date=datetime.strptime(_s[1], "%Y-%m-%d"),
-                msg=CommitMsg(content=_[1], body="|".join(_[2:])),
-                author=_s[2],
+                msg=CommitMsg(
+                    content=_[1],
+                    body="|".join(_[2:]),
+                ),
+                author=Profile(
+                    name=_s[2],
+                    email=_s[3],
+                ),
             )
         )
     return msgs
@@ -345,7 +356,7 @@ def get_latest_commit(
 
     rss, level = validate_commit_msg(lines)
     for rs in rss:
-        print(make_color(rs, level))
+        print(make_color(rs, level), file=sys.stdout)
     if level not in (Level.OK, Level.WARNING):
         sys.exit(1)
 
@@ -386,9 +397,11 @@ def tl():
 @click.option("-a", "--all-logs", is_flag=True)
 def cl(tag: Optional[str], all_logs: bool):
     """Show the Commit Logs from the latest Tag to HEAD"""
-    sys.exit(
+    print(
         "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
+        file=sys.stdout,
     )
+    sys.exit(0)
 
 
 @cli_git.command()
@@ -410,8 +423,8 @@ def cm(
     if not prepare:
         print(
             "\n".join(get_latest_commit(file, edit, output_file)),
+            file=sys.stdout,
         )
-        sys.exit(0)
     else:
         edit: bool = True
         cm_msg: str = "\n".join(get_latest_commit(file, edit, output_file))
@@ -426,6 +439,7 @@ def cm(
                 cm_msg,
             ]
         )
+    sys.exit(0)
 
 
 @cli_git.command()
@@ -433,6 +447,7 @@ def cm(
 def commit_previous(no_verify: bool):
     """Commit changes to the Previous Commit with same message"""
     merge2latest_commit(no_verify=no_verify)
+    sys.exit(0)
 
 
 @cli_git.command()
@@ -442,6 +457,7 @@ def commit_revert(force: bool):
     subprocess.run(["git", "reset", "HEAD^"])
     if force:
         subprocess.run(["git", "restore", "."])
+    sys.exit(0)
 
 
 @cli_git.command()
