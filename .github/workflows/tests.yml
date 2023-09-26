@@ -52,7 +52,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.pythonLocation }}
-          key:  ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-test-v03
+          key:  ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-test
 
       # The `if` statement ensures this only runs on a cache miss.
       - name: Install Dependencies
@@ -64,7 +64,7 @@ jobs:
       - name: Check git is working
         run: |
           git config --global user.email "korawica@github.actions"
-          git config --global user.name "Testing Git on Travis CI"
+          git config --global user.name "Testing Git on Testing CI"
           git --version
           git config --list
 
