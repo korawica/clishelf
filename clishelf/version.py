@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
 from __future__ import annotations
 
 import os
@@ -6,14 +11,16 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import click
 
 from .git import CommitLog
 from .settings import BumpVersionConfig
 
-BUMP_VERSION = (("bump", ":bookmark:"),)  # 🔖 :bookmark:
+BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
+    ("bump", ":bookmark:"),  # 🔖 :bookmark:
+)
 
 cli_vs: click.Command
 

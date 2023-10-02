@@ -1,8 +1,12 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
 from __future__ import annotations
 
 import subprocess
 import sys
-from pathlib import Path
 
 import click
 
@@ -17,23 +21,10 @@ def cli():
 
 
 @cli.command()
-@click.option(
-    "-p",
-    "--path",
-    type=click.Path(exists=True, resolve_path=True),
-    default=".",
-)
-def ls(path: str):
-    """List files in Current Path"""
-    for file in Path(path).glob("*"):
-        print(f"> {file.resolve()}")
+def echo():
+    """Echo Hello World"""
+    print("Hello World")
     sys.exit(0)
-
-
-@cli.command()
-def say():
-    """Say Hello World"""
-    sys.exit("Hello World")
 
 
 @cli.command()

@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
 from __future__ import annotations
 
 import os
@@ -19,11 +24,11 @@ from .utils import (
 
 cli_git: click.Command
 
-PROJECT_IDS = ["SLO"]
-BRANCH_TYPES = ["feature", "bug", "hot"]
+PROJECT_IDS: List[str] = ["SLO"]
+BRANCH_TYPES: List[str] = ["feature", "bug", "hot"]
 
-REGEX_PROJECT_IDS = "|".join(PROJECT_IDS)
-REGEX_BRANCH_TYPES = "|".join(BRANCH_TYPES)
+REGEX_PROJECT_IDS: str = "|".join(PROJECT_IDS)
+REGEX_BRANCH_TYPES: str = "|".join(BRANCH_TYPES)
 
 # Should contain a capturing group to extract the reference:
 REGEX_BRANCH: str = (
@@ -84,6 +89,7 @@ COMMIT_PREFIX_TYPE: Tuple[Tuple[str, str]] = (
 
 
 def load_profile() -> Profile:
+    """Load Profile function that return name and email."""
     from .utils import load_pyproject
 
     _authors: Dict[str, str] = load_pyproject().get("authors", {})
@@ -113,7 +119,7 @@ def load_profile() -> Profile:
 
 @dataclass
 class CommitMsg:
-    """Commit Message object that prepare un-emoji-prefix in that message."""
+    """Commit Message dataclass that prepare un-emoji-prefix in that message."""
 
     content: InitVar[str]
     mtype: InitVar[str] = field(default=None)
@@ -162,6 +168,8 @@ class CommitMsg:
 
 @dataclass(frozen=True)
 class CommitLog:
+    """Commit Log dataclass"""
+
     hash: str
     date: date
     msg: CommitMsg
@@ -182,6 +190,9 @@ class CommitLog:
 def validate_for_warning(
     lines: List[str],
 ) -> List[str]:
+    """Validate Commit message that should to fixed, but it does not impact to
+    target repository.
+    """
     subject: str = lines[0]
     results: List[str] = []
 

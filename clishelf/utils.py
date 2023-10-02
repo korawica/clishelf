@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -27,9 +32,9 @@ def readline(path: str):
 
 class Bcolors(str, Enum):
     """A Enum for colors using ANSI escape sequences.
-    Reference:
-    - https://stackoverflow.com/questions/287871
 
+    Reference:
+        - https://stackoverflow.com/questions/287871
     """
 
     HEADER = "\033[95m"

@@ -6,6 +6,7 @@
 
 **Table of Contents**:
 
+- [Installation](#installation)
 - [Features](#features)
   - [Extended Git](#extended-git)
   - [Versioning](#versioning)
@@ -15,11 +16,13 @@ logging on my any Python package repositories, because I do not want to hard
 code or set up the development flow every time that I create the new Python
 package project :tired_face:.
 
+## Installation
+
 ```shell
 pip install clishelf
 ```
 
-In the future :dart:, I will add more the CLI tools that able to dynamic with
+In the future, I will add more the CLI tools that able to dynamic with
 many style of config such as I want to make changelog file with style B by my
 custom message code.
 
