@@ -40,7 +40,7 @@ def echo():
     is_flag=True,
 )
 def cove(module: str, html: bool):
-    """Run coverage"""
+    """Run Coverage flow"""
     subprocess.run(["coverage", "run", "--m", module, "tests"])
     subprocess.run(["coverage", "combine"])
     subprocess.run(["coverage", "report", "--show-missing"])

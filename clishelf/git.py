@@ -192,6 +192,9 @@ def validate_for_warning(
 ) -> List[str]:
     """Validate Commit message that should to fixed, but it does not impact to
     target repository.
+
+    :param lines: A list of line from commit message.
+    :type lines: List[str]
     """
     subject: str = lines[0]
     results: List[str] = []
@@ -207,8 +210,7 @@ def validate_for_warning(
     # RULE 01: Separate subject from body with a blank line
     if lines[1].strip() != "":
         results.append(
-            "There should be an empty line between "
-            "the commit title and body."
+            "There should be an empty line between the commit title and body."
         )
 
     if not lines[0].strip().endswith("."):
@@ -220,6 +222,7 @@ def validate_for_warning(
 def validate_commit_msg(
     lines: List[str],
 ) -> Tuple[List[str], Level]:
+    """"""
     if not lines:
         return (
             ["Please supply commit message without start with ``#``."],
@@ -251,6 +254,7 @@ def validate_commit_msg(
 
 
 def get_branch_name() -> str:
+    """Return current branch name."""
     return (
         subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
         .decode(sys.stdout.encoding)
@@ -259,6 +263,9 @@ def get_branch_name() -> str:
 
 
 def get_latest_tag(default: bool = True) -> Optional[str]:
+    """Return the latest tag if it exists, otherwise it will return the
+    version from ``.__about__`` file.
+    """
     try:
         return (
             subprocess.check_output(
@@ -276,9 +283,9 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
         return None
 
 
-def prepare_commit_logs(tag2head: str):
+def prepare_commit_logs(tag2head: str) -> List[List[str]]:
     """Prepare contents logs to List of commit log."""
-    results: List = []
+    results: List[List[str]] = []
     prepare: List[str] = []
     for line in (
         subprocess.check_output(
@@ -306,6 +313,7 @@ def get_commit_logs(
     tag: Optional[str] = None,
     all_logs: bool = False,
 ) -> List[CommitLog]:
+    """Return a list of commit message logs."""
     if tag:
         tag2head: str = f"{tag}..HEAD"
     elif all_logs or not (tag := get_latest_tag(default=False)):
@@ -393,21 +401,25 @@ def cli_git():
 
 @cli_git.command()
 def bn():
-    """Show the Current Branch"""
-    sys.exit(get_branch_name())
+    """Show the Current Branch name."""
+    print(get_branch_name(), file=sys.stdout)
+    sys.exit(0)
 
 
 @cli_git.command()
 def tl():
-    """Show the Latest Tag"""
-    sys.exit(get_latest_tag())
+    """Show the Latest Tag if it exists, otherwise it will show version from
+    about file.
+    """
+    print(get_latest_tag(), file=sys.stdout)
+    sys.exit(0)
 
 
 @cli_git.command()
 @click.option("-t", "--tag", type=click.STRING, default=None)
 @click.option("-a", "--all-logs", is_flag=True)
 def cl(tag: Optional[str], all_logs: bool):
-    """Show the Commit Logs from the latest Tag to HEAD"""
+    """Show the Commit Logs from the latest Tag to HEAD."""
     print(
         "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
         file=sys.stdout,
@@ -456,7 +468,7 @@ def cm(
 @cli_git.command()
 @click.option("--no-verify", is_flag=True)
 def commit_previous(no_verify: bool):
-    """Commit changes to the Previous Commit with same message"""
+    """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=no_verify)
     sys.exit(0)
 
@@ -464,7 +476,7 @@ def commit_previous(no_verify: bool):
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 def commit_revert(force: bool):
-    """Revert the latest Commit on this Local"""
+    """Revert the latest Commit on the Local repository."""
     subprocess.run(["git", "reset", "HEAD^"])
     if force:
         subprocess.run(["git", "restore", "."])
@@ -473,13 +485,14 @@ def commit_revert(force: bool):
 
 @cli_git.command()
 def clear_branch():
-    """Clear Local Branches that sync from the Remote"""
+    """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
         ["git", "checkout", "main"],
         stderr=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
     )
     subprocess.run(
+        # Or, use ``git remote prune origin``.
         ["git", "remote", "update", "origin", "--prune"],
         stdout=subprocess.DEVNULL,
     )
@@ -497,9 +510,28 @@ def clear_branch():
 
 
 @cli_git.command()
-@click.option("--store", is_flag=True)
-def init_conf(store: bool):
-    """Initialize local GIT config"""
+def clear_tag():
+    """Clear Local Tags that sync from the Remote repository."""
+    subprocess.run(
+        ["git", "fetch", "--prune", "--prune-tags"],
+        stdout=subprocess.DEVNULL,
+    )
+    sys.exit(0)
+
+
+@cli_git.command()
+@click.option(
+    "--store",
+    is_flag=True,
+    help="(=False) Store credential flag.",
+)
+@click.option(
+    "--prune-tag",
+    is_flag=True,
+    help="(=False) Set Fetch handle prune tag.",
+)
+def init_conf(store: bool, prune_tag: bool):
+    """Initialize GIT config on local"""
     pf: Profile = load_profile()
     subprocess.run(
         ["git", "config", "--local", "user.name", f'"{pf.name}"'],
@@ -514,6 +546,14 @@ def init_conf(store: bool):
         ["git", "config", "--local", "credential.helper", st],
         stdout=subprocess.DEVNULL,
     )
+    if prune_tag:
+        # If you only want to prune tags when fetching from a specific remote.
+        # ["git", "config", "remote.origin.pruneTags", "true"]
+        subprocess.run(
+            # Or, able to use ``git fetch -p -P``.
+            ["git", "config", "--local", "fetch.pruneTags", "true"],
+            stdout=subprocess.DEVNULL,
+        )
     sys.exit(0)
 
 

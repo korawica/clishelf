@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import tomli
 
@@ -15,9 +17,10 @@ def pwd() -> Path:
     return Path(".")
 
 
-def load_pyproject() -> Dict[str, Any]:
+def load_pyproject(file: Optional[str] = None) -> Dict[str, Any]:
     """Load Configuration from pyproject.toml file."""
-    pyproject: Path = Path("pyproject.toml")
+    f: str = file or "pyproject.toml"
+    pyproject: Path = Path(f)
     return tomli.loads(pyproject.read_text()) if pyproject.exists() else {}
 
 
