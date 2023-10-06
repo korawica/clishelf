@@ -237,6 +237,17 @@ def current(file: str):
 
 
 @cli_vs.command()
+@click.option("-p", "--push", is_flag=True)
+def tag(push: bool):
+    """Create the Git tag from the about file."""
+    from .__about__ import __version__
+
+    subprocess.run(["git", "tag", f"v{__version__}"])
+    if push:
+        subprocess.run(["git", "push", "--tags"])
+
+
+@cli_vs.command()
 @click.argument("action", type=click.STRING)
 @click.option("-f", "--file", type=click.Path(exists=True))
 @click.option("-c", "--changelog-file", type=click.Path(exists=True))

@@ -83,6 +83,7 @@ Commands:
   changelog  Make Changelogs file
   conf       Return Configuration for Bump version
   current    Return Current Version
+  tag        Create the Git tag from the about file.
 ```
 
 ## License
