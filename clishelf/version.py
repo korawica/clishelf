@@ -11,7 +11,7 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, NoReturn, Optional, Tuple
 
 import click
 
@@ -23,13 +23,17 @@ BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
 )
 
 cli_vs: click.Command
+GroupCommitLog = Dict[str, List[CommitLog]]
 
 
-def generate_group_commit_log() -> Dict[str, List[CommitLog]]:
-    """Generate Group of the Commit Logs"""
+def gen_group_commit_log() -> GroupCommitLog:
+    """Generate Group of the Commit Logs
+
+    :rtype: GroupCommitLog
+    """
     from .git import get_commit_logs
 
-    group_logs: Dict[str, List[CommitLog]] = defaultdict(list)
+    group_logs: GroupCommitLog = defaultdict(list)
     for log in get_commit_logs():
         group_logs[log.msg.mtype].append(log)
     return {
@@ -43,7 +47,7 @@ def generate_group_commit_log() -> Dict[str, List[CommitLog]]:
 #  hot-changes commit
 def writer_changelog(file: str):
     """Write Commit logs to the changelog file."""
-    group_logs: Dict[str, List[CommitLog]] = generate_group_commit_log()
+    group_logs: GroupCommitLog = gen_group_commit_log()
 
     with Path(file).open(encoding="utf-8") as f_changes:
         changes = f_changes.read().splitlines()
@@ -66,25 +70,45 @@ def writer_changelog(file: str):
         elif written:
             continue
         else:
-            from .git import COMMIT_PREFIX_TYPE
-
-            linesep = os.linesep
-            if any(cpt[0] in group_logs for cpt in COMMIT_PREFIX_TYPE):
-                linesep = f"{os.linesep}{os.linesep}"
-
-            writer.write(f"## Latest Changes{linesep}")
-
-            for cpt in COMMIT_PREFIX_TYPE:
-                if cpt[0] in group_logs:
-                    writer.write(f"### {cpt[0]}{os.linesep}{os.linesep}")
-                    for log in group_logs[cpt[0]]:
-                        writer.write(
-                            f"- {log.msg.content} (_{log.date:%Y-%m-%d}_)"
-                            f"{os.linesep}"
-                        )
-                    writer.write(os.linesep)
+            write_group_log(writer, group_logs)
             written = True
     writer.close()
+
+
+def write_group_log(writer, group_logs):
+    from .git import COMMIT_PREFIX_TYPE
+
+    linesep = os.linesep
+    if any(cpt[0] in group_logs for cpt in COMMIT_PREFIX_TYPE):
+        linesep = f"{os.linesep}{os.linesep}"
+
+    writer.write(f"## Latest Changes{linesep}")
+
+    for cpt in COMMIT_PREFIX_TYPE:
+        if cpt[0] in group_logs:
+            writer.write(f"### {cpt[0]}{os.linesep}{os.linesep}")
+            for log in group_logs[cpt[0]]:
+                writer.write(
+                    f"- {log.msg.content} (_{log.date:%Y-%m-%d}_)"
+                    f"{os.linesep}"
+                )
+            writer.write(os.linesep)
+
+
+def write_bump_file(
+    file: str,
+    changelog_file: str,
+    *,
+    version: int = 1,
+) -> NoReturn:
+    with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
+        f_bump.write(
+            getattr(BumpVersionConfig, f"V{version}").format(
+                file=file,
+                version=current_version(file),
+                changelog=changelog_file,
+            )
+        )
 
 
 def bump2version(
@@ -93,19 +117,15 @@ def bump2version(
     changelog_file: str,
     ignore_changelog: bool = False,
     dry_run: bool = False,
+    version: int = 1,
 ):
-    from .git import merge2latest_commit
+    # Start writing ``.bump2version.cfg`` file on current path.
+    write_bump_file(file, changelog_file, version=version)
 
-    with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
-        f_bump.write(
-            BumpVersionConfig.V1.format(
-                file=file,
-                version=current_version(file),
-                changelog=changelog_file,
-            )
-        )
     if not ignore_changelog:
         writer_changelog(file=changelog_file)
+
+    # COMMIT: commit add config and edit changelog file.
     subprocess.run(["git", "add", "-A"])
     subprocess.run(
         [
@@ -114,8 +134,10 @@ def bump2version(
             "-m",
             "build: add bump2version config file",
             "--no-verify",
-        ]
+        ],
+        stdout=subprocess.DEVNULL,
     )
+    print("Start write '.bump2version.cfg' config file ...")
     subprocess.run(
         [
             "bump2version",
@@ -124,9 +146,7 @@ def bump2version(
         ]
         + (["--list", "--dry-run"] if dry_run else [])
     )
-    writer_changelog(file=changelog_file)
-    Path(".bumpversion.cfg").unlink(missing_ok=False)
-    merge2latest_commit(no_verify=True)
+
     subprocess.run(
         [
             "git",
@@ -137,6 +157,11 @@ def bump2version(
         stderr=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
     )
+
+    # Remove ``.bump2version.cfg`` file.
+    Path(".bumpversion.cfg").unlink(missing_ok=False)
+    print("Unlink '.bump2version.cfg' config file ...")
+
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
         raw_msg = f_msg.read().splitlines()
     subprocess.run(
@@ -149,9 +174,7 @@ def bump2version(
             "--no-verify",
         ],
         stderr=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
     )
-    return 0
 
 
 def current_version(file: str) -> str:
@@ -182,7 +205,8 @@ def cli_vs():
 @cli_vs.command()
 def conf():
     """Return Configuration for Bump version"""
-    sys.exit(load_config())
+    print(load_config())
+    sys.exit(0)
 
 
 @cli_vs.command()
@@ -212,12 +236,14 @@ def current(file: str):
 @click.option("-c", "--changelog-file", type=click.Path(exists=True))
 @click.option("--ignore-changelog", is_flag=True)
 @click.option("--dry-run", is_flag=True)
+@click.option("-v", "--version", type=click.INT, default=1)
 def bump(
     action: str,
     file: Optional[str],
     changelog_file: Optional[str],
     ignore_changelog: bool,
     dry_run: bool,
+    version: int,
 ):
     """Bump Version"""
     if not file:
@@ -226,9 +252,15 @@ def bump(
         )
     if not changelog_file:
         changelog_file = load_config().get("changelog", None) or "CHANGELOG.md"
-    sys.exit(
-        bump2version(action, file, changelog_file, ignore_changelog, dry_run)
+    bump2version(
+        action,
+        file,
+        changelog_file,
+        ignore_changelog,
+        dry_run,
+        version,
     )
+    sys.exit(0)
 
 
 if __name__ == "__main__":

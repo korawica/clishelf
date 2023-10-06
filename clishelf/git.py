@@ -475,9 +475,10 @@ def commit_previous(no_verify: bool):
 
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
-def commit_revert(force: bool):
+@click.option("-n", "--number", type=click.INT, default=1)
+def commit_revert(force: bool, number: int):
     """Revert the latest Commit on the Local repository."""
-    subprocess.run(["git", "reset", "HEAD^"])
+    subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
         subprocess.run(["git", "restore", "."])
     sys.exit(0)

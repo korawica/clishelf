@@ -10,7 +10,8 @@ from textwrap import dedent
 
 class BumpVersionConfig:
     V1: str = dedent(
-        r"""[bumpversion]
+        r"""
+    [bumpversion]
     current_version = {version}
     commit = True
     tag = False
@@ -29,7 +30,6 @@ class BumpVersionConfig:
     optional_value = _
     values =
         _
-        dev
         a
         b
         rc
@@ -43,10 +43,12 @@ class BumpVersionConfig:
     [bumpversion:file:{file}]
 
     [bumpversion:file:{changelog}]
-    search = ## Latest Changes
-    replace = ## {{new_version}}
+    search = {{#}}{{#}} Latest Changes
+    replace = {{#}}{{#}} Latest Changes
+
+        {{#}}{{#}} {{new_version}}
     """
-    )
+    ).strip()
 
     V1_REGEX: str = (
         r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
@@ -55,7 +57,8 @@ class BumpVersionConfig:
     )
 
     V2: str = dedent(
-        r"""[bumpversion]
+        r"""
+    [bumpversion]
     current_version = {version}
     commit = True
     tag = False
@@ -88,10 +91,11 @@ class BumpVersionConfig:
     [bumpversion:file:{file}]
 
     [bumpversion:file:{changelog}]
-    [bumpversion:file:CHANGELOG.md]
-    search = {#}{#} Latest Changes
-    replace = {#}{#} Latest Changes
+    search = {{#}}{{#}} Latest Changes
+    replace = {{#}}{{#}} Latest Changes
 
-        {#}{#} {{new_version}} - {utcnow:%Y-%m-%d}
+        {{#}}{{#}} {{new_version}}
+
+        Released: {{utcnow:%Y-%m-%d}}
     """
-    )
+    ).strip()

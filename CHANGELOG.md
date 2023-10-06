@@ -2,6 +2,24 @@
 
 ## Latest Changes
 
+### Features
+
+- :dart: feat: add git cmd for sync deleted tag from remote. (_2023-10-06_)
+- :dart: feat: add init-conf Git command for set name and email on local. (_2023-09-14_)
+
+### Code Changes
+
+- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-10-03_)
+- :construction: refactored: add detail syntax for git commands. (_2023-09-26_)
+- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-09-26_)
+- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-09-19_)
+
+### Documents
+
+- :page_facing_up: docs: add comment statement on cli command. (_2023-10-06_)
+- :page_facing_up: docs: add doc-string and license message. (_2023-10-02_)
+- :page_facing_up: docs: update CONTRIBUTING file for revise name and email in git. (_2023-09-14_)
+
 ## 0.0.3
 
 ### Features

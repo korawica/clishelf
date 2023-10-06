@@ -23,7 +23,7 @@ def cli():
 @cli.command()
 def echo():
     """Echo Hello World"""
-    print("Hello World")
+    print("Hello World", file=sys.stdout)
     sys.exit(0)
 
 
@@ -42,7 +42,10 @@ def echo():
 def cove(module: str, html: bool):
     """Run Coverage flow"""
     subprocess.run(["coverage", "run", "--m", module, "tests"])
-    subprocess.run(["coverage", "combine"])
+    subprocess.run(
+        ["coverage", "combine"],
+        stdout=subprocess.DEVNULL,
+    )
     subprocess.run(["coverage", "report", "--show-missing"])
     if html:
         subprocess.run(["coverage", "html"])
