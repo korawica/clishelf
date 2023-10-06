@@ -30,6 +30,21 @@ custom message code.
 
 This Utility Package provide some CLI tools for handler development process.
 
+```text
+Usage: shelf.exe [OPTIONS] COMMAND [ARGS]...
+
+  A simple command line tool.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  cove  Run Coverage flow
+  echo  Echo Hello World
+  git   Extended Git commands
+  vs    Versioning commands
+```
+
 ### Extended Git
 
 ```text
@@ -38,19 +53,19 @@ Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
   Extended Git commands
 
 Options:
-
   --help  Show this message and exit.
 
 Commands:
-  bn               Show the Current Branch
-  cl               Show the Commit Logs from the latest Tag to HEAD
-  clear-branch     Clear Local Branches that sync from the Remote
+  bn               Show the Current Branch name.
+  cl               Show the Commit Logs from the latest Tag to HEAD.
+  clear-branch     Clear Local Branches that sync from the Remote...
+  clear-tag        Clear Local Tags that sync from the Remote repository.
   cm               Show the latest Commit message
-  commit-previous  Commit changes to the Previous Commit with same message
-  commit-revert    Revert the latest Commit on this Local
-  init-conf        Initialize local GIT config
+  commit-previous  Commit changes to the Previous Commit with same message.
+  commit-revert    Revert the latest Commit on the Local repository.
+  init-conf        Initialize GIT config on local
   profile          Show Profile object that contain Name and Email of Author
-  tl               Show the Latest Tag
+  tl               Show the Latest Tag if it exists, otherwise it will...
 ```
 
 ### Versioning
