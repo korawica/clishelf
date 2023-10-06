@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 0.0.4
+
 ### Features
 
 - :dart: feat: add git cmd for sync deleted tag from remote. (_2023-10-06_)
