@@ -2,8 +2,6 @@
 
 ## Latest Changes
 
-## 0.0.4
-
 ### Features
 
 - :dart: feat: add git cmd for sync deleted tag from remote. (_2023-10-06_)
@@ -11,6 +9,7 @@
 
 ### Code Changes
 
+- :bookmark: Bump up to version 0.0.3 -> 0.0.4. (_2023-10-06_)
 - :test_tube: test: update test-case for git cli. (_2023-10-06_)
 - :construction: refactored: change test-case name and improve perf in git. (_2023-10-06_)
 - :construction: refactored: add detail syntax for git commands. (_2023-09-26_)
@@ -21,6 +20,11 @@
 - :page_facing_up: docs: add comment statement on cli command. (_2023-10-06_)
 - :page_facing_up: docs: add doc-string and license message. (_2023-10-02_)
 - :page_facing_up: docs: update CONTRIBUTING file for revise name and email in git. (_2023-09-14_)
+
+### Fix Bugs
+
+- :gear: fixed: add value for the Level enum before return. (_2023-10-06_)
+- :gear: fixed: change make_color function that handle value of Enum. (_2023-10-06_)
 
 ## 0.0.3
 
