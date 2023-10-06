@@ -1,10 +1,7 @@
-import contextlib
 import datetime as dt
-import re
 import subprocess
 import sys
 import unittest
-from typing import Callable, NamedTuple, Union
 from unittest.mock import DEFAULT, MagicMock, patch
 
 from click.testing import CliRunner
@@ -12,39 +9,13 @@ from click.testing import CliRunner
 import clishelf.git as git
 
 
-class CmdMatch(NamedTuple):
-    cmd: str
-    match: str = ".*"
-    result: str = ""
-    side_effect: Callable = None
-
-
-@contextlib.contextmanager
-def mock_run(*cmd_match: Union[str, CmdMatch], **kws):
-    sub_run = subprocess.run
-    mock = MagicMock()
-    if isinstance(cmd_match[0], str):
-        cmd_match = [CmdMatch(*cmd_match, **kws)]
-
-    def new_run(cmd, **_kws):
-        check_cmd = " ".join(cmd[1:])
-        mock(*cmd[1:])
-        for m in cmd_match:
-            if m.cmd in cmd[0].lower() and re.match(m.match, check_cmd):
-                if m.side_effect:
-                    m.side_effect()
-                return subprocess.CompletedProcess(cmd, 0, m.result, "")
-        raise AssertionError("No matching call for %s" % check_cmd)
-
-    subprocess.run = new_run
-    yield mock
-    subprocess.run = sub_run
-
-
 def side_effect_func(*args, **kwargs):
-    if any(["git", "rev-parse", "--abbrev-ref", "HEAD"] == arg for arg in args):
+    if any(["git", "rev-parse", "--abbrev-ref", "HEAD"] == a for a in args):
         _ = kwargs
-        return "0.0.1".encode(encoding=sys.stdout.encoding)
+        return "0.1.2".encode(encoding=sys.stdout.encoding)
+    elif any(["git", "describe", "--tags", "--abbrev=0"] == a for a in args):
+        _ = kwargs
+        return "v0.0.1".encode(encoding=sys.stdout.encoding)
     else:
         return DEFAULT
 
@@ -52,6 +23,20 @@ def side_effect_func(*args, **kwargs):
 class CLIGitTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
+
+    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
+    def test_cli_branch_name(self, mock):
+        result = self.runner.invoke(git.bn)
+        self.assertTrue(mock.called)
+        self.assertEqual("0.1.2\n", result.output)
+        self.assertEqual(0, result.exit_code)
+
+    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
+    def test_cli_latest_tag(self, mock):
+        result = self.runner.invoke(git.tl)
+        self.assertTrue(mock.called)
+        self.assertEqual("v0.0.1\n", result.output)
+        self.assertEqual(0, result.exit_code)
 
 
 class GitTestCase(unittest.TestCase):
@@ -83,22 +68,55 @@ class GitTestCase(unittest.TestCase):
         mock_stdout = MagicMock()
         mock_stdout.configure_mock(**{"decode.return_value": "0.0.1"})
         mock.return_value = mock_stdout
+
+        # Start Test after mock subprocess.
         result = git.get_branch_name()
         self.assertEqual("0.0.1", result)
 
     @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_get_branch_name_2(self, mock):
+    def test_get_branch_name_with_side_effect(self, mock):
+        # Start Test after mock subprocess.
         result = git.get_branch_name()
         self.assertTrue(mock.called)
-        self.assertEqual("0.0.1", result)
+        self.assertEqual("0.1.2", result)
 
-    # @patch(
-    #     "clishelf.git.subprocess.check_output",
-    #     side_effect=subprocess.CalledProcessError(
-    #         1, cmd="git", stderr="Test raise"
-    #     )
-    # )
-    # def test_get_data_invalid(self, mock_run):
-    #     with self.assertRaises(subprocess.CalledProcessError) as exc:
-    #         print(git.get_latest_tag())
-    #     print(exc)
+    @patch(
+        "clishelf.git.subprocess.check_output",
+        side_effect=subprocess.CalledProcessError(
+            1,
+            cmd="git",
+            stderr="Error message from command git.",
+        ),
+    )
+    def test_get_branch_name_raise(self, mock):
+        with self.assertRaises(subprocess.CalledProcessError) as exc:
+            git.get_branch_name()
+
+        # Start Test after mock subprocess.
+        self.assertTrue(mock.called)
+        self.assertEqual(
+            "Error message from command git.",
+            str(exc.exception.stderr),
+        )
+        self.assertEqual("1", str(exc.exception.returncode))
+
+    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
+    def test_get_latest_tag(self, mock):
+        # Start Test after mock subprocess.
+        result = git.get_latest_tag()
+        self.assertTrue(mock.called)
+        self.assertEqual("v0.0.1", result)
+
+    @patch(
+        "clishelf.git.subprocess.check_output",
+        side_effect=subprocess.CalledProcessError(1, "git"),
+    )
+    @patch("clishelf.__about__.__version__", "0.0.9")
+    def test_get_latest_tag_raise(self, mock):
+        # Start Test after mock subprocess.
+        result = git.get_latest_tag()
+        self.assertTrue(mock.called)
+        self.assertEqual("v0.0.9", result)
+
+        result = git.get_latest_tag(default=False)
+        self.assertEqual(None, result)

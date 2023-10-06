@@ -205,7 +205,7 @@ def load_config() -> Dict[str, Any]:
 @click.group(name="vs")
 def cli_vs():
     """Versioning commands"""
-    pass
+    pass  # pragma: no cover.
 
 
 @cli_vs.command()

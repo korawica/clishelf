@@ -5,9 +5,9 @@ from click.testing import CliRunner
 from clishelf.cli import echo
 
 
-class MainTestCase(unittest.TestCase):
+class CliTestCase(unittest.TestCase):
     def test_hello_world(self):
         runner = CliRunner()
         result = runner.invoke(echo)
-        self.assertEqual(result.exit_code, 0)
-        self.assertEqual(result.output, "Hello World\n")
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual("Hello World\n", result.output)

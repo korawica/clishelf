@@ -1,7 +1,7 @@
 # Utility Package: *CLI Shelf*
 
 [![test](https://github.com/korawica/clishelf/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/korawica/clishelf/actions/workflows/tests.yml)
-[![python support version](https://img.shields.io/pypi/pyversions/clishelf)](https://pypi.org/project/clishelf/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/clishelf?logo=pypi)](https://pypi.org/project/clishelf/)
 [![size](https://img.shields.io/github/languages/code-size/korawica/clishelf)](https://github.com/korawica/clishelf)
 
 **Table of Contents**:

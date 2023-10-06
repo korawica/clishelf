@@ -371,7 +371,7 @@ def get_latest_commit(
 @click.group(name="git")
 def cli_git():
     """Extended Git commands"""
-    pass
+    pass  # pragma: no cover.
 
 
 @cli_git.command()
