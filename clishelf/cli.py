@@ -49,6 +49,7 @@ def cove(module: str, html: bool):
     subprocess.run(["coverage", "report", "--show-missing"])
     if html:
         subprocess.run(["coverage", "html"])
+    sys.exit(0)
 
 
 def main() -> None:

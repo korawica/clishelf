@@ -15,7 +15,7 @@ from typing import Any, Dict, List, NoReturn, Optional, Tuple
 
 import click
 
-from .git import CommitLog
+from .git import CommitLog, get_latest_tag
 from .settings import BumpVersionConfig
 
 BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
@@ -34,7 +34,12 @@ def gen_group_commit_log() -> GroupCommitLog:
     from .git import get_commit_logs
 
     group_logs: GroupCommitLog = defaultdict(list)
-    for log in get_commit_logs():
+    for log in get_commit_logs(
+        excluded=[
+            r"pre-commit autoupdate",
+            r"^Merge",
+        ]
+    ):
         group_logs[log.msg.mtype].append(log)
     return {
         k: sorted(v, key=lambda x: x.date, reverse=True)
@@ -59,11 +64,12 @@ def writer_changelog(file: str):
         if line.startswith("## Latest Changes"):
             skip_line = False
 
-        if re.match(rf"## {BumpVersionConfig.V1_REGEX}", line):
+        if m := re.match(rf"##\s({BumpVersionConfig.V1_REGEX})", line):
             if not written:
                 writer.write(f"## Latest Changes{os.linesep}{os.linesep}")
                 written = True
-            skip_line = True
+            if f"v{m.group(1)}" == get_latest_tag():
+                skip_line = True
 
         if skip_line:
             writer.write(line + os.linesep)

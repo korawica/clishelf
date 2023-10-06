@@ -79,17 +79,17 @@ class GitTestCase(unittest.TestCase):
         )
 
     @patch("clishelf.git.subprocess.check_output")
-    def test_get_branch_name(self, mock_run):
+    def test_get_branch_name(self, mock):
         mock_stdout = MagicMock()
         mock_stdout.configure_mock(**{"decode.return_value": "0.0.1"})
-        mock_run.return_value = mock_stdout
+        mock.return_value = mock_stdout
         result = git.get_branch_name()
         self.assertEqual("0.0.1", result)
 
     @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_get_branch_name_2(self, mock_run):
+    def test_get_branch_name_2(self, mock):
         result = git.get_branch_name()
-        self.assertTrue(mock_run.called)
+        self.assertTrue(mock.called)
         self.assertEqual("0.0.1", result)
 
     # @patch(

@@ -9,10 +9,7 @@
 
 ### Code Changes
 
-- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-10-03_)
 - :construction: refactored: add detail syntax for git commands. (_2023-09-26_)
-- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-09-26_)
-- :construction: refactored: 🚧 [pre-commit.ci] pre-commit autoupdate (_2023-09-19_)
 
 ### Documents
 

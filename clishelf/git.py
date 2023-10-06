@@ -12,7 +12,7 @@ import sys
 from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Generator, Iterator, List, Optional, Tuple
 
 import click
 
@@ -24,25 +24,9 @@ from .utils import (
 
 cli_git: click.Command
 
-PROJECT_IDS: List[str] = ["SLO"]
 BRANCH_TYPES: List[str] = ["feature", "bug", "hot"]
 
-REGEX_PROJECT_IDS: str = "|".join(PROJECT_IDS)
 REGEX_BRANCH_TYPES: str = "|".join(BRANCH_TYPES)
-
-# Should contain a capturing group to extract the reference:
-REGEX_BRANCH: str = (
-    rf"^(?:{REGEX_BRANCH_TYPES})/"
-    rf"((?:{REGEX_PROJECT_IDS})-[\d]{{1,5}})-[a-z]+(?:-[a-z]+)*$"
-)
-
-# Should contain a capturing group to extract the reference
-# (note the dot at the end is optional as this script will add it
-# automatically for us):
-REGEX_MESSAGE = rf"^((?:{REGEX_PROJECT_IDS})-[\d]{{1,5}}): .+\.?$"
-
-# No capturing group. Just checking for the bare minimum:
-REGEX_BASIC_MESSAGE = "^.+$"
 
 REGEX_COMMIT_MESSAGE = r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
 
@@ -283,9 +267,8 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
         return None
 
 
-def prepare_commit_logs(tag2head: str) -> List[List[str]]:
+def prepare_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
     """Prepare contents logs to List of commit log."""
-    results: List[List[str]] = []
     prepare: List[str] = []
     for line in (
         subprocess.check_output(
@@ -302,45 +285,42 @@ def prepare_commit_logs(tag2head: str) -> List[List[str]]:
         .splitlines()
     ):
         if line == "(END)":
-            results.append(prepare)
+            yield prepare
             prepare = []
             continue
         prepare.append(line)
-    return results
 
 
 def get_commit_logs(
     tag: Optional[str] = None,
+    *,
     all_logs: bool = False,
-) -> List[CommitLog]:
+    excluded: Optional[List[str]] = None,
+) -> Iterator[CommitLog]:
     """Return a list of commit message logs."""
+    _exc: List[str] = excluded or [r"^Merge"]
     if tag:
         tag2head: str = f"{tag}..HEAD"
     elif all_logs or not (tag := get_latest_tag(default=False)):
         tag2head = "HEAD"
     else:
         tag2head = f"{tag}..HEAD"
-    msgs: List[CommitLog] = []
     for _ in prepare_commit_logs(tag2head):
-        if re.match(r"^Merge", _[1]):
+        if any((re.search(s, _[1]) is not None) for s in _exc):
             continue
-
-        _s: List[str] = _[0].split("|")
-        msgs.append(
-            CommitLog(
-                hash=_s[0],
-                date=datetime.strptime(_s[1], "%Y-%m-%d"),
-                msg=CommitMsg(
-                    content=_[1],
-                    body="|".join(_[2:]),
-                ),
-                author=Profile(
-                    name=_s[2],
-                    email=_s[3],
-                ),
-            )
+        header: List[str] = _[0].split("|")
+        yield CommitLog(
+            hash=header[0],
+            date=datetime.strptime(header[1], "%Y-%m-%d"),
+            msg=CommitMsg(
+                content=_[1],
+                body="|".join(_[2:]),
+            ),
+            author=Profile(
+                name=header[2],
+                email=header[3],
+            ),
         )
-    return msgs
 
 
 def merge2latest_commit(no_verify: bool = False):
@@ -386,11 +366,6 @@ def get_latest_commit(
         with Path(file).open(mode="w", encoding="utf-8", newline="") as f_msg:
             f_msg.write(f"{os.linesep}".join(lines))
     return lines
-
-
-def get_branch_ref(branch):
-    match = re.findall(REGEX_BRANCH, branch)
-    return match[0] if match and match[0] else None
 
 
 @click.group(name="git")

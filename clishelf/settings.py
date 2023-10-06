@@ -77,7 +77,6 @@ class BumpVersionConfig:
     optional_value = _
     values =
         _
-        dev
         a
         b
         rc
