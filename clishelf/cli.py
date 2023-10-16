@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from typing import NoReturn
 
 import click
 
@@ -16,14 +17,14 @@ from .version import cli_vs
 
 @click.group()
 def cli():
-    """A simple command line tool."""
+    """The Main Shelf commands."""
     pass  # pragma: no cover.
 
 
 @cli.command()
 def echo():
     """Echo Hello World"""
-    print("Hello World", file=sys.stdout)
+    click.echo("Hello World", file=sys.stdout)
     sys.exit(0)
 
 
@@ -52,7 +53,7 @@ def cove(module: str, html: bool):
     sys.exit(0)
 
 
-def main() -> None:
+def main() -> NoReturn:
     cli.add_command(cli_git)
     cli.add_command(cli_vs)
     cli.main()

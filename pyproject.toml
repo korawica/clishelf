@@ -45,7 +45,7 @@ build-backend = "hatchling.build"
 [project.scripts]
 shelf = "clishelf.__main__:main"
 
-[tool.utils.version]
+[tool.shelf.version]
 version = "./clishelf/__about__.py"
 changelog = "CHANGELOG.md"
 

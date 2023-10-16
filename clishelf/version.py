@@ -143,7 +143,7 @@ def bump2version(
         ],
         stdout=subprocess.DEVNULL,
     )
-    print("Start write '.bump2version.cfg' config file ...")
+    click.echo("Start write '.bump2version.cfg' config file ...")
     subprocess.run(
         [
             "bump2version",
@@ -166,7 +166,7 @@ def bump2version(
 
     # Remove ``.bump2version.cfg`` file.
     Path(".bumpversion.cfg").unlink(missing_ok=False)
-    print("Unlink '.bump2version.cfg' config file ...")
+    click.echo("Unlink '.bump2version.cfg' config file ...")
 
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
         raw_msg = f_msg.read().splitlines()
@@ -199,25 +199,26 @@ def load_project() -> Dict[str, Any]:
 def load_config() -> Dict[str, Any]:
     from .utils import load_pyproject
 
-    return load_pyproject().get("tool", {}).get("utils", {}).get("version", {})
+    return load_pyproject().get("tool", {}).get("shelf", {}).get("version", {})
 
 
 @click.group(name="vs")
 def cli_vs():
-    """Versioning commands"""
+    """The Versioning commands."""
     pass  # pragma: no cover.
 
 
 @cli_vs.command()
-def conf():
+def conf() -> NoReturn:
     """Return Configuration for Bump version"""
-    print(load_config())
+    for k, v in load_config().items():
+        click.echo(f"{k}: {v!r}")
     sys.exit(0)
 
 
 @cli_vs.command()
 @click.option("-f", "--file", type=click.Path(exists=True))
-def changelog(file: Optional[str]):
+def changelog(file: Optional[str]) -> NoReturn:
     """Make Changelogs file"""
     if not file:
         file = load_config().get("changelog", None) or "CHANGELOG.md"
@@ -227,7 +228,7 @@ def changelog(file: Optional[str]):
 
 @cli_vs.command()
 @click.option("-f", "--file", type=click.Path(exists=True))
-def current(file: str):
+def current(file: str) -> NoReturn:
     """Return Current Version"""
     if not file:
         file = load_config().get("version", None) or (
@@ -238,7 +239,7 @@ def current(file: str):
 
 @cli_vs.command()
 @click.option("-p", "--push", is_flag=True)
-def tag(push: bool):
+def tag(push: bool) -> NoReturn:
     """Create the Git tag from the about file."""
     from .__about__ import __version__
 
@@ -261,7 +262,7 @@ def bump(
     ignore_changelog: bool,
     dry_run: bool,
     version: int,
-):
+) -> NoReturn:
     """Bump Version"""
     if not file:
         file = load_config().get("version", None) or (

@@ -126,7 +126,6 @@ repos:
         # alternatively you could `core: [python]` so it only runs
         # when python files change.
         types: [python]
-        # entry: pytest -v
         entry: venv/Scripts/pytest.exe -v
         language: system
         # language: script

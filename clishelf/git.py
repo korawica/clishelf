@@ -355,7 +355,7 @@ def get_latest_commit(
 
     rss, level = validate_commit_msg(lines)
     for rs in rss:
-        print(make_color(rs, level), file=sys.stdout)
+        click.echo(make_color(rs, level), file=sys.stdout)
     if level not in (Level.OK, Level.WARNING):
         sys.exit(1)
 
@@ -370,14 +370,14 @@ def get_latest_commit(
 
 @click.group(name="git")
 def cli_git():
-    """Extended Git commands"""
+    """The Extended Git commands"""
     pass  # pragma: no cover.
 
 
 @cli_git.command()
 def bn():
     """Show the Current Branch name."""
-    print(get_branch_name(), file=sys.stdout)
+    click.echo(get_branch_name(), file=sys.stdout)
     sys.exit(0)
 
 
@@ -386,7 +386,7 @@ def tl():
     """Show the Latest Tag if it exists, otherwise it will show version from
     about file.
     """
-    print(get_latest_tag(), file=sys.stdout)
+    click.echo(get_latest_tag(), file=sys.stdout)
     sys.exit(0)
 
 
@@ -395,7 +395,7 @@ def tl():
 @click.option("-a", "--all-logs", is_flag=True)
 def cl(tag: Optional[str], all_logs: bool):
     """Show the Commit Logs from the latest Tag to HEAD."""
-    print(
+    click.echo(
         "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
         file=sys.stdout,
     )
@@ -419,9 +419,11 @@ def cm(
     if latest and not file:
         file = ".git/COMMIT_EDITMSG"
     if not prepare:
-        print(
-            "\n".join(get_latest_commit(file, edit, output_file)),
-            file=sys.stdout,
+        click.echo(
+            make_color(
+                "\n".join(get_latest_commit(file, edit, output_file)),
+                level=Level.OK,
+            ),
         )
     else:
         edit: bool = True
@@ -435,8 +437,10 @@ def cm(
                 "--no-verify",
                 "-m",
                 cm_msg,
-            ]
+            ],
+            stdout=subprocess.DEVNULL,
         )
+        click.echo(make_color(cm_msg, level=Level.OK))
     sys.exit(0)
 
 
@@ -536,7 +540,7 @@ def init_conf(store: bool, prune_tag: bool):
 @cli_git.command()
 def profile():
     """Show Profile object that contain Name and Email of Author"""
-    print(load_profile(), file=sys.stdout)
+    click.echo(load_profile(), file=sys.stdout)
     sys.exit(0)
 
 
