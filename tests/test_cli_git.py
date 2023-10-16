@@ -33,7 +33,7 @@ class CLIGitTestCase(unittest.TestCase):
 
     @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
     def test_cli_latest_tag(self, mock):
-        result = self.runner.invoke(git.tl)
+        result = self.runner.invoke(git.tg)
         self.assertTrue(mock.called)
         self.assertEqual("v0.0.1\n", result.output)
         self.assertEqual(0, result.exit_code)

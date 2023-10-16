@@ -16,7 +16,7 @@ from typing import Any, Dict, List, NoReturn, Optional, Tuple
 import click
 
 from .git import CommitLog, get_latest_tag
-from .settings import BumpVersionConfig
+from .settings import BumpVerConf
 
 BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
     ("bump", ":bookmark:"),  # 🔖 :bookmark:
@@ -64,7 +64,7 @@ def writer_changelog(file: str):
         if line.startswith("## Latest Changes"):
             skip_line = False
 
-        if m := re.match(rf"##\s({BumpVersionConfig.V1_REGEX})", line):
+        if m := re.match(rf"##\s({BumpVerConf.regex})", line):
             if not written:
                 writer.write(f"## Latest Changes{os.linesep}{os.linesep}")
                 written = True
@@ -109,10 +109,14 @@ def write_bump_file(
 ) -> NoReturn:
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
-            getattr(BumpVersionConfig, f"V{version}").format(
+            getattr(BumpVerConf, f"v{version}").format(
                 file=file,
-                version=current_version(file),
                 changelog=changelog_file,
+                main=BumpVerConf.main.format(
+                    version=current_version(file),
+                    msg=BumpVerConf.msg,
+                    regex=BumpVerConf.regex,
+                ),
             )
         )
 
@@ -125,6 +129,7 @@ def bump2version(
     dry_run: bool = False,
     version: int = 1,
 ):
+    """Bump version process."""
     # Start writing ``.bump2version.cfg`` file on current path.
     write_bump_file(file, changelog_file, version=version)
 
@@ -185,7 +190,7 @@ def bump2version(
 
 def current_version(file: str) -> str:
     with Path(file).open(encoding="utf-8") as f:
-        if search := re.search(BumpVersionConfig.V1_REGEX, f.read()):
+        if search := re.search(BumpVerConf.regex, f.read()):
             return search[0]
     raise NotImplementedError(f"{file} does not implement version value.")
 
@@ -210,7 +215,7 @@ def cli_vs():
 
 @cli_vs.command()
 def conf() -> NoReturn:
-    """Return Configuration for Bump version"""
+    """Return the config data for bumping version."""
     for k, v in load_config().items():
         click.echo(f"{k}: {v!r}")
     sys.exit(0)
@@ -227,20 +232,31 @@ def changelog(file: Optional[str]) -> NoReturn:
 
 
 @cli_vs.command()
-@click.option("-f", "--file", type=click.Path(exists=True))
+@click.option(
+    "-f",
+    "--file",
+    type=click.Path(exists=True),
+    help="The contain version file that able to search with regex.",
+)
 def current(file: str) -> NoReturn:
-    """Return Current Version"""
+    """Return Current Version that read from ``__about__`` by default."""
     if not file:
         file = load_config().get("version", None) or (
             f"./{load_project().get('name', 'unknown')}/__about__.py"
         )
-    sys.exit(current_version(file))
+    click.echo(current_version(file))
+    sys.exit(0)
 
 
 @cli_vs.command()
-@click.option("-p", "--push", is_flag=True)
+@click.option(
+    "-p",
+    "--push",
+    is_flag=True,
+    help="If True, it will push the tag to remote repository",
+)
 def tag(push: bool) -> NoReturn:
-    """Create the Git tag from the about file."""
+    """Create the Git tag by version from the ``__about__`` file."""
     from .__about__ import __version__
 
     subprocess.run(["git", "tag", f"v{__version__}"])
@@ -249,27 +265,29 @@ def tag(push: bool) -> NoReturn:
 
 
 @cli_vs.command()
-@click.argument("action", type=click.STRING)
+@click.argument("action", type=click.STRING, required=1)
 @click.option("-f", "--file", type=click.Path(exists=True))
 @click.option("-c", "--changelog-file", type=click.Path(exists=True))
+@click.option("-v", "--version", type=click.INT, default=1)
 @click.option("--ignore-changelog", is_flag=True)
 @click.option("--dry-run", is_flag=True)
-@click.option("-v", "--version", type=click.INT, default=1)
 def bump(
     action: str,
     file: Optional[str],
     changelog_file: Optional[str],
+    version: int,
     ignore_changelog: bool,
     dry_run: bool,
-    version: int,
 ) -> NoReturn:
-    """Bump Version"""
+    """Bump Version with specific action."""
     if not file:
-        file = load_config().get("version", None) or (
+        file: str = load_config().get("version", None) or (
             f"./{load_project().get('name', 'unknown')}/__about__.py"
         )
     if not changelog_file:
-        changelog_file = load_config().get("changelog", None) or "CHANGELOG.md"
+        changelog_file: str = (
+            load_config().get("changelog", None) or "CHANGELOG.md"
+        )
     bump2version(
         action,
         file,

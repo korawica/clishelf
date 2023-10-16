@@ -14,6 +14,8 @@ import click
 from .git import cli_git
 from .version import cli_vs
 
+cli: click.Command
+
 
 @click.group()
 def cli():
@@ -39,9 +41,10 @@ def echo():
     "-h",
     "--html",
     is_flag=True,
+    help="If True, it will generate coverage html file on `htmlcov/`.",
 )
 def cove(module: str, html: bool):
-    """Run Coverage flow"""
+    """Run the coverage command."""
     subprocess.run(["coverage", "run", "--m", module, "tests"])
     subprocess.run(
         ["coverage", "combine"],

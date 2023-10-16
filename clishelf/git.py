@@ -24,9 +24,6 @@ from .utils import (
 
 cli_git: click.Command
 
-BRANCH_TYPES: List[str] = ["feature", "bug", "hot"]
-
-REGEX_BRANCH_TYPES: str = "|".join(BRANCH_TYPES)
 
 REGEX_COMMIT_MESSAGE = r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
 
@@ -382,7 +379,7 @@ def bn():
 
 
 @cli_git.command()
-def tl():
+def tg():
     """Show the Latest Tag if it exists, otherwise it will show version from
     about file.
     """
@@ -393,7 +390,7 @@ def tl():
 @cli_git.command()
 @click.option("-t", "--tag", type=click.STRING, default=None)
 @click.option("-a", "--all-logs", is_flag=True)
-def cl(tag: Optional[str], all_logs: bool):
+def cm_log(tag: Optional[str], all_logs: bool):
     """Show the Commit Logs from the latest Tag to HEAD."""
     click.echo(
         "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
@@ -446,7 +443,7 @@ def cm(
 
 @cli_git.command()
 @click.option("--no-verify", is_flag=True)
-def commit_previous(no_verify: bool):
+def cm_previous(no_verify: bool):
     """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=no_verify)
     sys.exit(0)
@@ -455,7 +452,7 @@ def commit_previous(no_verify: bool):
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 @click.option("-n", "--number", type=click.INT, default=1)
-def commit_revert(force: bool, number: int):
+def cm_revert(force: bool, number: int):
     """Revert the latest Commit on the Local repository."""
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
@@ -464,7 +461,7 @@ def commit_revert(force: bool, number: int):
 
 
 @cli_git.command()
-def clear_branch():
+def bn_clear():
     """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
         ["git", "checkout", "main"],
@@ -490,7 +487,7 @@ def clear_branch():
 
 
 @cli_git.command()
-def clear_tag():
+def tg_clear():
     """Clear Local Tags that sync from the Remote repository."""
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],
