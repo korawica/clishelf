@@ -304,11 +304,35 @@ def tag(push: bool) -> NoReturn:
 
 @cli_vs.command()
 @click.argument("action", type=click.STRING, required=1)
-@click.option("-f", "--file", type=click.Path(exists=True))
-@click.option("-c", "--changelog-file", type=click.Path(exists=True))
-@click.option("-v", "--version", type=click.INT, default=1)
-@click.option("--ignore-changelog", is_flag=True)
-@click.option("--dry-run", is_flag=True)
+@click.option(
+    "-f",
+    "--file",
+    type=click.Path(exists=True),
+    help="A about file path that want to write new version.",
+)
+@click.option(
+    "-c",
+    "--changelog-file",
+    type=click.Path(exists=True),
+    help="A changelog file path that want to write new version.",
+)
+@click.option(
+    "-v",
+    "--version",
+    type=click.INT,
+    default=1,
+    help="A version of bump2version config, it default by 1.",
+)
+@click.option(
+    "--ignore-changelog",
+    is_flag=True,
+    help="If True, it will skip writing changelog step before bump version.",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="If True, it will pass --dry-run option to bump2version",
+)
 def bump(
     action: str,
     file: Optional[str],
@@ -317,7 +341,19 @@ def bump(
     ignore_changelog: bool,
     dry_run: bool,
 ) -> NoReturn:
-    """Bump Version with specific action."""
+    """Bump Version with specific action.
+
+    ACTION is the part of action that should be `major`, `minor`, or `patch`.
+
+    \f
+    :param action: A action path for bump the next version.
+    :type action: str
+    :param file: Optional[str]
+    :param changelog_file: Optional[str]
+    :param version: int
+    :param ignore_changelog: bool
+    :param dry_run: bool
+    """
     if not file:
         file: str = load_config().get("version", None) or (
             f"./{load_project().get('name', 'unknown')}/__about__.py"
