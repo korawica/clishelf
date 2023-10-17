@@ -6,15 +6,68 @@
 from __future__ import annotations
 
 from textwrap import dedent
-from typing import List
+from typing import List, Tuple
 
 
 class GitConf:
+    """Git Config."""
+
     branch_types: List[str] = ["feature", "bug", "hot"]
+
+    # These branch names are not validated with this same rules
+    # (permissions should be configured on the server if you want to prevent
+    # pushing to any of these):
+    branch_excepts: List[str] = [
+        "feature",
+        "dev",
+        "main",
+        "stable",
+        # for quickly fixing critical issues, usually with a temporary solution.
+        "hotfix",
+        "bugfix",  # for fixing a bug
+        "feature",  # for adding, removing or modifying a feature
+        "test",  # for experimenting something which is not an issue
+        "wip",  # for a work in progress
+    ]
+
     regex_branch_types: str = "|".join(branch_types)
+
+    regex_commit_msg: str = (
+        r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
+    )
+
+    commit_prefix: Tuple[Tuple[str, str, str]] = (
+        ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:
+        ("hotfix", "Fix Bugs", ":fire:"),  # 🔥
+        ("fixed", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
+        ("fix", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
+        ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
+        ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
+        ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
+        ("refactored", "Code Changes", ":construction:"),
+        # 🚧, 💬 :speech_balloon:
+        ("refactor", "Code Changes", ":construction:"),
+        # 🚧, 💬 :speech_balloon:
+        ("perf", "Code Changes", ":chart_with_upwards_trend:"),
+        # 📈, ⌛ :hourglass:
+        ("tests", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
+        ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
+        ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
+        ("workflow", "Build & Workflow", ":rocket:"),  # 🚀, 🕹️ :joystick:
+    )
+
+    commit_prefix_group: Tuple[Tuple[str, str]] = (
+        ("Features", ":clipboard:"),  # 📋
+        ("Code Changes", ":black_nib:"),  # ✒️
+        ("Documents", ":bookmark_tabs:"),  # 📑
+        ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
+        ("Build & Workflow", ":package:"),  # 📦
+    )
 
 
 class BumpVerConf:
+    """Bump Version Config."""
+
     main: str = dedent(
         r"""
     [bumpversion]

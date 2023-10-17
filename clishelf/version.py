@@ -82,15 +82,15 @@ def writer_changelog(file: str):
 
 
 def write_group_log(writer, group_logs):
-    from .git import COMMIT_PREFIX_TYPE
+    from .settings import GitConf
 
     linesep = os.linesep
-    if any(cpt[0] in group_logs for cpt in COMMIT_PREFIX_TYPE):
+    if any(cpt[0] in group_logs for cpt in GitConf.commit_prefix_group):
         linesep = f"{os.linesep}{os.linesep}"
 
     writer.write(f"## Latest Changes{linesep}")
 
-    for cpt in COMMIT_PREFIX_TYPE:
+    for cpt in GitConf.commit_prefix_group:
         if cpt[0] in group_logs:
             writer.write(f"### {cpt[0]}{os.linesep}{os.linesep}")
             for log in group_logs[cpt[0]]:

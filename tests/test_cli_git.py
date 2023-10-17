@@ -54,6 +54,7 @@ class GitTestCase(unittest.TestCase):
     def test_commit_log(self):
         commit_log = git.CommitLog(
             hash="",
+            refs=[],
             date=dt.datetime(2021, 1, 1),
             msg=git.CommitMsg(content="test: test commit message", body="|"),
             author="Demo Username",

@@ -14,6 +14,7 @@ import tomli
 
 
 def pwd() -> Path:
+    """Return current path."""
     return Path(".")
 
 
@@ -25,28 +26,29 @@ def load_pyproject(file: Optional[str] = None) -> Dict[str, Any]:
 
 
 def ls(path: str):
+    """Generate path at the current position."""
     yield from pwd().glob(path)
 
 
-def readline(path: str):
-    file = pwd() / Path(path)
-    return file.read_text(encoding="utf-8")
+def readline(path: str) -> str:
+    """Return string information of file."""
+    return (pwd() / Path(path)).read_text(encoding="utf-8")
 
 
 class Bcolors(str, Enum):
-    """A Enum for colors using ANSI escape sequences.
+    """An Enum for colors using ANSI escape sequences.
 
     Reference:
         - https://stackoverflow.com/questions/287871
     """
 
     HEADER = "\033[95m"
-    OKBLUE = "\033[94m"
-    OKCYAN = "\033[96m"
-    OKGREEN = "\033[92m"
+    OK_BLUE = "\033[94m"
+    OK_CYAN = "\033[96m"
+    OK_GREEN = "\033[92m"
     WARNING = "\033[93m"
     FAIL = "\033[91m"
-    ENDC = "\033[0m"
+    END = "\033[0m"
     BOLD = "\033[1m"
     OK = "\033[92m"
     INFO = "\033[94m"
@@ -54,7 +56,7 @@ class Bcolors(str, Enum):
 
 
 class Level(str, Enum):
-    """An Enum for notification levels."""
+    """An Enum for notification levels that relate with Bcolors enum object."""
 
     OK = "OK"
     INFO = "INFO"
@@ -66,7 +68,7 @@ def make_color(message: str, level: Level) -> str:
     """Print the message with a color for the corresponding level."""
     return (
         f"{Bcolors[level].value}{Bcolors.BOLD.value}{level.value}: "
-        f"{message}{Bcolors.ENDC.value}"
+        f"{message}{Bcolors.END.value}"
     )
 
 

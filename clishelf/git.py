@@ -16,6 +16,7 @@ from typing import Dict, Generator, Iterator, List, Optional, Tuple
 
 import click
 
+from .settings import GitConf
 from .utils import (
     Level,
     Profile,
@@ -23,50 +24,6 @@ from .utils import (
 )
 
 cli_git: click.Command
-
-
-REGEX_COMMIT_MESSAGE = r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
-
-# These branch names are not validated with this same rules
-# (permissions should be configured on the server if you want to prevent
-# pushing to any of these):
-BRANCH_EXCEPTIONS = [
-    "feature",
-    "dev",
-    "main",
-    "stable",
-    # for quickly fixing critical issues, usually with a temporary solution.
-    "hotfix",
-    "bugfix",  # for fixing a bug
-    "feature",  # for adding, removing or modifying a feature
-    "test",  # for experimenting something which is not an issue
-    "wip",  # for a work in progress
-]
-
-COMMIT_PREFIX: Tuple[Tuple[str, str, str]] = (
-    ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:
-    ("hotfix", "Fix Bugs", ":fire:"),  # 🔥
-    ("fixed", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
-    ("fix", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
-    ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
-    ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
-    ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
-    ("refactored", "Code Changes", ":construction:"),  # 🚧, 💬 :speech_balloon:
-    ("refactor", "Code Changes", ":construction:"),  # 🚧, 💬 :speech_balloon:
-    ("perf", "Code Changes", ":chart_with_upwards_trend:"),  # 📈, ⌛ :hourglass:
-    ("tests", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
-    ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
-    ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
-    ("workflow", "Build & Workflow", ":rocket:"),  # 🚀, 🕹️ :joystick:
-)
-
-COMMIT_PREFIX_TYPE: Tuple[Tuple[str, str]] = (
-    ("Features", ":clipboard:"),  # 📋
-    ("Code Changes", ":black_nib:"),  # ✒️
-    ("Documents", ":bookmark_tabs:"),  # 📑
-    ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
-    ("Build & Workflow", ":package:"),  # 📦
-)
 
 
 def load_profile() -> Profile:
@@ -118,7 +75,7 @@ class CommitMsg:
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
-                (cp[1] for cp in COMMIT_PREFIX if prefix == cp[0]),
+                (cp[1] for cp in GitConf.commit_prefix if prefix == cp[0]),
                 "Code Changes",
             )
         return "Code Changes"
@@ -126,7 +83,11 @@ class CommitMsg:
     @property
     def mtype_icon(self):
         return next(
-            (cpt[1] for cpt in COMMIT_PREFIX_TYPE if cpt[0] == self.mtype),
+            (
+                cpt[1]
+                for cpt in GitConf.commit_prefix_group
+                if cpt[0] == self.mtype
+            ),
             ":black_nib:",  # ✒️
         )
 
@@ -140,10 +101,15 @@ class CommitMsg:
             if ":" in content
             else ("refactored", content)
         )
-        icon: str = ""
-        for cp in COMMIT_PREFIX:
+        icon: Optional[str] = None
+        for cp in GitConf.commit_prefix:
             if prefix == cp[0]:
                 icon = f"{cp[2]} "
+        if icon is None:
+            raise ValueError(
+                f"The prefix of this commit message does not support, "
+                f"{prefix!r}."
+            )
         return f"{icon}{prefix}: {content.strip()}"
 
 
@@ -152,6 +118,7 @@ class CommitLog:
     """Commit Log dataclass"""
 
     hash: str
+    refs: List[str]
     date: date
     msg: CommitMsg
     author: Profile
@@ -168,7 +135,7 @@ class CommitLog:
         )
 
 
-def validate_for_warning(
+def __validate_for_warning(
     lines: List[str],
 ) -> List[str]:
     """Validate Commit message that should to fixed, but it does not impact to
@@ -176,54 +143,61 @@ def validate_for_warning(
 
     :param lines: A list of line from commit message.
     :type lines: List[str]
+
+    :rtype: List[str]
+    :return: A list of warning message.
     """
     subject: str = lines[0]
-    results: List[str] = []
+    rs: List[str] = []
 
     # RULE 02: Limit the subject line to 50 characters
     if len(subject) <= 20 or len(subject) > 50:
-        results.append(
+        rs.append(
             "There should be between 21 and 50 characters in the commit title."
         )
     if len(lines) <= 2:
-        results.append("There should at least 3 lines in your commit message.")
+        rs.append("There should at least 3 lines in your commit message.")
 
     # RULE 01: Separate subject from body with a blank line
     if lines[1].strip() != "":
-        results.append(
+        rs.append(
             "There should be an empty line between the commit title and body."
         )
 
     if not lines[0].strip().endswith("."):
         lines[0] = f"{lines[0].strip()}."
-        results.append("There should not has dot in the end of commit message.")
-    return results
+        rs.append("There should not has dot in the end of commit message.")
+    return rs
 
 
 def validate_commit_msg(
     lines: List[str],
 ) -> Tuple[List[str], Level]:
-    """"""
+    """Validate Commit message
+
+    :param lines: A list of line from commit message.
+    :type lines: List[str]
+    """
     if not lines:
         return (
             ["Please supply commit message without start with ``#``."],
             Level.ERROR,
         )
 
-    rs: List[str] = validate_for_warning(lines)
-    if rs:
-        return rs, Level.WARNING
+    rs: List[str] = __validate_for_warning(lines)
 
     has_story_id: bool = False
-    for line in lines[1:]:
+    for line, msg in enumerate(lines[1:], start=2):
         # RULE 06: Wrap the body at 72 characters
-        if len(line) > 72:
-            rs.append("The commit body should wrap at 72 characters.")
+        if len(msg) > 72:
+            rs.append(
+                f"The commit body should wrap at 72 characters at line: {line}."
+            )
 
-        if line.startswith("["):
+        if not msg.startswith("["):
             has_story_id = True
 
-    if not has_story_id:
+    if not has_story_id and len(lines) > 1:
         rs.append("Please add a Story ID in the commit message.")
 
     if not rs:
@@ -264,7 +238,7 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
         return None
 
 
-def prepare_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
+def gen_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
     """Prepare contents logs to List of commit log."""
     prepare: List[str] = []
     for line in (
@@ -273,7 +247,7 @@ def prepare_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
                 "git",
                 "log",
                 tag2head,
-                "--pretty=format:%h|%ad|%an|%ae%n%s%n%b%-C()%n(END)",
+                "--pretty=format:%h|%D|%ad|%an|%ae%n%s%n%b%-C()%n(END)",
                 "--date=short",
             ]
         )
@@ -302,20 +276,21 @@ def get_commit_logs(
         tag2head = "HEAD"
     else:
         tag2head = f"{tag}..HEAD"
-    for _ in prepare_commit_logs(tag2head):
+    for _ in gen_commit_logs(tag2head):
         if any((re.search(s, _[1]) is not None) for s in _exc):
             continue
         header: List[str] = _[0].split("|")
         yield CommitLog(
             hash=header[0],
-            date=datetime.strptime(header[1], "%Y-%m-%d"),
+            refs=[ref.strip() for ref in header[1].strip().split(",")],
+            date=datetime.strptime(header[2], "%Y-%m-%d"),
             msg=CommitMsg(
                 content=_[1],
                 body="|".join(_[2:]),
             ),
             author=Profile(
-                name=header[2],
-                email=header[3],
+                name=header[3],
+                email=header[4],
             ),
         )
 
@@ -352,7 +327,7 @@ def get_latest_commit(
 
     rss, level = validate_commit_msg(lines)
     for rs in rss:
-        click.echo(make_color(rs, level), file=sys.stdout)
+        click.echo(make_color(rs, level))
     if level not in (Level.OK, Level.WARNING):
         sys.exit(1)
 
@@ -390,7 +365,7 @@ def tg():
 @cli_git.command()
 @click.option("-t", "--tag", type=click.STRING, default=None)
 @click.option("-a", "--all-logs", is_flag=True)
-def cm_log(tag: Optional[str], all_logs: bool):
+def log(tag: Optional[str], all_logs: bool):
     """Show the Commit Logs from the latest Tag to HEAD."""
     click.echo(
         "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
@@ -500,22 +475,25 @@ def tg_clear():
 @click.option(
     "--store",
     is_flag=True,
-    help="(=False) Store credential flag.",
+    help="If True, it will set store credential.",
 )
 @click.option(
     "--prune-tag",
     is_flag=True,
-    help="(=False) Set Fetch handle prune tag.",
+    help="If True, it will set fetch handle prune tag.",
 )
-def init_conf(store: bool, prune_tag: bool):
+def init(store: bool, prune_tag: bool):
     """Initialize GIT config on local"""
-    pf: Profile = load_profile()
+    if not Path(".git").exists():
+        click.echo("Start initialize git on current path ...")
+        subprocess.run(["git", "init"], stdout=subprocess.DEVNULL)
+    profile: Profile = load_profile()
     subprocess.run(
-        ["git", "config", "--local", "user.name", f'"{pf.name}"'],
+        ["git", "config", "--local", "user.name", f'"{profile.name}"'],
         stdout=subprocess.DEVNULL,
     )
     subprocess.run(
-        ["git", "config", "--local", "user.email", f'"{pf.email}"'],
+        ["git", "config", "--local", "user.email", f'"{profile.email}"'],
         stdout=subprocess.DEVNULL,
     )
     st = "store" if store else '""'
@@ -535,7 +513,7 @@ def init_conf(store: bool, prune_tag: bool):
 
 
 @cli_git.command()
-def profile():
+def pf():
     """Show Profile object that contain Name and Email of Author"""
     click.echo(load_profile(), file=sys.stdout)
     sys.exit(0)
