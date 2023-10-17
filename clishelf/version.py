@@ -141,12 +141,12 @@ def write_bump_file(
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
             getattr(BumpVerConf, f"v{version}").format(
-                file=file,
                 changelog=changelog_file,
                 main=BumpVerConf.main.format(
                     version=current_version(file),
                     msg=BumpVerConf.msg,
                     regex=BumpVerConf.regex,
+                    file=file,
                 ),
             )
         )

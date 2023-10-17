@@ -2,6 +2,27 @@
 
 ## Latest Changes
 
+## 0.1.0
+
+### Features
+
+- :dart: feat: add write all changelog option for re-write all logs to new file. (_2023-10-17_)
+- :dart: feat: add tag from version cli for create git tag by __about__. (_2023-10-06_)
+
+### Code Changes
+
+- :construction: refactored: change the name of cli commands. (_2023-10-17_)
+- :construction: refactored: change value on BumpVerConf obj in setting file. (_2023-10-16_)
+- :construction: refactored: change print function to click.echo that recommend by click. (_2023-10-16_)
+- :construction: refactored: 📦 bump mypy from 1.5.1 to 1.6.0 (#13) (_2023-10-16_)
+- :construction: refactored: 📦 bump pre-commit from 3.4.0 to 3.5.0 (_2023-10-16_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.3.1 to 7.3.2 (_2023-10-09_)
+
+### Documents
+
+- :page_facing_up: docs: update doc-string on bump command. (_2023-10-17_)
+- :page_facing_up: docs: update API commands on README file. (_2023-10-17_)
+
 ## 0.0.4
 
 ### Features
