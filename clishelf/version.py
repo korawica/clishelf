@@ -24,27 +24,58 @@ BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
 
 cli_vs: click.Command
 GroupCommitLog = Dict[str, List[CommitLog]]
+TagGroupCommitLog = Dict[str, GroupCommitLog]
 
 
-def gen_group_commit_log() -> GroupCommitLog:
+def gen_group_commit_log(all_logs: bool = False) -> GroupCommitLog:
     """Generate Group of the Commit Logs
 
     :rtype: GroupCommitLog
     """
     from .git import get_commit_logs
 
-    group_logs: GroupCommitLog = defaultdict(list)
+    tag_group_logs: TagGroupCommitLog = defaultdict(lambda: defaultdict(list))
     for log in get_commit_logs(
+        all_logs=all_logs,
         excluded=[
             r"pre-commit autoupdate",
             r"^Merge",
-        ]
+        ],
     ):
-        group_logs[log.msg.mtype].append(log)
-    return {
-        k: sorted(v, key=lambda x: x.date, reverse=True)
-        for k, v in group_logs.items()
-    }
+        tag_group_logs[log.refs][log.msg.mtype].append(log)
+    rs: TagGroupCommitLog = {}
+    for ref_tag in tag_group_logs:
+        rs[ref_tag] = {
+            k: sorted(v, key=lambda x: x.date, reverse=True)
+            for k, v in tag_group_logs[ref_tag].items()
+        }
+    return rs
+
+
+def writer_changelog_all(file: str):
+    from .settings import GitConf
+
+    group_logs: GroupCommitLog = gen_group_commit_log(all_logs=True)
+
+    writer = Path(file).open(mode="w", encoding="utf-8", newline="")
+    writer.write(f"# Changelogs{os.linesep}")
+
+    for line in group_logs:
+        line_str = "Latest Changes" if line == "HEAD" else line
+
+        writer.write(f"{os.linesep}## {line_str}{os.linesep}")
+
+        for cpt in GitConf.commit_prefix_group:
+            if cpt[0] in group_logs[line]:
+                writer.write(
+                    f"{os.linesep}### {cpt[0]}{os.linesep}{os.linesep}"
+                )
+
+                for log in group_logs[line][cpt[0]]:
+                    writer.write(
+                        f"- {log.msg.content} (_{log.date:%Y-%m-%d}_)"
+                        f"{os.linesep}"
+                    )
 
 
 # TODO: add new style of changelog file
@@ -52,7 +83,7 @@ def gen_group_commit_log() -> GroupCommitLog:
 #  hot-changes commit
 def writer_changelog(file: str):
     """Write Commit logs to the changelog file."""
-    group_logs: GroupCommitLog = gen_group_commit_log()
+    group_logs: GroupCommitLog = gen_group_commit_log()["HEAD"]
 
     with Path(file).open(encoding="utf-8") as f_changes:
         changes = f_changes.read().splitlines()
@@ -223,11 +254,18 @@ def conf() -> NoReturn:
 
 @cli_vs.command()
 @click.option("-f", "--file", type=click.Path(exists=True))
-def changelog(file: Optional[str]) -> NoReturn:
+@click.option("-n", "--new", is_flag=True)
+def changelog(
+    file: Optional[str],
+    new: bool,
+) -> NoReturn:
     """Make Changelogs file"""
     if not file:
-        file = load_config().get("changelog", None) or "CHANGELOG.md"
-    writer_changelog(file)
+        file: str = load_config().get("changelog", None) or "CHANGELOG.md"
+    if new:
+        writer_changelog_all(file)
+    else:
+        writer_changelog(file)
     sys.exit(0)
 
 

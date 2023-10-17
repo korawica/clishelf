@@ -118,7 +118,7 @@ class CommitLog:
     """Commit Log dataclass"""
 
     hash: str
-    refs: List[str]
+    refs: str
     date: date
     msg: CommitMsg
     author: Profile
@@ -269,6 +269,8 @@ def get_commit_logs(
     excluded: Optional[List[str]] = None,
 ) -> Iterator[CommitLog]:
     """Return a list of commit message logs."""
+    from .settings import BumpVerConf
+
     _exc: List[str] = excluded or [r"^Merge"]
     if tag:
         tag2head: str = f"{tag}..HEAD"
@@ -276,17 +278,27 @@ def get_commit_logs(
         tag2head = "HEAD"
     else:
         tag2head = f"{tag}..HEAD"
-    for _ in gen_commit_logs(tag2head):
-        if any((re.search(s, _[1]) is not None) for s in _exc):
+    refs: str = "HEAD"
+    for logs in gen_commit_logs(tag2head):
+        if any((re.search(s, logs[1]) is not None) for s in _exc):
             continue
-        header: List[str] = _[0].split("|")
+        header: List[str] = logs[0].split("|")
+        if ref_tag := [
+            ref.strip()
+            for ref in header[1].strip().split(",")
+            if "tag: " in ref
+        ]:
+            if search := re.search(
+                rf"tag:\sv(?P<version>{BumpVerConf.regex})", ref_tag[0]
+            ):
+                refs = search.groupdict()["version"]
         yield CommitLog(
             hash=header[0],
-            refs=[ref.strip() for ref in header[1].strip().split(",")],
+            refs=refs,
             date=datetime.strptime(header[2], "%Y-%m-%d"),
             msg=CommitMsg(
-                content=_[1],
-                body="|".join(_[2:]),
+                content=logs[1],
+                body="|".join(logs[2:]),
             ),
             author=Profile(
                 name=header[3],
