@@ -11,23 +11,19 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, NoReturn, Optional, Tuple
+from typing import Any, Dict, List, NoReturn, Optional
 
 import click
 
-from .git import CommitLog, get_latest_tag
+from .git import CommitLog
 from .settings import BumpVerConf
-
-BUMP_VERSION: Tuple[Tuple[str, str], ...] = (
-    ("bump", ":bookmark:"),  # 🔖 :bookmark:
-)
 
 cli_vs: click.Command
 GroupCommitLog = Dict[str, List[CommitLog]]
 TagGroupCommitLog = Dict[str, GroupCommitLog]
 
 
-def gen_group_commit_log(all_logs: bool = False) -> GroupCommitLog:
+def gen_group_commit_log(all_tags: bool = False) -> GroupCommitLog:
     """Generate Group of the Commit Logs
 
     :rtype: GroupCommitLog
@@ -36,7 +32,7 @@ def gen_group_commit_log(all_logs: bool = False) -> GroupCommitLog:
 
     tag_group_logs: TagGroupCommitLog = defaultdict(lambda: defaultdict(list))
     for log in get_commit_logs(
-        all_logs=all_logs,
+        all_logs=all_tags,
         excluded=[
             r"pre-commit autoupdate",
             r"^Merge",
@@ -52,84 +48,83 @@ def gen_group_commit_log(all_logs: bool = False) -> GroupCommitLog:
     return rs
 
 
-def writer_changelog_all(file: str):
-    from .settings import GitConf
+def get_changelog(
+    file: str,
+    tags: Optional[List[str]] = None,
+    refresh: bool = False,
+):
+    changes: List[str]
+    if refresh or not Path(file).exists():
+        from more_itertools import roundrobin
 
-    group_logs: GroupCommitLog = gen_group_commit_log(all_logs=True)
+        _changes = ["# Changelogs", "## Latest Changes"]
+        if tags:
+            _changes.extend(f"## {t}" for t in tags)
+        changes = roundrobin(_changes, ([""] * (len(_changes) - 1)))
+    else:
+        with Path(file).open(mode="r", encoding="utf-8") as f_changes:
+            changes = f_changes.read().splitlines()
+    return changes
 
-    writer = Path(file).open(mode="w", encoding="utf-8", newline="")
-    writer.write(f"# Changelogs{os.linesep}")
 
-    for line in group_logs:
-        line_str = "Latest Changes" if line == "HEAD" else line
+def writer_changelog(
+    file: str,
+    all_tags: bool = False,
+    refresh: bool = False,
+):
+    group_logs: GroupCommitLog = gen_group_commit_log(all_tags=all_tags)
+    tags: List[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
 
-        writer.write(f"{os.linesep}## {line_str}{os.linesep}")
+    changes = get_changelog(file, tags=tags, refresh=refresh)
 
-        for cpt in GitConf.commit_prefix_group:
-            if cpt[0] in group_logs[line]:
-                writer.write(
-                    f"{os.linesep}### {cpt[0]}{os.linesep}{os.linesep}"
+    with Path(file).open(mode="w", encoding="utf-8", newline="") as writer:
+        skip_line: bool = False
+        for line in changes:
+            if line.startswith("## Latest Changes"):
+                write_group_log(
+                    writer,
+                    group_logs.get("HEAD", {}),
+                    tag_value="Latest Changes",
                 )
-
-                for log in group_logs[line][cpt[0]]:
-                    writer.write(
-                        f"- {log.msg.content} (_{log.date:%Y-%m-%d}_)"
-                        f"{os.linesep}"
-                    )
-
-
-# TODO: add new style of changelog file
-# TODO: add parameter that able to write after release version like
-#  hot-changes commit
-def writer_changelog(file: str):
-    """Write Commit logs to the changelog file."""
-    group_logs: GroupCommitLog = gen_group_commit_log()["HEAD"]
-
-    with Path(file).open(encoding="utf-8") as f_changes:
-        changes = f_changes.read().splitlines()
-
-    writer = Path(file).open(mode="w", encoding="utf-8", newline="")
-    skip_line: bool = True
-    written: bool = False
-    for line in changes:
-        if line.startswith("## Latest Changes"):
-            skip_line = False
-
-        if m := re.match(rf"##\s({BumpVerConf.regex})", line):
-            if not written:
-                writer.write(f"## Latest Changes{os.linesep}{os.linesep}")
-                written = True
-            if f"v{m.group(1)}" == get_latest_tag():
                 skip_line = True
+            elif m := re.match(rf"^##\s({BumpVerConf.regex})", line):
+                get_tag: str = m.group(1)
+                if get_tag in tags:
+                    write_group_log(
+                        writer,
+                        group_logs[get_tag],
+                        tag_value=get_tag,
+                    )
+                    skip_line = True
+                else:
+                    skip_line = False
+            elif line.startswith("## "):
+                skip_line = False
 
-        if skip_line:
-            writer.write(line + os.linesep)
-        elif written:
-            continue
-        else:
-            write_group_log(writer, group_logs)
-            written = True
-    writer.close()
+            if not skip_line:
+                writer.write(line + os.linesep)
 
 
-def write_group_log(writer, group_logs):
+def write_group_log(writer, group_logs, tag_value: str):
     from .settings import GitConf
 
-    linesep = os.linesep
-    if any(cpt[0] in group_logs for cpt in GitConf.commit_prefix_group):
+    linesep: str = os.linesep
+    if not group_logs or any(
+        cpt[0] in group_logs for cpt in GitConf.commit_prefix_group
+    ):
         linesep = f"{os.linesep}{os.linesep}"
 
-    writer.write(f"## Latest Changes{linesep}")
+    writer.write(f"## {tag_value}{linesep}")
 
-    for cpt in GitConf.commit_prefix_group:
-        if cpt[0] in group_logs:
-            writer.write(f"### {cpt[0]}{os.linesep}{os.linesep}")
-            for log in group_logs[cpt[0]]:
-                writer.write(
-                    f"- {log.msg.content} (_{log.date:%Y-%m-%d}_)"
-                    f"{os.linesep}"
-                )
-            writer.write(os.linesep)
+    for group in (
+        cpt[0] for cpt in GitConf.commit_prefix_group if cpt[0] in group_logs
+    ):
+        writer.write(f"### {group}{os.linesep}{os.linesep}")
+        for log in group_logs[group]:
+            writer.write(
+                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
+            )
+        writer.write(os.linesep)
 
 
 def write_bump_file(
@@ -138,6 +133,7 @@ def write_bump_file(
     *,
     version: int = 1,
 ) -> NoReturn:
+    """Writing the ``.bump2version.cfg`` config file at current path."""
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
             getattr(BumpVerConf, f"v{version}").format(
@@ -263,9 +259,9 @@ def changelog(
     if not file:
         file: str = load_config().get("changelog", None) or "CHANGELOG.md"
     if new:
-        writer_changelog_all(file)
+        writer_changelog(file, all_tags=True, refresh=new)
     else:
-        writer_changelog(file)
+        writer_changelog(file, refresh=new)
     sys.exit(0)
 
 

@@ -102,7 +102,8 @@ class BumpVerConf:
     ).strip()
 
     msg: str = (
-        ":bookmark: Bump up to version {{current_version}} -> {{new_version}}."
+        # 🔖 :bookmark:
+        ":bookmark: Bump up to version {current_version} -> {new_version}."
     )
 
     regex: str = (
