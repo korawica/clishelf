@@ -71,7 +71,8 @@ def writer_changelog(
     file: str,
     all_tags: bool = False,
     refresh: bool = False,
-):
+) -> None:
+    """Writer Changelog."""
     group_logs: GroupCommitLog = gen_group_commit_log(all_tags=all_tags)
     tags: List[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
 
@@ -132,18 +133,17 @@ def write_bump_file(
     changelog_file: str,
     *,
     version: int = 1,
-) -> NoReturn:
+) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path."""
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
-            getattr(BumpVerConf, f"v{version}").format(
-                changelog=changelog_file,
-                main=BumpVerConf.main.format(
-                    version=current_version(file),
-                    msg=BumpVerConf.msg,
-                    regex=BumpVerConf.regex,
-                    file=file,
-                ),
+            BumpVerConf.get_version(
+                version,
+                params={
+                    "changelog": changelog_file,
+                    "version": current_version(file),
+                    "file": file,
+                },
             )
         )
 
@@ -152,7 +152,7 @@ def bump2version(
     action: str,
     file: str,
     changelog_file: str,
-    ignore_changelog: bool = False,
+    changelog_ignore: bool = False,
     dry_run: bool = False,
     version: int = 1,
 ):
@@ -160,7 +160,7 @@ def bump2version(
     # Start writing ``.bump2version.cfg`` file on current path.
     write_bump_file(file, changelog_file, version=version)
 
-    if not ignore_changelog:
+    if not changelog_ignore:
         writer_changelog(file=changelog_file)
 
     # COMMIT: commit add config and edit changelog file.
@@ -260,8 +260,8 @@ def changelog(
         file: str = load_config().get("changelog", None) or "CHANGELOG.md"
     if new:
         writer_changelog(file, all_tags=True, refresh=new)
-    else:
-        writer_changelog(file, refresh=new)
+        sys.exit(0)
+    writer_changelog(file, refresh=new)
     sys.exit(0)
 
 
@@ -347,8 +347,10 @@ def bump(
     :param file: Optional[str]
     :param changelog_file: Optional[str]
     :param version: int
-    :param ignore_changelog: bool
-    :param dry_run: bool
+    :param ignore_changelog: Ignore the changelog file if set be True.
+    :type ignore_changelog: boolean
+    :param dry_run: Dry run the bumpversion command if set be True.
+    :type dry_run: boolean
     """
     if not file:
         file: str = load_config().get("version", None) or (

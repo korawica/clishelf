@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from textwrap import dedent
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 
 class GitConf:
@@ -101,6 +101,22 @@ class BumpVerConf:
     """
     ).strip()
 
+    main_dt = dedent(
+        r"""
+    [bumpversion]
+    current_version = {version}
+    commit = True
+    tag = False
+    parse = ^
+        {regex}
+    serialize =
+        {{now:%Y%m%d}}
+    message = {msg}
+
+    [bumpversion:file:{file}]
+    """
+    )
+
     msg: str = (
         # 🔖 :bookmark:
         ":bookmark: Bump up to version {current_version} -> {new_version}."
@@ -111,6 +127,8 @@ class BumpVerConf:
         r"(\.(?P<prekind>a|alpha|b|beta|d|dev|rc)(?P<pre>\d+))?"
         r"(\.(?P<postkind>post)(?P<post>\d+))?"
     )
+
+    regex_dt: str = r"\d{4}\d{2}\d{2}"
 
     v1: str = dedent(
         r"""
@@ -137,3 +155,18 @@ class BumpVerConf:
         Released: {{utcnow:%Y-%m-%d}}
     """
     ).strip()
+
+    @classmethod
+    def get_version(cls, version: int, params: Dict[str, str]):
+        """Generate the bump2version config from specific version"""
+        if not hasattr(cls, f"v{version}"):
+            version = 1
+        template: str = getattr(cls, f"v{version}")
+        return template.format(
+            changelog=params.get("changelog"),
+            main=cls.main.format(
+                version=params.get("version"),
+                msg=cls.msg,
+                file=params.get("file"),
+            ),
+        )
