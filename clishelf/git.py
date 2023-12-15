@@ -448,6 +448,60 @@ def cm_revert(force: bool, number: int):
 
 
 @cli_git.command()
+@click.argument(
+    "branch",
+    type=click.STRING,
+    default="main",
+)
+@click.option(
+    "-t",
+    "--theirs",
+    is_flag=True,
+    help="If True, it will use `their` strategy if it has conflict",
+)
+@click.option(
+    "-o",
+    "--ours",
+    is_flag=True,
+    help="If True, it will use `ours` strategy if it has conflict",
+)
+@click.option(
+    "-s",
+    "--squash",
+    is_flag=True,
+    help="If True, it will use `squash` merge option.",
+)
+def mg(
+    branch: str,
+    theirs: bool = False,
+    ours: bool = False,
+    squash: bool = False,
+):
+    """Merge change from another branch with strategy, `theirs` or `ours`.
+
+    BRANCH is a name of branch that you want to merge with current branch.
+    """
+    if theirs and ours:
+        raise ValueError("The strategy flag should not True together.")
+    elif ours:
+        strategy = "ours"
+    else:
+        strategy = "theirs"
+    subprocess.run(
+        [
+            "git",
+            "merge",
+            branch,
+            "--strategy-option",
+            strategy,
+            *(["--squash"] if squash else []),
+        ],
+        stderr=subprocess.DEVNULL,
+    )
+    sys.exit(0)
+
+
+@cli_git.command()
 def bn_clear():
     """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
