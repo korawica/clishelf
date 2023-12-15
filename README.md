@@ -40,6 +40,7 @@ Options:
 
 Commands:
   cove  Run the coverage command.
+  dep   List of Dependencies that was set in pyproject.toml file.
   echo  Echo Hello World
   git   The Extended Git commands
   vs    The Versioning commands.

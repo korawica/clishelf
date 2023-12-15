@@ -30,7 +30,9 @@ def load_profile() -> Profile:
     """Load Profile function that return name and email."""
     from .utils import load_pyproject
 
-    _authors: Dict[str, str] = load_pyproject().get("authors", {})
+    _authors: Dict[str, str] = (
+        load_pyproject().get("project", {}).get("authors", {})
+    )
     return Profile(
         name=_authors.get(
             "name",
