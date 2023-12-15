@@ -167,6 +167,7 @@ class BumpVerConf:
             main=cls.main.format(
                 version=params.get("version"),
                 msg=cls.msg,
+                regex=cls.regex,
                 file=params.get("file"),
             ),
         )
