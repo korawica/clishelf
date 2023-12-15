@@ -63,6 +63,7 @@ Commands:
   cm-revert    Revert the latest Commit on the Local repository.
   init         Initialize GIT config on local
   log          Show the Commit Logs from the latest Tag to HEAD.
+  mg           Merge change from another branch with strategy, `theirs`...
   pf           Show Profile object that contain Name and Email of Author
   tg           Show the Latest Tag if it exists, otherwise it will show...
   tg-clear     Clear Local Tags that sync from the Remote repository.
