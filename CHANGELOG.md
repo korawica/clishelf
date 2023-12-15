@@ -2,6 +2,35 @@
 
 ## Latest Changes
 
+## 0.1.1
+
+### Features
+
+- :dart: feat: add dep common command for generate dependencies. (_2023-12-15_)
+- :dart: feat: add command mg for merge with strategy. (_2023-12-15_)
+- :dart: feat: add get_version method on BumpVerConf. (_2023-12-15_)
+
+### Code Changes
+
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.8.10 to 1.8.11 (_2023-12-01_)
+- :construction: refactored: 📦 bump mypy from 1.7.0 to 1.7.1 (_2023-11-27_)
+- :construction: refactored: 📦 bump mypy from 1.6.1 to 1.7.0 (_2023-11-13_)
+- :construction: refactored: 📦 update pytest requirement from <8.0.0,==7.4.2 to ==7.4.3 (_2023-10-30_)
+- :construction: refactored: 📦 bump mypy from 1.5.1 to 1.6.1 (_2023-10-23_)
+- :construction: refactored: change logic of writer_changelog function. (_2023-10-22_)
+
+### Documents
+
+- :page_facing_up: docs: update README for a new git command. (_2023-12-15_)
+
+### Fix Bugs
+
+- :gear: fixed: add regex key when generate bump2version config file. (_2023-12-15_)
+
+### Build & Workflow
+
+- :toolbox: build: change frequency of dependabot from weekly to monthly. (_2023-11-22_)
+
 ## 0.1.0
 
 ### Features
