@@ -179,6 +179,9 @@ def validate_commit_msg(
 
     :param lines: A list of line from commit message.
     :type lines: List[str]
+
+    :rtype: Tuple[List[str], Level]
+    :return: A pair of warning messages and its logging level.
     """
     if not lines:
         return (
@@ -482,6 +485,12 @@ def mg(
     """Merge change from another branch with strategy, `theirs` or `ours`.
 
     BRANCH is a name of branch that you want to merge with current branch.
+
+    \f
+    :param branch:
+    :param theirs:
+    :param ours:
+    :param squash:
     """
     if theirs and ours:
         raise ValueError("The strategy flag should not True together.")

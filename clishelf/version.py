@@ -229,6 +229,7 @@ def load_project() -> Dict[str, Any]:
 
 
 def load_config() -> Dict[str, Any]:
+    """Return config of the shelf package that was set on pyproject.toml."""
     from .utils import load_pyproject
 
     return load_pyproject().get("tool", {}).get("shelf", {}).get("version", {})
@@ -290,7 +291,12 @@ def current(file: str) -> NoReturn:
     help="If True, it will push the tag to remote repository",
 )
 def tag(push: bool) -> NoReturn:
-    """Create the Git tag by version from the ``__about__`` file."""
+    """Create the Git tag by version from the ``__about__`` file.
+
+    \f
+    :param push: A push flag that will push the tag to remote if it True.
+    :type push: boolean
+    """
     from .__about__ import __version__
 
     subprocess.run(["git", "tag", f"v{__version__}"])

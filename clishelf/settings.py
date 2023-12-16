@@ -54,6 +54,8 @@ class GitConf:
         ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
         ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
         ("workflow", "Build & Workflow", ":rocket:"),  # 🚀, 🕹️ :joystick:
+        ("deps", "Dependencies", ":mag:"),  # 🔍, ⚡ :zap:
+        ("dependency", "Dependencies", ":mag:"),  # 🔍, ⚡ :zap:
     )
 
     commit_prefix_group: Tuple[Tuple[str, str]] = (
@@ -62,6 +64,7 @@ class GitConf:
         ("Documents", ":bookmark_tabs:"),  # 📑
         ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
         ("Build & Workflow", ":package:"),  # 📦
+        ("Dependencies", ":postbox:"),  # 📮
     )
 
 
