@@ -49,7 +49,7 @@ git clone https://github.com/korawica/clishelf.git
 > git config credential.helper store
 > ```
 
-Second, I will create the local Python environment by build-in package, `venv`.
+Second, I will create the local Python environment by built-in package, `venv`.
 
 ```shell
 python -m pip install --upgrade pip
@@ -58,7 +58,7 @@ python -m venv venv
 ```
 
 > **Note**: \
-> For create performance, you can use `virtualenv` instead of build-in `venv`.
+> For create performance, you can use `virtualenv` instead of built-in `venv`.
 
 Third, I will install this package dependencies on my local environment.
 
