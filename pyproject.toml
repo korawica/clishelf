@@ -1,6 +1,6 @@
 [project]
 name = "clishelf"
-description = "Utility CLI Tools that reuseable for develop any Python Package"
+description = "Utility CLI Tools that reusable for develop any Python Package"
 readme = "README.md"
 requires-python = ">=3.8.10"
 license = "MIT"

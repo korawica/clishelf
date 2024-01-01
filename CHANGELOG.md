@@ -122,7 +122,7 @@
 
 ### Code Changes
 
-- :construction: refactored: change version of inital stage to 0.0.0. (_2023-09-08_)
+- :construction: refactored: change version of initial stage to 0.0.0. (_2023-09-08_)
 - :construction: refactor: Initial commit (_2023-09-08_)
 
 ### Documents
