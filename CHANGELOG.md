@@ -2,6 +2,30 @@
 
 ## Latest Changes
 
+## 0.1.2
+
+### Features
+
+- :dart: feat: add deps emoji for update any thing that relate with package dependency. (_2023-12-16_)
+
+### Code Changes
+
+- :construction: refactored: ⬆ bump actions/setup-python from 4 to 5 (#33) (_2024-01-01_)
+- :construction: refactored: fix typos (#32) (_2024-01-01_)
+- :construction: refactored: 📦 bump pytest from 7.4.3 to 7.4.4 (_2024-01-01_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.3.4 to 7.4.0 (_2024-01-01_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.3.3 to 7.3.4 (_2023-12-27_)
+- :construction: refactored: 📦 bump mypy from 1.7.1 to 1.8.0 (_2023-12-25_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.3.2 to 7.3.3 (_2023-12-18_)
+
+### Fix Bugs
+
+- :gear: fixed: add deleted file stage for bump2version process. (_2024-01-04_)
+
+### Build & Workflow
+
+- :toolbox: build: add python 3.12 for test workflow. (_2024-01-04_)
+
 ## 0.1.1
 
 ### Features
