@@ -202,6 +202,8 @@ def bump2version(
 
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
         raw_msg = f_msg.read().splitlines()
+
+    subprocess.run(["git", "add", "-A"], stderr=subprocess.DEVNULL)
     subprocess.run(
         [
             "git",
