@@ -58,6 +58,31 @@ def load_profile() -> Profile:
     )
 
 
+@dataclass(frozen=True)
+class CommitPrefix:
+    name: str
+    group: str
+    emoji: str
+
+    def __hash__(self):
+        return hash(self.__str__())
+
+    def __str__(self):
+        return self.name
+
+
+@dataclass(frozen=True)
+class CommitPrefixGroup:
+    name: str
+    emoji: str
+
+    def __hash__(self):
+        return hash(self.__str__())
+
+    def __str__(self):
+        return self.name
+
+
 def get_commit_prefix() -> Tuple[str, str, str]:
     conf: List[str] = load_config().get("git", {}).get("commit_prefix", [])
     prefix_conf = [_[0] for _ in conf]
