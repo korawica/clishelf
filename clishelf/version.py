@@ -23,7 +23,11 @@ GroupCommitLog = Dict[str, List[CommitLog]]
 TagGroupCommitLog = Dict[str, GroupCommitLog]
 
 
-def gen_group_commit_log(all_tags: bool = False) -> GroupCommitLog:
+def gen_group_commit_log(
+    all_tags: bool = False,
+    *,
+    is_dt: bool = False,
+) -> GroupCommitLog:
     """Generate Group of the Commit Logs
 
     :rtype: GroupCommitLog
@@ -37,6 +41,7 @@ def gen_group_commit_log(all_tags: bool = False) -> GroupCommitLog:
             r"pre-commit autoupdate",
             r"^Merge",
         ],
+        is_dt=is_dt,
     ):
         tag_group_logs[log.refs][log.msg.mtype].append(log)
     rs: TagGroupCommitLog = {}
@@ -71,12 +76,18 @@ def writer_changelog(
     file: str,
     all_tags: bool = False,
     refresh: bool = False,
+    *,
+    is_dt: bool = False,
 ) -> None:
     """Writer Changelog."""
-    group_logs: GroupCommitLog = gen_group_commit_log(all_tags=all_tags)
+    group_logs: GroupCommitLog = gen_group_commit_log(
+        all_tags=all_tags,
+        is_dt=is_dt,
+    )
     tags: List[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
 
     changes = get_changelog(file, tags=tags, refresh=refresh)
+    regex: str = BumpVerConf.get_regex(is_dt)
 
     with Path(file).open(mode="w", encoding="utf-8", newline="") as writer:
         skip_line: bool = False
@@ -88,7 +99,7 @@ def writer_changelog(
                     tag_value="Latest Changes",
                 )
                 skip_line = True
-            elif m := re.match(rf"^##\s({BumpVerConf.regex})", line):
+            elif m := re.match(rf"^##\s({regex})", line):
                 get_tag: str = m.group(1)
                 if get_tag in tags:
                     write_group_log(
@@ -143,7 +154,6 @@ def write_bump_file(
                 is_dt=is_dt,
             )
         )
-        f_bump.write(f"\n# Note: with datetime: {is_dt}")
 
 
 def bump2version(
@@ -156,7 +166,16 @@ def bump2version(
     *,
     is_dt: bool = False,
 ):
-    """Bump version process."""
+    """Bump version process.
+
+    :param action
+    :param file
+    :param changelog_file
+    :param changelog_ignore
+    :param dry_run
+    :param version
+    :param is_dt: A datetime mode flag
+    """
     # Start writing ``.bump2version.cfg`` file on current path.
     write_bump_file(
         param={
@@ -206,7 +225,7 @@ def bump2version(
     )
 
     # Remove ``.bump2version.cfg`` file.
-    # Path(".bumpversion.cfg").unlink(missing_ok=False)
+    Path(".bumpversion.cfg").unlink(missing_ok=False)
     click.echo("Unlink '.bump2version.cfg' config file ...")
 
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:

@@ -50,9 +50,7 @@ shelf = "clishelf.__main__:main"
 # Note: This line is the config for `clishelf` package
 [tool.shelf.version]
 version = "./clishelf/__about__.py"
-#changelog = "CHANGELOG.md"
-changelog = "CHANGELOGDT.md"
-mode = "datetime"
+changelog = "CHANGELOG.md"
 
 [tool.coverage.run]
 branch = true

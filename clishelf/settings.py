@@ -240,3 +240,7 @@ class BumpVerConf:
         raise ValueError(
             "version value does not match with datetime regex string."
         )
+
+    @classmethod
+    def get_regex(cls, is_dt: bool = False) -> str:
+        return cls.regex_dt if is_dt else cls.regex

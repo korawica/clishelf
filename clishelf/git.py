@@ -133,6 +133,7 @@ class CommitLog:
                 self.msg.content,
                 self.author.name,
                 self.author.email,
+                self.refs,
             )
         )
 
@@ -272,10 +273,12 @@ def get_commit_logs(
     *,
     all_logs: bool = False,
     excluded: Optional[List[str]] = None,
+    is_dt: bool = False,
 ) -> Iterator[CommitLog]:
     """Return a list of commit message logs."""
     from .settings import BumpVerConf
 
+    regex: str = BumpVerConf.get_regex(is_dt)
     _exc: List[str] = excluded or [r"^Merge"]
     if tag:
         tag2head: str = f"{tag}..HEAD"
@@ -293,9 +296,7 @@ def get_commit_logs(
             for ref in header[1].strip().split(",")
             if "tag: " in ref
         ]:
-            if search := re.search(
-                rf"tag:\sv(?P<version>{BumpVerConf.regex})", ref_tag[0]
-            ):
+            if search := re.search(rf"tag:\sv(?P<version>{regex})", ref_tag[0]):
                 refs = search.groupdict()["version"]
         yield CommitLog(
             hash=header[0],
@@ -382,10 +383,18 @@ def tg():
 @cli_git.command()
 @click.option("-t", "--tag", type=click.STRING, default=None)
 @click.option("-a", "--all-logs", is_flag=True)
-def log(tag: Optional[str], all_logs: bool):
+@click.option("-d", "--datetime-mode", is_flag=True)
+def log(tag: Optional[str], all_logs: bool, datetime_mode: bool):
     """Show the Commit Logs from the latest Tag to HEAD."""
     click.echo(
-        "\n".join(str(x) for x in get_commit_logs(tag=tag, all_logs=all_logs)),
+        "\n".join(
+            str(x)
+            for x in get_commit_logs(
+                tag=tag,
+                all_logs=all_logs,
+                is_dt=datetime_mode,
+            )
+        ),
         file=sys.stdout,
     )
     sys.exit(0)
