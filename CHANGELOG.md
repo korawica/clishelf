@@ -2,6 +2,27 @@
 
 ## Latest Changes
 
+## 0.1.3
+
+### Features
+
+- :dart: feat: add clean untrack files on cm-revert command. (_2024-02-12_)
+- :dart: feat: add bump version support with datetime mode with pre value. (_2024-02-12_)
+- :dart: feat: add bump version support with datetime mode. (_2024-02-12_)
+- :dart: feat: add df command for show files change on previous commit. (_2024-02-12_)
+- :dart: feat: update emoji for commit message fixing. (_2024-02-12_)
+
+### Code Changes
+
+- :construction: refactored: ⬆ bump actions/cache from 3 to 4 (_2024-02-01_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.4.0 to 7.4.1 (#39) (_2024-01-29_)
+- :construction: refactored: 📦 bump pytest from 7.4.4 to 8.0.0 (_2024-01-29_)
+- :construction: refactored: 📦 bump more-itertools from 10.1.0 to 10.2.0 (_2024-01-15_)
+
+### Fix Bugs
+
+- :gear: fixed: add dynamic value for regex on writer changelog func. (_2024-02-12_)
+
 ## 0.1.2
 
 ### Features
