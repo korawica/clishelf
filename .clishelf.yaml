@@ -2,3 +2,5 @@ git:
   commit_prefix:
     - ["comment", "Documents", ":bulb:"]  # 💡
     - ["typos", "Documents", ":pencil2:"]  # ✏️
+  commit_prefix_group:
+    - ["Features", ":tada:"]  # 🎉
