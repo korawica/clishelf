@@ -6,10 +6,11 @@
 
 **Table of Contents**:
 
-- [Installation](#installation)
-- [Features](#features)
-  - [Extended Git](#extended-git)
-  - [Versioning](#versioning)
+* [Installation](#installation)
+* [Features](#features)
+  * [Extended Git](#extended-git)
+  * [Versioning](#versioning)
+* [Configuration](#configuration)
 
 This is the **CLI Utility** Python package for help me to make versioning and
 logging on my any Python package repositories, because I do not want to hard
@@ -88,6 +89,18 @@ Commands:
   current    Return Current Version that read from ``__about__`` by default.
   tag        Create the Git tag by version from the ``__about__`` file.
 ```
+
+## Configuration
+
+```toml
+[tool.shelf.version]
+version = "./clishelf/__about__.py"
+changelog = "CHANGELOG.md"
+mode = "normal"
+```
+
+> **Note**:\
+> The bump version mode able to be `normal` or `datetime` only.
 
 ## License
 
