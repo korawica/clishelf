@@ -36,11 +36,14 @@ class GitConf:
         r"(?P<prefix>\w+)(?:\((?P<topic>\w+)\))?: (?P<header>.+)"
     )
 
+    # TODO: reference emoji from https://gitmoji.dev/
     commit_prefix: Tuple[Tuple[str, str, str]] = (
-        ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:
-        ("hotfix", "Fix Bugs", ":fire:"),  # 🔥
+        ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
+        ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
+        ("hotfix", "Fix Bugs", ":fire:"),  # 🔥, 🚑 :ambulance:
         ("fixed", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
         ("fix", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
+        ("bug", "Fix Bugs", ":bug:"),  # 🐛
         ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
         ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
         ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
@@ -48,14 +51,17 @@ class GitConf:
         # 🚧, 💬 :speech_balloon:
         ("refactor", "Code Changes", ":construction:"),
         # 🚧, 💬 :speech_balloon:
-        ("perf", "Code Changes", ":chart_with_upwards_trend:"),
-        # 📈, ⌛ :hourglass:
+        ("perf", "Code Changes", ":zap:"),
+        # ⚡, 📈 :chart_with_upwards_trend:, ⌛ :hourglass:
         ("tests", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
         ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
         ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
         ("workflow", "Build & Workflow", ":rocket:"),  # 🚀, 🕹️ :joystick:
-        ("deps", "Dependencies", ":mag:"),  # 🔍, ⚡ :zap:
-        ("dependency", "Dependencies", ":mag:"),  # 🔍, ⚡ :zap:
+        ("deps", "Dependencies", ":pushpin:"),  # 📌, 🔍 :mag:
+        ("dependency", "Dependencies", ":pushpin:"),  # 📌, 🔍 :mag:
+        ("secure", "Security", ":lock:"),  # 🔒
+        ("init", "Features", ":tada:"),  # 🎉
+        ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
     )
 
     commit_prefix_group: Tuple[Tuple[str, str]] = (
@@ -65,6 +71,7 @@ class GitConf:
         ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
         ("Build & Workflow", ":package:"),  # 📦
         ("Dependencies", ":postbox:"),  # 📮
+        ("Security", ":closed_lock_with_key:"),  # 🔐
     )
 
 
