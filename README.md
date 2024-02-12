@@ -62,6 +62,7 @@ Commands:
   cm           Show the latest Commit message
   cm-previous  Commit changes to the Previous Commit with same message.
   cm-revert    Revert the latest Commit on the Local repository.
+  df           Show changed files from previous commit to HEAD
   init         Initialize GIT config on local
   log          Show the Commit Logs from the latest Tag to HEAD.
   mg           Merge change from another branch with strategy, `theirs`...
