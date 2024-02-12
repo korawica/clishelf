@@ -133,6 +133,7 @@ def write_bump_file(
     changelog_file: str,
     *,
     version: int = 1,
+    is_dt: bool = False,
 ) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path."""
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
@@ -141,11 +142,13 @@ def write_bump_file(
                 version,
                 params={
                     "changelog": changelog_file,
-                    "version": current_version(file),
+                    "version": current_version(file, is_dt=is_dt),
                     "file": file,
                 },
+                is_dt=is_dt,
             )
         )
+        f_bump.write(f"\n# Note: with datetime: {is_dt}")
 
 
 def bump2version(
@@ -155,10 +158,12 @@ def bump2version(
     changelog_ignore: bool = False,
     dry_run: bool = False,
     version: int = 1,
+    *,
+    is_dt: bool = False,
 ):
     """Bump version process."""
     # Start writing ``.bump2version.cfg`` file on current path.
-    write_bump_file(file, changelog_file, version=version)
+    write_bump_file(file, changelog_file, version=version, is_dt=is_dt)
 
     if not changelog_ignore:
         writer_changelog(file=changelog_file)
@@ -197,7 +202,7 @@ def bump2version(
     )
 
     # Remove ``.bump2version.cfg`` file.
-    Path(".bumpversion.cfg").unlink(missing_ok=False)
+    # Path(".bumpversion.cfg").unlink(missing_ok=False)
     click.echo("Unlink '.bump2version.cfg' config file ...")
 
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
@@ -217,9 +222,11 @@ def bump2version(
     )
 
 
-def current_version(file: str) -> str:
+def current_version(file: str, *, is_dt: bool = False) -> str:
     with Path(file).open(encoding="utf-8") as f:
-        if search := re.search(BumpVerConf.regex, f.read()):
+        if is_dt and (search_dt := re.search(BumpVerConf.regex_dt, f.read())):
+            return search_dt[0]
+        elif search := re.search(BumpVerConf.regex, f.read()):
             return search[0]
     raise NotImplementedError(f"{file} does not implement version value.")
 
@@ -337,10 +344,17 @@ def tag(push: bool) -> NoReturn:
     is_flag=True,
     help="If True, it will pass --dry-run option to bump2version",
 )
+@click.option(
+    "-m",
+    "--mode",
+    type=click.STRING,
+    help="A bump version mode that should be normal or datetime.",
+)
 def bump(
     action: str,
     file: Optional[str],
     changelog_file: Optional[str],
+    mode: Optional[str],
     version: int,
     ignore_changelog: bool,
     dry_run: bool,
@@ -354,6 +368,7 @@ def bump(
     :type action: str
     :param file: Optional[str]
     :param changelog_file: Optional[str]
+    :param mode: Optional[str]
     :param version: int
     :param ignore_changelog: Ignore the changelog file if set be True.
     :type ignore_changelog: boolean
@@ -368,6 +383,13 @@ def bump(
         changelog_file: str = (
             load_config().get("changelog", None) or "CHANGELOG.md"
         )
+    if not mode:
+        mode: str = load_config().get("mode", "normal")
+    assert mode in (
+        "datetime",
+        "normal",
+    ), "`mode` should be normal or datetime only"
+
     bump2version(
         action,
         file,
@@ -375,6 +397,7 @@ def bump(
         ignore_changelog,
         dry_run,
         version,
+        is_dt=(mode == "datetime"),
     )
     sys.exit(0)
 

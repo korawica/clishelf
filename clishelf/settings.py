@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 from __future__ import annotations
 
+import datetime
 from textwrap import dedent
 from typing import Dict, List, Tuple
 
@@ -111,21 +112,40 @@ class BumpVerConf:
     """
     ).strip()
 
-    main_dt = dedent(
+    main_dt: str = dedent(
         r"""
     [bumpversion]
     current_version = {version}
+    new_version = {new_version}
     commit = True
     tag = False
     parse = ^
         {regex}
     serialize =
-        {{now:%Y%m%d}}
+        {{date}}.{{pre}}
+        {{date}}
     message = {msg}
 
     [bumpversion:file:{file}]
     """
     )
+    # main_dt: str = dedent(
+    #     r"""
+    # [bumpversion]
+    # current_version = {version}
+    # new_version = {new_version}
+    # commit = True
+    # tag = False
+    # parse = ^
+    #     {regex}
+    # serialize =
+    #     {{date}}.{{pre}}
+    #     {{date}}
+    # message = {msg}
+    #
+    # [bumpversion:file:{file}]
+    # """
+    # )
 
     msg: str = (
         # 🔖 :bookmark:
@@ -138,7 +158,7 @@ class BumpVerConf:
         r"(\.(?P<postkind>post)(?P<post>\d+))?"
     )
 
-    regex_dt: str = r"\d{4}\d{2}\d{2}"
+    regex_dt: str = r"(?P<date>\d{4}\d{2}\d{2})(\.(?P<pre>\d+))?"
 
     v1: str = dedent(
         r"""
@@ -167,11 +187,27 @@ class BumpVerConf:
     ).strip()
 
     @classmethod
-    def get_version(cls, version: int, params: Dict[str, str]):
+    def get_version(
+        cls,
+        version: int,
+        params: Dict[str, str],
+        is_dt: bool = False,
+    ):
         """Generate the bump2version config from specific version"""
         if not hasattr(cls, f"v{version}"):
             version = 1
         template: str = getattr(cls, f"v{version}")
+        if is_dt:
+            return template.format(
+                changelog=params.get("changelog"),
+                main=cls.main_dt.format(
+                    version=params.get("version"),
+                    new_version=datetime.datetime.now().strftime("%Y%m%d"),
+                    msg=cls.msg,
+                    regex=cls.regex_dt,
+                    file=params.get("file"),
+                ),
+            )
         return template.format(
             changelog=params.get("changelog"),
             main=cls.main.format(
