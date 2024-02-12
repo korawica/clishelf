@@ -596,5 +596,13 @@ def pf():
     sys.exit(0)
 
 
+@cli_git.command()
+def df():
+    """Show changed files from previous commit to HEAD"""
+    # NOTE: We can use `git show --name-only HEAD~1`, but it got commit message.
+    subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"])
+    sys.exit(0)
+
+
 if __name__ == "__main__":
     cli_git.main()
