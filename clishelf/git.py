@@ -449,6 +449,7 @@ def cm_revert(force: bool, number: int):
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
         subprocess.run(["git", "restore", "."])
+        subprocess.run(["git", "clean", "-f"])
     sys.exit(0)
 
 
