@@ -17,6 +17,7 @@ import click
 
 from .git import CommitLog
 from .settings import BumpVerConf
+from .utils import load_config, load_project
 
 cli_vs: click.Command
 GroupCommitLog = Dict[str, List[CommitLog]]
@@ -254,19 +255,6 @@ def current_version(file: str, *, is_dt: bool = False) -> str:
     raise NotImplementedError(f"{file} does not implement version value.")
 
 
-def load_project() -> Dict[str, Any]:
-    from .utils import load_pyproject
-
-    return load_pyproject().get("project", {})
-
-
-def load_config() -> Dict[str, Any]:
-    """Return config of the shelf package that was set on pyproject.toml."""
-    from .utils import load_pyproject
-
-    return load_pyproject().get("tool", {}).get("shelf", {}).get("version", {})
-
-
 @click.group(name="vs")
 def cli_vs():
     """The Versioning commands."""
@@ -276,7 +264,7 @@ def cli_vs():
 @cli_vs.command()
 def conf() -> NoReturn:
     """Return the config data for bumping version."""
-    for k, v in load_config().items():
+    for k, v in load_config().get("version", {}).items():
         click.echo(f"{k}: {v!r}")
     sys.exit(0)
 
@@ -290,7 +278,10 @@ def changelog(
 ) -> NoReturn:
     """Make Changelogs file"""
     if not file:
-        file: str = load_config().get("changelog", None) or "CHANGELOG.md"
+        file: str = (
+            load_config().get("version", {}).get("changelog", None)
+            or "CHANGELOG.md"
+        )
     if new:
         writer_changelog(file, all_tags=True, refresh=new)
         sys.exit(0)
@@ -308,8 +299,9 @@ def changelog(
 def current(file: str) -> NoReturn:
     """Return Current Version that read from ``__about__`` by default."""
     if not file:
-        file = load_config().get("version", None) or (
-            f"./{load_project().get('name', 'unknown')}/__about__.py"
+        file = (
+            load_config().get("version", {}).get("version", None)
+            or f"./{load_project().get('name', 'unknown')}/__about__.py"
         )
     click.echo(current_version(file))
     sys.exit(0)
@@ -398,16 +390,15 @@ def bump(
     :param dry_run: Dry run the bumpversion command if set be True.
     :type dry_run: boolean
     """
+    vs_conf: Dict[str, Any] = load_config().get("version", {})
     if not file:
-        file: str = load_config().get("version", None) or (
+        file: str = vs_conf.get("version", None) or (
             f"./{load_project().get('name', 'unknown')}/__about__.py"
         )
     if not changelog_file:
-        changelog_file: str = (
-            load_config().get("changelog", None) or "CHANGELOG.md"
-        )
+        changelog_file: str = vs_conf.get("changelog", None) or "CHANGELOG.md"
     if not mode:
-        mode: str = load_config().get("mode", "normal")
+        mode: str = vs_conf.get("mode", "normal")
     assert mode in (
         "datetime",
         "normal",

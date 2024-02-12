@@ -20,6 +20,7 @@ from .settings import GitConf
 from .utils import (
     Level,
     Profile,
+    load_config,
     make_color,
 )
 
@@ -57,6 +58,26 @@ def load_profile() -> Profile:
     )
 
 
+def get_commit_prefix() -> Tuple[str, str, str]:
+    conf: List[str] = load_config().get("git", {}).get("commit_prefix", [])
+    prefix_conf = [_[0] for _ in conf]
+    return (
+        *conf,
+        *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+    )
+
+
+def get_commit_prefix_group() -> Tuple[str, str]:
+    conf: List[str] = (
+        load_config().get("git", {}).get("commit_prefix_group", [])
+    )
+    prefix_conf = [_[0] for _ in conf]
+    return (
+        *conf,
+        *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+    )
+
+
 @dataclass
 class CommitMsg:
     """Commit Message dataclass that prepare un-emoji-prefix in that message."""
@@ -77,7 +98,7 @@ class CommitMsg:
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
-                (cp[1] for cp in GitConf.commit_prefix if prefix == cp[0]),
+                (cp[1] for cp in get_commit_prefix() if prefix == cp[0]),
                 "Code Changes",
             )
         return "Code Changes"
@@ -87,7 +108,7 @@ class CommitMsg:
         return next(
             (
                 cpt[1]
-                for cpt in GitConf.commit_prefix_group
+                for cpt in get_commit_prefix_group()
                 if cpt[0] == self.mtype
             ),
             ":black_nib:",  # ✒️
@@ -104,7 +125,7 @@ class CommitMsg:
             else ("refactored", content)
         )
         icon: Optional[str] = None
-        for cp in GitConf.commit_prefix:
+        for cp in get_commit_prefix():
             if prefix == cp[0]:
                 icon = f"{cp[2]} "
         if icon is None:

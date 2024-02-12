@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 from __future__ import annotations
 
+import json
 import pathlib
 import subprocess
 import sys
@@ -13,6 +14,7 @@ from typing import List, NoReturn, Optional
 import click
 
 from .git import cli_git
+from .utils import load_config
 from .version import cli_vs
 
 cli: click.Command
@@ -28,6 +30,13 @@ def cli():
 def echo():
     """Echo Hello World"""
     click.echo("Hello World", file=sys.stdout)
+    sys.exit(0)
+
+
+@cli.command()
+def conf():
+    """Return config for clishelf commands"""
+    click.echo(json.dumps(load_config(), indent=4))
     sys.exit(0)
 
 

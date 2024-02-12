@@ -137,7 +137,7 @@ exclude = """
 
 [tool.ruff]
 line-length = 80
-select = [
+lint.select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
