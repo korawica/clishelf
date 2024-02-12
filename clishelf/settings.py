@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import datetime
+import re
 from textwrap import dedent
 from typing import Dict, List, Tuple
 
@@ -198,11 +199,20 @@ class BumpVerConf:
             version = 1
         template: str = getattr(cls, f"v{version}")
         if is_dt:
+            if (action := params.get("action", "date")) == "date":
+                new_version: str = datetime.datetime.now().strftime("%Y%m%d")
+            elif action == "pre":
+                new_version = cls.update_dt_pre(params.get("version"))
+            else:
+                raise ValueError(
+                    f"the action does not support for {action} with use "
+                    f"datetime mode."
+                )
             return template.format(
                 changelog=params.get("changelog"),
                 main=cls.main_dt.format(
                     version=params.get("version"),
-                    new_version=datetime.datetime.now().strftime("%Y%m%d"),
+                    new_version=new_version,
                     msg=cls.msg,
                     regex=cls.regex_dt,
                     file=params.get("file"),
@@ -216,4 +226,17 @@ class BumpVerConf:
                 regex=cls.regex,
                 file=params.get("file"),
             ),
+        )
+
+    @classmethod
+    def update_dt_pre(cls, version: str):
+        if search := re.search(BumpVerConf.regex_dt, version):
+            search_dict: Dict[str, str] = search.groupdict()
+            if pre := search_dict.get("pre"):
+                pre = str(int(pre) + 1)
+            else:
+                pre = "1"
+            return f"{search_dict['date']}.{pre}"
+        raise ValueError(
+            "version value does not match with datetime regex string."
         )

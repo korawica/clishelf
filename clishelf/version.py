@@ -129,8 +129,7 @@ def write_group_log(writer, group_logs, tag_value: str):
 
 
 def write_bump_file(
-    file: str,
-    changelog_file: str,
+    param: Dict[str, Any],
     *,
     version: int = 1,
     is_dt: bool = False,
@@ -140,11 +139,7 @@ def write_bump_file(
         f_bump.write(
             BumpVerConf.get_version(
                 version,
-                params={
-                    "changelog": changelog_file,
-                    "version": current_version(file, is_dt=is_dt),
-                    "file": file,
-                },
+                params=param,
                 is_dt=is_dt,
             )
         )
@@ -163,7 +158,16 @@ def bump2version(
 ):
     """Bump version process."""
     # Start writing ``.bump2version.cfg`` file on current path.
-    write_bump_file(file, changelog_file, version=version, is_dt=is_dt)
+    write_bump_file(
+        param={
+            "changelog": changelog_file,
+            "version": current_version(file, is_dt=is_dt),
+            "action": action,
+            "file": file,
+        },
+        version=version,
+        is_dt=is_dt,
+    )
 
     if not changelog_ignore:
         writer_changelog(file=changelog_file)
