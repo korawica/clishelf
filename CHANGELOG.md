@@ -2,6 +2,21 @@
 
 ## Latest Changes
 
+## 0.1.4
+
+### Features
+
+- :dart: feat: add override commit prefix with any emoji and prefix values. (_2024-02-12_)
+
+### Code Changes
+
+- :test_tube: test: add testcase for override git commit prefix group. (_2024-02-12_)
+
+### Documents
+
+- :page_facing_up: docs: add configuration topic for help to change any config value. (_2024-02-12_)
+- :page_facing_up: docs: update info for df command on git group in README. (_2024-02-12_)
+
 ## 0.1.3
 
 ### Features
