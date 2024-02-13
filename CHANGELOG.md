@@ -2,6 +2,26 @@
 
 ## Latest Changes
 
+## 0.1.7
+
+### :book: Documents
+
+- :page_facing_up: docs: update CONTRIBUTING file that relate with updated version. (_2024-02-13_)
+- :page_facing_up: docs: update propose of this project include hooks. (_2024-02-13_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: change option and name of cm-previous command. (_2024-02-13_)
+- :art: styled: add emoji to setting for reference. (_2024-02-13_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: fix get commit prefix config does not filter out duplicate value. (_2024-02-13_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: edit config for override commit prefix group emoji. (_2024-02-13_)
+
 ## 0.1.6
 
 ### :tada: Features
