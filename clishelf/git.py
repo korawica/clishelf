@@ -83,23 +83,29 @@ class CommitPrefixGroup:
         return self.name
 
 
-def get_commit_prefix() -> Tuple[str, str, str]:
+def get_commit_prefix() -> Tuple[CommitPrefix]:
     conf: List[str] = load_config().get("git", {}).get("commit_prefix", [])
     prefix_conf = [_[0] for _ in conf]
-    return (
-        *conf,
-        *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+    return tuple(
+        CommitPrefix(name=n, group=g, emoji=e)
+        for n, g, e in (
+            *conf,
+            *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+        )
     )
 
 
-def get_commit_prefix_group() -> Tuple[str, str]:
+def get_commit_prefix_group() -> Tuple[CommitPrefixGroup]:
     conf: List[str] = (
         load_config().get("git", {}).get("commit_prefix_group", [])
     )
     prefix_conf = [_[0] for _ in conf]
-    return (
-        *conf,
-        *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+    return tuple(
+        CommitPrefixGroup(name=n, emoji=e)
+        for n, e in (
+            *conf,
+            *[p for p in GitConf.commit_prefix_group if p not in prefix_conf],
+        )
     )
 
 
@@ -123,7 +129,7 @@ class CommitMsg:
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
-                (cp[1] for cp in get_commit_prefix() if prefix == cp[0]),
+                (cp.group for cp in get_commit_prefix() if prefix == cp.name),
                 "Code Changes",
             )
         return "Code Changes"
@@ -132,9 +138,9 @@ class CommitMsg:
     def mtype_icon(self):
         return next(
             (
-                cpt[1]
+                cpt.emoji
                 for cpt in get_commit_prefix_group()
-                if cpt[0] == self.mtype
+                if cpt.name == self.mtype
             ),
             ":black_nib:",  # ✒️
         )
@@ -149,16 +155,16 @@ class CommitMsg:
             if ":" in content
             else ("refactored", content)
         )
-        icon: Optional[str] = None
+        emoji: Optional[str] = None
         for cp in get_commit_prefix():
-            if prefix == cp[0]:
-                icon = f"{cp[2]} "
-        if icon is None:
+            if prefix == cp.name:
+                emoji = f"{cp.emoji} "
+        if emoji is None:
             raise ValueError(
                 f"The prefix of this commit message does not support, "
                 f"{prefix!r}."
             )
-        return f"{icon}{prefix}: {content.strip()}"
+        return f"{emoji}{prefix}: {content.strip()}"
 
 
 @dataclass(frozen=True)
