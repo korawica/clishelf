@@ -2,6 +2,27 @@
 
 ## Latest Changes
 
+## 0.1.5
+
+### Features
+
+- :dart: feat: add git_demojize func for replace emoji value to str. (_2024-02-13_)
+- :dart: feat: add emoji command that support convert emoji value on commit msg. (_2024-02-13_)
+- :dart: feat: implement CommitPrefix and CommitPrefixGroup. (_2024-02-13_)
+- :dart: feat: add CommitPrefix and CommitPrefixGroup dataclasses. (_2024-02-12_)
+
+### Code Changes
+
+- :construction: refactored: change list to tuple for mem save. (_2024-02-13_)
+
+### Documents
+
+- :page_facing_up: docs: update emoji command and config detail on README. (_2024-02-13_)
+
+### Build & Workflow
+
+- :toolbox: build: fixed deps on tests workflow. (_2024-02-13_)
+
 ## 0.1.4
 
 ### Features
