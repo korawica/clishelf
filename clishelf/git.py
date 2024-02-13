@@ -11,11 +11,13 @@ import subprocess
 import sys
 from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Generator, Iterator, List, Optional, Tuple
 
 import click
 
+from .emoji import get_emojis
 from .settings import GitConf
 from .utils import (
     Level,
@@ -111,6 +113,19 @@ def get_commit_prefix_group() -> Tuple[CommitPrefixGroup, ...]:
     )
 
 
+@lru_cache
+def get_git_emojis():
+    cm_prefix = tuple(p.emoji.strip(":") for p in get_commit_prefix())
+    return [emojis for emojis in get_emojis() if emojis["alias"] in cm_prefix]
+
+
+def git_demojize(msg: str):
+    for emojis in get_git_emojis():
+        if (emoji := emojis["emoji"]) in msg:
+            msg = msg.replace(emoji, f':{emojis["alias"]}:')
+    return msg
+
+
 @dataclass
 class CommitMsg:
     """Commit Message dataclass that prepare un-emoji-prefix in that message."""
@@ -123,7 +138,7 @@ class CommitMsg:
         return f"{self.mtype}: {self.content}"
 
     def __post_init__(self, content: str, mtype: str):
-        self.content: str = self.__prepare_msg(content)
+        self.content: str = self.__prepare_msg(git_demojize(content))
         if not mtype:
             self.mtype: str = self.__gen_msg_type()
 
