@@ -470,21 +470,21 @@ def log(tag: Optional[str], all_logs: bool, datetime_mode: bool):
 
 
 @cli_git.command()
-@click.option("-f", "--file", type=click.STRING, default=None)
-@click.option("-l", "--latest", is_flag=True)
+@click.argument(
+    "file",
+    type=click.STRING,
+    default=".git/COMMIT_EDITMSG",
+)
 @click.option("-e", "--edit", is_flag=True)
 @click.option("-o", "--output-file", is_flag=True)
 @click.option("-p", "--prepare", is_flag=True)
 def cm(
     file: Optional[str],
-    latest: bool,
     edit: bool,
     output_file: bool,
     prepare: bool,
 ):
     """Show the latest Commit message"""
-    if latest and not file:
-        file = ".git/COMMIT_EDITMSG"
     if not prepare:
         click.echo(
             make_color(
