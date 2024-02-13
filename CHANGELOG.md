@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.1.5.a1
+
+### Fix Bugs
+
+- :gear: fixed: fixed argument of cm command for receive extra arg. (_2024-02-13_)
+
 ## 0.1.5.a0
 
 ### Features
