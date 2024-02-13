@@ -7,15 +7,15 @@ to develop this code.
 
 **Table of Contents**:
 
-- [Getting Started](#getting-started)
-- [Develop Feature](#develop-feature)
-- [Release Code](#release-code)
-  - [Make Versioning](#make-versioning)
-  - [Test Installation](#test-pypi-installation)
+* [Getting Started](#getting-started)
+* [Develop Feature](#develop-feature)
+* [Release Code](#release-code)
+  * [Make Versioning](#make-versioning)
+  * [Test Installation](#test-pypi-installation)
 
 ## Getting Started
 
-First, I will clone the code from my repository or the fork of this repository
+Firstly, I will clone the code from my repository or the fork of this repository
 to local. Please check the Python version on your local environment that match
 with the base version of this package.
 
@@ -23,7 +23,7 @@ with the base version of this package.
 git clone https://github.com/korawica/clishelf.git
 ```
 
-> **Note**: \
+> **Note**:\
 > If you want to set new user and email before push your edited code, you should
 > follow below command:
 > ```shell
@@ -51,27 +51,28 @@ git clone https://github.com/korawica/clishelf.git
 
 Second, I will create the local Python environment by built-in package, `venv`.
 
-```shell
-python -m pip install --upgrade pip
-python -m venv venv
-./env/Scripts/activate
+```console
+$ python -m pip install -U pip
+$ python -m venv venv
+$ ./env/Scripts/activate
 ```
 
-> **Note**: \
+> **Note**:\
 > For create performance, you can use `virtualenv` instead of built-in `venv`.
 
 Third, I will install this package dependencies on my local environment.
 
-```shell
-(venv) $ pip install -e . --no-cache
+```console
+(venv) $ pip install -e .[dev] --no-cache
 ```
 
 Finally, I will set up the test and development packages for helping me when I
 develop this code.
 
-```shell
-shelf git init-conf
-pre-commit install
+```console
+(env) $ shelf git init-conf
+(env) $ pre-commit install
+(env) $ pytest -v
 ```
 
 ## Develop Feature
@@ -80,15 +81,15 @@ This repository have the versioning branching strategy. If I want to add new fea
 to the versioning branch, in the below example be `0.0.3` branch, I will create the
 feature branch from that branch first.
 
-```shell
-git checkout 0.0.3
-git checkout -b features/{name-of-feature} 0.0.3
-git push origin features/{name-of-feature}
+```console
+(env) $ git checkout 0.0.3
+(env) $ git checkout -b features/{name-of-feature} 0.0.3
+(env) $ git push origin features/{name-of-feature}
 ```
 
 If I finish my code develop, I will pull request to my parent versioning branch.
 
-> **Note**: \
+> **Note**:\
 > If you have `hotfix` or some little change of the versioning code, you can directly
 > develop on your versioning branch and then push the code with the commit format.
 
@@ -100,23 +101,30 @@ When you finish the release coding in the versioning branch, you can pull reques
 the code to the main branch.
 
 ```shell
-git checkout 0.0.3 ; git pull origin 0.0.3
+(venv) $ git checkout 0.0.3 ; git pull origin 0.0.3
 ```
 
 Bump the next patch version from `0.0.2` to `0.0.3`.
 
 ```shell
-shelf vs bump patch --ignore-changelog
+(venv) $ shelf vs bump patch --ignore-changelog
 ```
 
-Finally, you create the changelog information and edit if it has some detail that you want to add.
+Finally, you create the changelog information and edit if it has some detail that
+you want to add.
 
 ```shell
-shelf vs changelog ; shelf git commit-previous
+(venv) $ shelf vs changelog ; shelf git cm-prev
+(venv) $ git push origin
+(venv) $ git tag v0.0.3
+(venv) $ git push --tags
 ```
 
-> **Note**: \
-> If it has some accident, you can restore all the change by `git restore .` command.
+> **Note**:\
+> If it has some accident, you can restore all the change:
+> ```shell
+> (env) $ shelf cm-revert
+> ```
 
 ### Test PyPI Installation
 
