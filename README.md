@@ -142,7 +142,7 @@ git:
 version:
   version: "./clishelf/__about__.py"
   changelog: "CHANGELOG.md"
-  mode: "normal"  
+  mode: "normal"
 ```
 
 `pyproject.toml`:
