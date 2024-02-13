@@ -7,6 +7,7 @@
 **Table of Contents**:
 
 * [Installation](#installation)
+* [Pre-Commit Hook](#pre-commit-hook)
 * [Features](#features)
   * [Extended Git](#extended-git)
   * [Versioning](#versioning)
@@ -27,6 +28,17 @@ pip install clishelf
 In the future, I will add more the CLI tools that able to dynamic with
 many style of config such as I want to make changelog file with style B by my
 custom message code.
+
+## Pre-Commit Hook
+
+See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
+
+```yaml
+-   repo: https://github.com/korawica/clishelf
+    rev: v0.x.x
+    hooks:
+    -   id: shelf-commit-msg
+```
 
 ## Features
 
