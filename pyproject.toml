@@ -25,6 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "requests==2.31.0",
     "more-itertools==10.2.0",
     "click==8.1.7,<9.0.0",
     "tomli==2.0.1",
@@ -35,7 +36,6 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
-    "requests==2.31.0",
     "pytest==8.0.0",
     "coverage[toml]==7.4.1",
     "mypy==1.8.0",
