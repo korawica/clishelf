@@ -8,10 +8,6 @@
 
 - :dart: feat: add emoji on commit group when writing changelog file. (_2024-02-13_)
 
-### :sparkles: Features
-
-- :dart: feat: add emoji on commit group when writing changelog file. (_2024-02-13_)
-
 ### :black_nib: Code Changes
 
 - :construction: refactored: change emoji for commit prefix group. (_2024-02-13_)

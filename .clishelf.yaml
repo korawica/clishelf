@@ -4,3 +4,4 @@ git:
     - ["typos", "Documents", ":pencil2:"]  # ✏️
   commit_prefix_group:
     - ["Features", ":tada:"]  # 🎉
+    - ["Documents", ":book:"]  # 📖
