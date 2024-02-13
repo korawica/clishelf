@@ -2,6 +2,16 @@
 
 ## Latest Changes
 
+## 0.1.5.a0
+
+### Features
+
+- :dart: feat: add pre-commit hook for external usage without install. (_2024-02-13_)
+
+### Build & Workflow
+
+- :toolbox: build: fixed config for hook to always run. (_2024-02-13_)
+
 ## 0.1.5
 
 ### Features
