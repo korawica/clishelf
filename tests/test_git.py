@@ -18,3 +18,18 @@ class GitTestCase(unittest.TestCase):
             cm for cm in data if cm.name == "Features"
         ][0]
         self.assertEqual(":tada:", feat.emoji)
+
+    def test_encoding_emoji(self):
+
+        # msg = "<F0><9F><8E><AF> feat: update docs form 20240206. (#40)"
+        # print(msg)
+        # msg = '🎯 feat'.encode("utf-8")
+        # print(msg)
+        # print(repr('🎯'))
+
+        for _ in list(
+            git.get_commit_logs(
+                all_logs=True,
+            )
+        ):
+            print(_)

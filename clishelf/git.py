@@ -83,9 +83,10 @@ class CommitPrefixGroup:
         return self.name
 
 
-def get_commit_prefix() -> Tuple[CommitPrefix]:
+def get_commit_prefix() -> Tuple[CommitPrefix, ...]:
+    """Return tuple of CommitPrefix"""
     conf: List[str] = load_config().get("git", {}).get("commit_prefix", [])
-    prefix_conf = [_[0] for _ in conf]
+    prefix_conf: Tuple[str, ...] = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefix(name=n, group=g, emoji=e)
         for n, g, e in (
@@ -95,11 +96,12 @@ def get_commit_prefix() -> Tuple[CommitPrefix]:
     )
 
 
-def get_commit_prefix_group() -> Tuple[CommitPrefixGroup]:
+def get_commit_prefix_group() -> Tuple[CommitPrefixGroup, ...]:
+    """Return tuple of CommitPrefixGroup"""
     conf: List[str] = (
         load_config().get("git", {}).get("commit_prefix_group", [])
     )
-    prefix_conf = [_[0] for _ in conf]
+    prefix_conf: Tuple[str, ...] = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefixGroup(name=n, emoji=e)
         for n, e in (
