@@ -14,10 +14,10 @@
   * [Emoji](#emoji)
 * [Configuration](#configuration)
 
-This is the **CLI Utility** Python package for help me to make versioning and
-logging on my any Python package repositories, because I do not want to hard
-code or set up the development flow every time that I create the new Python
-package project :tired_face:.
+This is the **Utility CLI Tools and Hooks on the Shelf** for my Python packages
+that help me to make versioning, abbreviate Git CLI and logging on my any Python
+package repositories, because I do not want to hard code or set up the development
+flow every time that I create the new Python package project :tired_face:.
 
 ## Installation
 
@@ -64,6 +64,8 @@ Commands:
 
 ### Extended Git
 
+This is abbreviation of Git CLI that warped with the Python subprocess package.
+
 ```text
 Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
 
@@ -89,6 +91,8 @@ Commands:
 
 ### Versioning
 
+This is the enhancement `bump2version` Python package for my bumping style.
+
 ```text
 Usage: shelf.exe vs [OPTIONS] COMMAND [ARGS]...
 
@@ -106,6 +110,8 @@ Commands:
 ```
 
 ### Emoji
+
+This is the emoji CLI that getting data from GitHub dataset.
 
 ```text
 Usage: shelf.exe emoji [OPTIONS] COMMAND [ARGS]...
@@ -133,6 +139,10 @@ git:
     - ["typos", "Documents", ":pencil2:"]  # ✏️
   commit_prefix_group:
     - ["Features", ":tada:"]  # 🎉
+version:
+  version: "./clishelf/__about__.py"
+  changelog: "CHANGELOG.md"
+  mode: "normal"  
 ```
 
 `pyproject.toml`:
