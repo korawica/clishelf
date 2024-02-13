@@ -2,6 +2,24 @@
 
 ## Latest Changes
 
+## 0.1.6
+
+### :tada: Features
+
+- :dart: feat: add emoji on commit group when writing changelog file. (_2024-02-13_)
+
+### :sparkles: Features
+
+- :dart: feat: add emoji on commit group when writing changelog file. (_2024-02-13_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: change emoji for commit prefix group. (_2024-02-13_)
+
+### :card_file_box: Documents
+
+- :page_facing_up: docs: update pre-commit hook topic on README file. (_2024-02-13_)
+
 ## 0.1.5.a1
 
 ### Fix Bugs
