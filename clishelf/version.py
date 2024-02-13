@@ -119,21 +119,21 @@ def writer_changelog(
 
 
 def write_group_log(writer, group_logs, tag_value: str):
-    from .settings import GitConf
+    from .git import get_commit_prefix_group
 
     linesep: str = os.linesep
     if not group_logs or any(
-        cpt[0] in group_logs for cpt in GitConf.commit_prefix_group
+        cpt.name in group_logs for cpt in get_commit_prefix_group()
     ):
         linesep = f"{os.linesep}{os.linesep}"
 
     writer.write(f"## {tag_value}{linesep}")
 
     for group in (
-        cpt[0] for cpt in GitConf.commit_prefix_group if cpt[0] in group_logs
+        cpt for cpt in get_commit_prefix_group() if cpt.name in group_logs
     ):
-        writer.write(f"### {group}{os.linesep}{os.linesep}")
-        for log in group_logs[group]:
+        writer.write(f"### {group.emoji}{group.name}{os.linesep}{os.linesep}")
+        for log in group_logs[group.name]:
             writer.write(
                 f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
             )

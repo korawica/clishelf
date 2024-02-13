@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
 import json
 from datetime import datetime
 from pathlib import Path
