@@ -10,6 +10,7 @@
 * [Features](#features)
   * [Extended Git](#extended-git)
   * [Versioning](#versioning)
+  * [Emoji](#emoji)
 * [Configuration](#configuration)
 
 This is the **CLI Utility** Python package for help me to make versioning and
@@ -40,11 +41,13 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  cove  Run the coverage command.
-  dep   List of Dependencies that was set in pyproject.toml file.
-  echo  Echo Hello World
-  git   The Extended Git commands
-  vs    The Versioning commands.
+  conf   Return config for clishelf commands
+  cove   Run the coverage command.
+  dep    List of Dependencies that was set in pyproject.toml file.
+  echo   Echo Hello World
+  emoji  The Emoji commands
+  git    The Extended Git commands
+  vs     The Versioning commands.
 ```
 
 ### Extended Git
@@ -90,7 +93,37 @@ Commands:
   tag        Create the Git tag by version from the ``__about__`` file.
 ```
 
+### Emoji
+
+```text
+Usage: shelf.exe emoji [OPTIONS] COMMAND [ARGS]...
+
+  The Emoji commands
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  fetch  Refresh emoji metadata file on assets folder.
+  ls     List all emojis from metadata file.
+```
+
 ## Configuration
+
+The configuration able to be `.clishelf.yaml` or mapping value in `pyproject.toml`.
+
+`.clishelf.yaml`:
+
+```yaml
+git:
+  commit_prefix:
+    - ["comment", "Documents", ":bulb:"]  # 💡
+    - ["typos", "Documents", ":pencil2:"]  # ✏️
+  commit_prefix_group:
+    - ["Features", ":tada:"]  # 🎉
+```
+
+`pyproject.toml`:
 
 ```toml
 [tool.shelf.version]

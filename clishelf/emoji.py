@@ -56,6 +56,7 @@ def fetch():
 
 @cli_emoji.command()
 def ls():
+    """List all emojis from metadata file."""
     for info in get_emojis():
         click.echo(info)
 
