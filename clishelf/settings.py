@@ -66,13 +66,14 @@ class GitConf:
         ("secure", "Security", ":lock:"),  # 🔒
         ("init", "Features", ":tada:"),  # 🎉
         ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
+        ("revert", "Code Changes", ":rewind:"),  #
     )
 
     commit_prefix_group: Tuple[Tuple[str, str]] = (
-        ("Features", ":clipboard:"),  # 📋
+        ("Features", ":sparkles:"),  # ✨
         ("Code Changes", ":black_nib:"),  # ✒️
-        ("Documents", ":bookmark_tabs:"),  # 📑
-        ("Fix Bugs", ":hammer_and_wrench:"),  # 🛠️
+        ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
+        ("Fix Bugs", ":bug:"),  # 🐛
         ("Build & Workflow", ":package:"),  # 📦
         ("Dependencies", ":postbox:"),  # 📮
         ("Security", ":closed_lock_with_key:"),  # 🔐

@@ -9,7 +9,7 @@ class GitTestCase(unittest.TestCase):
         data = git.get_commit_prefix()
 
         # This assert will true if run on `pytest -v`
-        self.assertEqual(23, len(data))
+        self.assertEqual(24, len(data))
 
     def test_get_commit_prefix_group(self):
         data: Tuple[git.CommitPrefixGroup] = git.get_commit_prefix_group()

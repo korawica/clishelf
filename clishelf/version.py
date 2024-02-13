@@ -132,7 +132,7 @@ def write_group_log(writer, group_logs, tag_value: str):
     for group in (
         cpt for cpt in get_commit_prefix_group() if cpt.name in group_logs
     ):
-        writer.write(f"### {group.emoji}{group.name}{os.linesep}{os.linesep}")
+        writer.write(f"### {group.emoji} {group.name}{os.linesep}{os.linesep}")
         for log in group_logs[group.name]:
             writer.write(
                 f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
