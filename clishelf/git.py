@@ -93,7 +93,7 @@ def get_commit_prefix() -> Tuple[CommitPrefix, ...]:
         CommitPrefix(name=n, group=g, emoji=e)
         for n, g, e in (
             *conf,
-            *[p for p in GitConf.commit_prefix if p not in prefix_conf],
+            *[p for p in GitConf.commit_prefix if p[0] not in prefix_conf],
         )
     )
 
@@ -108,7 +108,11 @@ def get_commit_prefix_group() -> Tuple[CommitPrefixGroup, ...]:
         CommitPrefixGroup(name=n, emoji=e)
         for n, e in (
             *conf,
-            *[p for p in GitConf.commit_prefix_group if p not in prefix_conf],
+            *[
+                p
+                for p in GitConf.commit_prefix_group
+                if p[0] not in prefix_conf
+            ],
         )
     )
 

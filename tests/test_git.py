@@ -13,7 +13,6 @@ class GitTestCase(unittest.TestCase):
 
     def test_get_commit_prefix_group(self):
         data: Tuple[git.CommitPrefixGroup] = git.get_commit_prefix_group()
-
         feat: git.CommitPrefixGroup = [
             cm for cm in data if cm.name == "Features"
         ][0]
