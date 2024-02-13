@@ -512,10 +512,10 @@ def cm(
 
 
 @cli_git.command()
-@click.option("--no-verify", is_flag=True)
-def cm_previous(no_verify: bool):
+@click.option("--verify", is_flag=True)
+def cm_prev(verify: bool):
     """Commit changes to the Previous Commit with same message."""
-    merge2latest_commit(no_verify=no_verify)
+    merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
 
 
