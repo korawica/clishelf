@@ -110,17 +110,16 @@ repos:
 -   repo: local
     hooks:
     -   id: commit-msg-hook
-        name: Prepare Commit Message
-        stages:
-            - commit-msg
+        name: prepare commit message
+        stages: [commit-msg]
         types: [python]
-        entry: venv/Scripts/shelf.exe git cm -e -o
+        entry: venv/Scripts/shelf.exe git cm
         args: ["-e", "-o"]
         language: system
         always_run: true
 
     -   id: pytest-check
-        name: PyTest Runner
+        name: pyTest runner
         stages:
             - commit
             - push

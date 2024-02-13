@@ -66,7 +66,7 @@ class GitConf:
         ("secure", "Security", ":lock:"),  # 🔒
         ("init", "Features", ":tada:"),  # 🎉
         ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
-        ("revert", "Code Changes", ":rewind:"),  #
+        ("revert", "Code Changes", ":rewind:"),  # ⏪
     )
 
     commit_prefix_group: Tuple[Tuple[str, str]] = (
