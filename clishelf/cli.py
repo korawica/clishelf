@@ -13,6 +13,7 @@ from typing import List, NoReturn, Optional
 
 import click
 
+from .emoji import cli_emoji
 from .git import cli_git
 from .utils import load_config
 from .version import cli_vs
@@ -130,6 +131,7 @@ def dep(
 def main() -> NoReturn:
     cli.add_command(cli_git)
     cli.add_command(cli_vs)
+    cli.add_command(cli_emoji)
     cli.main()
 
 

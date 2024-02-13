@@ -39,6 +39,8 @@ class GitConf:
     )
 
     # TODO: reference emoji from https://gitmoji.dev/
+    #   All emojis, https://github.com/ikatyang/emoji-cheat-sheet
+    #   GitHub API: https://api.github.com/emojis
     commit_prefix: Tuple[Tuple[str, str, str]] = (
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
