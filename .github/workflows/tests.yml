@@ -76,5 +76,5 @@ jobs:
       - name: Test shelf commands
         run: |
           echo "test: test prepare commit message" > test-pre-commit-hook.txt
-          shelf git cm .\test-pre-commit-hook.txt --output-file --edit
+          shelf git cm test-pre-commit-hook.txt --output-file --edit
           grep -q ":test_tube: test: test prepare commit message." test-pre-commit-hook.txt && exit 0 || exit 1
