@@ -2,7 +2,7 @@
     name: shelf prepare commit message
     description: Automatically prepare commit message with emoji prefix.
     entry: shelf git cm
-    args: ["-e", "-o"]
+    args: ["--edit", "-output-file"]
     language: python
     always_run: true
     minimum_pre_commit_version: 2.9.2

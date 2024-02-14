@@ -489,7 +489,6 @@ def cm(
     prepare: bool,
 ):
     """Show the latest Commit message"""
-    print(file)
     if not prepare:
         click.echo(
             make_color(
