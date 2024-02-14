@@ -1,0 +1,61 @@
+name: pre-commit
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+    paths-ignore:
+      - 'docs/**'
+      - 'tests/**'
+      - '*.md'
+      - '.pre-commit-config.yaml'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tests-install-hook:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          pip install -U pip
+          pip install -U pre-commit
+
+      - name: Create Pre-commit config file
+        run: |
+          echo "default_install_hook_types: [commit-msg]
+          repos:
+            - repo: https://github.com/korawica/clishelf
+              rev: ${{  github.ref_name }}
+              hooks:
+                - id: shelf-commit-msg
+                  stages: [commit-msg]" >> .pre-commit-config.yaml
+          cat .pre-commit-config.yaml
+
+      - name: Start testing Pre-commit hook
+        run: |
+          pre-commit install
+          git add .
+          git commit -am "test: test pre-commit hook able to run"

@@ -114,7 +114,7 @@ repos:
         stages: [commit-msg]
         types: [python]
         entry: venv/Scripts/shelf.exe git cm
-        args: ["-e", "-o"]
+        args: ["--edit", "--output-file"]
         language: system
         always_run: true
 
