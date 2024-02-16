@@ -73,6 +73,32 @@ def get_changelog(
     return changes
 
 
+def write_group_log(
+    writer,
+    group_logs: GroupCommitLog,
+    tag_value: str,
+) -> None:
+    from .git import get_commit_prefix_group
+
+    linesep: str = os.linesep
+    if not group_logs or any(
+        cpt.name in group_logs for cpt in get_commit_prefix_group()
+    ):
+        linesep = f"{os.linesep}{os.linesep}"
+
+    writer.write(f"## {tag_value}{linesep}")
+
+    for group in (
+        cpt for cpt in get_commit_prefix_group() if cpt.name in group_logs
+    ):
+        writer.write(f"### {group.emoji} {group.name}{os.linesep}{os.linesep}")
+        for log in group_logs[group.name]:
+            writer.write(
+                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
+            )
+        writer.write(os.linesep)
+
+
 def writer_changelog(
     file: str,
     all_tags: bool = False,
@@ -81,7 +107,7 @@ def writer_changelog(
     is_dt: bool = False,
 ) -> None:
     """Writer Changelog."""
-    group_logs: GroupCommitLog = gen_group_commit_log(
+    group_logs: TagGroupCommitLog = gen_group_commit_log(
         all_tags=all_tags,
         is_dt=is_dt,
     )
@@ -118,28 +144,6 @@ def writer_changelog(
                 writer.write(line + os.linesep)
 
 
-def write_group_log(writer, group_logs, tag_value: str):
-    from .git import get_commit_prefix_group
-
-    linesep: str = os.linesep
-    if not group_logs or any(
-        cpt.name in group_logs for cpt in get_commit_prefix_group()
-    ):
-        linesep = f"{os.linesep}{os.linesep}"
-
-    writer.write(f"## {tag_value}{linesep}")
-
-    for group in (
-        cpt for cpt in get_commit_prefix_group() if cpt.name in group_logs
-    ):
-        writer.write(f"### {group.emoji} {group.name}{os.linesep}{os.linesep}")
-        for log in group_logs[group.name]:
-            writer.write(
-                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
-            )
-        writer.write(os.linesep)
-
-
 def write_bump_file(
     param: Dict[str, Any],
     *,
@@ -166,7 +170,7 @@ def bump2version(
     version: int = 1,
     *,
     is_dt: bool = False,
-):
+) -> None:  # pragma: no cover.
     """Bump version process.
 
     :param action
@@ -324,7 +328,7 @@ def tag(push: bool) -> NoReturn:
     from .__about__ import __version__
 
     subprocess.run(["git", "tag", f"v{__version__}"])
-    if push:
+    if push:  # pragma: no cover.
         subprocess.run(["git", "push", "--tags"])
 
 
@@ -373,7 +377,7 @@ def bump(
     version: int,
     ignore_changelog: bool,
     dry_run: bool,
-) -> NoReturn:
+) -> NoReturn:  # pragma: no cover.
     """Bump Version with specific action.
 
     ACTION is the part of action that should be `major`, `minor`, or `patch`.

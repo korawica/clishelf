@@ -386,7 +386,7 @@ def get_commit_logs(
         )
 
 
-def merge2latest_commit(no_verify: bool = False):
+def merge2latest_commit(no_verify: bool = False):  # pragma: no cover.
     subprocess.run(
         ["git", "commit", "--amend", "--no-edit", "-a"]
         + (["--no-verify"] if no_verify else [])
@@ -487,7 +487,7 @@ def cm(
     edit: bool,
     output_file: bool,
     prepare: bool,
-):
+):  # pragma: no cover.
     """Show the latest Commit message"""
     if not prepare:
         click.echo(
@@ -517,7 +517,7 @@ def cm(
 
 @cli_git.command()
 @click.option("--verify", is_flag=True)
-def cm_prev(verify: bool):
+def cm_prev(verify: bool):  # pragma: no cover.
     """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
@@ -526,7 +526,7 @@ def cm_prev(verify: bool):
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 @click.option("-n", "--number", type=click.INT, default=1)
-def cm_revert(force: bool, number: int):
+def cm_revert(force: bool, number: int):  # pragma: no cover.
     """Revert the latest Commit on the Local repository."""
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
@@ -564,7 +564,7 @@ def mg(
     theirs: bool = False,
     ours: bool = False,
     squash: bool = False,
-):
+):  # pragma: no cover.
     """Merge change from another branch with strategy, `theirs` or `ours`.
 
     BRANCH is a name of branch that you want to merge with current branch.
@@ -596,7 +596,7 @@ def mg(
 
 
 @cli_git.command()
-def bn_clear():
+def bn_clear():  # pragma: no cover.
     """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
         ["git", "checkout", "main"],
@@ -622,7 +622,7 @@ def bn_clear():
 
 
 @cli_git.command()
-def tg_clear():
+def tg_clear():  # pragma: no cover.
     """Clear Local Tags that sync from the Remote repository."""
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],
@@ -642,7 +642,7 @@ def tg_clear():
     is_flag=True,
     help="If True, it will set fetch handle prune tag.",
 )
-def init(store: bool, prune_tag: bool):
+def init(store: bool, prune_tag: bool):  # pragma: no cover.
     """Initialize GIT config on local"""
     if not Path(".git").exists():
         click.echo("Start initialize git on current path ...")
@@ -680,7 +680,7 @@ def pf():
 
 
 @cli_git.command()
-def df():
+def df():  # pragma: no cover.
     """Show changed files from previous commit to HEAD"""
     # NOTE: We can use `git show --name-only HEAD~1`, but it got commit message.
     subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"])
