@@ -57,6 +57,6 @@ jobs:
 
       - name: Start testing Pre-commit hook
         run: |
-          pre-commit install
+          pre-commit install --install-hooks -f
           git add .
           git commit -am "test: test pre-commit hook able to run"
