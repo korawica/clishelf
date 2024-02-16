@@ -120,7 +120,7 @@ repos:
         always_run: true
 
     -   id: pytest-check
-        name: pyTest runner
+        name: pytest runner check
         stages:
             - commit
             - push

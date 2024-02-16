@@ -67,7 +67,7 @@ jobs:
           cat .pre-commit-config.yaml
 
       - run: |
-          la -al
+          ll -al
 
       - name: Start testing Pre-commit hook
         run: |
