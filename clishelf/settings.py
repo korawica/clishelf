@@ -197,7 +197,7 @@ class BumpVerConf:
         params: Dict[str, str],
         is_dt: bool = False,
     ):
-        """Generate the bump2version config from specific version"""
+        """Generate the `bump2version` config from specific version"""
         if not hasattr(cls, f"v{version}"):
             version = 1
         template: str = getattr(cls, f"v{version}")

@@ -151,6 +151,7 @@ def write_bump_file(
     is_dt: bool = False,
 ) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path."""
+    files: List[str] = load_config().get("version", {}).get("files", [])
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
             BumpVerConf.get_version(
@@ -159,6 +160,9 @@ def write_bump_file(
                 is_dt=is_dt,
             )
         )
+        f_bump.write("\n")
+        for file in files:
+            f_bump.write(f"\n[bumpversion:file:{file}]\n")
 
 
 def bump2version(
