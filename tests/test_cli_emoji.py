@@ -28,7 +28,9 @@ class CLIEmojiTestCase(unittest.TestCase):
 
     @patch("clishelf.emoji.Path", side_effect=side_effect_func)
     @patch("clishelf.emoji.datetime")
-    def test_fetch_emoji(self, mock_now, mock_path):
+    @patch("clishelf.emoji.requests.get")
+    def test_fetch_emoji(self, mock_request, mock_now, mock_path):
+        mock_request.get.return_value.json.return_value = []
         mock_now.now.return_value = dt.datetime(2024, 1, 1, 0, 0, 0)
         result = self.runner.invoke(emoji.fetch)
         self.assertTrue(mock_path.called)
