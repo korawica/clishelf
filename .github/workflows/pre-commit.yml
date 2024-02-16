@@ -70,10 +70,11 @@ jobs:
       - name: List all files
         run: |
           ls -lA
-          pwd
 
       - name: Start testing Pre-commit hook
         run: |
+          git config --global user.email "korawica@github.actions"
+          git config --global user.name "Testing Git on Pre-commit CI"
           pre-commit install
           git add .
           git commit -am "test: test pre-commit hook able to run"
