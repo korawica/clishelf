@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.1.8
+
+### :black_nib: Code Changes
+
+- :construction: refactored: change option of pre-commit on workflow. (_2024-02-16_)
+
 ## 0.1.7.post1
 
 ## 0.1.7.post0
