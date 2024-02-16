@@ -233,6 +233,12 @@ class BumpVerConf:
 
     @classmethod
     def update_dt_pre(cls, version: str):
+        """Return new pre version of datetime mode.
+        Examples:
+            20240101        ->  20240101.1
+            20240101.2      ->  20240101.3
+            20240101.post   ->  20240101.1
+        """
         if search := re.search(BumpVerConf.regex_dt, version):
             search_dict: Dict[str, str] = search.groupdict()
             if pre := search_dict.get("pre"):

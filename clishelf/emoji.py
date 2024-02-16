@@ -46,10 +46,12 @@ def cli_emoji():
 
 
 @cli_emoji.command()
-def fetch():
+@click.option("-b", "--backup", is_flag=True)
+def fetch(backup: bool):
     """Refresh emoji metadata file on assets folder."""
     file = Path(__file__).parent / "assets/emoji.json"
-    if file.exists():
+    file.parent.mkdir(exist_ok=True)
+    if file.exists() and backup:
         file.rename(file.parent / f"emoji.bk{datetime.now():%Y%m%d%H%M%S}.json")
     with file.open(mode="w", encoding="utf-8") as f:
         prepare = [

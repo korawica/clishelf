@@ -45,12 +45,12 @@ def load_config() -> Dict[str, Any]:
 
 def ls(path: str):
     """Generate path at the current position."""
-    yield from pwd().glob(path)
+    yield from pwd().glob(path)  # pragma: no cover.
 
 
 def readline(path: str) -> str:
     """Return string information of file."""
-    return (pwd() / Path(path)).read_text(encoding="utf-8")
+    return (pwd() / Path(path)).read_text(encoding="utf-8")  # pragma: no cover.
 
 
 class Bcolors(str, Enum):

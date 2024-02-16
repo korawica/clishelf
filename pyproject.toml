@@ -92,6 +92,7 @@ exclude_lines = [
     "no cov",
     "if TYPE_CHECKING:",
     "raise NotImplementedError",
+    "if __name__ == \"__main__\":",
 ]
 
 [tool.pytest.ini_options]

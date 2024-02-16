@@ -97,6 +97,7 @@ repos:
         stages: [commit]
         exclude: ".bumpversion.cfg"
     -   id: end-of-file-fixer
+        exclude: "emoji\\.json"
         stages: [commit]
     -   id: check-yaml
         stages: [commit]

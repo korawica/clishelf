@@ -1,0 +1,133 @@
+name: coverage
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pip install -e .[dev]
+          pip install "coverage[toml]"
+
+      - run: mkdir coverage
+
+      - name: Run coverage and produce a .coverage file
+        env:
+          COVERAGE_FILE: coverage/.coverage.${{ runner.os }}-py${{ matrix.python-version }}
+          CONTEXT: ${{ runner.os }}-py${{ matrix.python-version }}
+        run: |
+          coverage run -m pytest --disable-pytest-warnings
+
+      - name: Test list coverage file
+        run: ls -al
+
+      - name: Store coverage file
+        # FIXED: Revert version of upload-artifact from 4 to 3
+        # https://github.com/actions/upload-artifact/issues/478
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage
+
+  coverage:
+    # This make sure the workflow is skipped without any alert.
+    # if: ${{ false }}
+    name: coverage
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      # Gives the action the necessary permissions for publishing new
+      # comments in pull requests.
+      pull-requests: write
+
+      # Gives the action the necessary permissions for pushing data to the
+      # python-coverage-comment-action branch, and for editing existing
+      # comments (to avoid publishing multiple comments in the same PR)
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Get coverage files
+        uses: actions/download-artifact@v3
+        id: download
+        with:
+          name: coverage
+          path: coverage
+
+      - run: |
+          pip install "coverage[toml]"
+          pip install "pytest>=7.4.3,<8.0.0"
+
+      - run: ls -al coverage
+      - name: Run coverage
+        run: |
+          coverage combine coverage
+          coverage report --show-missing
+          coverage html --show-contexts --title "Coverage for ${{ github.ref }}"
+          ls -al
+
+      - run: |
+          coverage xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        env:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ${{ github.repository }}
+
+      - run: |
+          ls -al
+          cat .gitignore
+
+      - name: Store coverage HTML
+        # FIXED: Revert version of upload-artifact from 4 to 3
+        # https://github.com/actions/upload-artifact/issues/478
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: htmlcov
+
+  # This job does nothing and is only used for the branch protection
+  # docs: https://github.com/marketplace/actions/alls-green
+  check:
+    if: always()
+    needs:
+      - build
+      - coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
