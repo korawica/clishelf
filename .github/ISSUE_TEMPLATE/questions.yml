@@ -1,4 +1,5 @@
-labels: [question]
+name: Question
+description: question issue
 body:
   - type: markdown
     attributes:
