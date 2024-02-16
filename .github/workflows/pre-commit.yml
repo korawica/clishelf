@@ -54,7 +54,7 @@ jobs:
 
       - name: Set Rev name
         run: |
-          if [[ ${{ github.event.inputs.ref_name }} == 'default' ]]; then
+          if [[ "${{ github.event.inputs.ref_name }}" == 'default' || "${{ github.event.inputs.ref_name }}" == "" ]]; then
             REF_NAME=${{ github.ref_name }}
           else
             REF_NAME=${{ github.event.inputs.ref_name }}
