@@ -10,6 +10,8 @@ on:
       - '*.md'
       - '.pre-commit-config.yaml'
 
+  workflow_dispatch:
+
 permissions:
   contents: read
 
@@ -46,13 +48,17 @@ jobs:
 
       - name: Create Pre-commit config file
         run: |
-          echo "default_install_hook_types: [commit-msg]
+          cat <<EOF > .pre-commit-config.yaml
+          default_install_hook_types: [commit-msg]
           repos:
             - repo: https://github.com/korawica/clishelf
               rev: ${{  github.ref_name }}
               hooks:
                 - id: shelf-commit-msg
-                  stages: [commit-msg]" >> .pre-commit-config.yaml
+                  stages: [commit-msg]
+          EOF
+
+          echo "cat .pre-commit-config.yaml"
           cat .pre-commit-config.yaml
 
       - name: Start testing Pre-commit hook
