@@ -11,6 +11,11 @@ on:
       - '.pre-commit-config.yaml'
 
   workflow_dispatch:
+    inputs:
+      ref_name:
+        description: Ref of pre-commit to test
+        required: false
+        default: 'default'
 
 permissions:
   contents: read
@@ -52,7 +57,7 @@ jobs:
           default_install_hook_types: [commit-msg]
           repos:
             - repo: https://github.com/korawica/clishelf
-              rev: ${{  github.ref_name }}
+              rev: ${{ github.event.inputs.ref_name == 'default' && github.ref_name || github.event.inputs.ref_name }}
               hooks:
                 - id: shelf-commit-msg
                   stages: [commit-msg]
