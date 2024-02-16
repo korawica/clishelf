@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          apt update && apt install -y --no-install-recommends git
+          sudo apt update && sudo apt install -y --no-install-recommends git
           pip install -U pip
           pip install -U pre-commit
 
