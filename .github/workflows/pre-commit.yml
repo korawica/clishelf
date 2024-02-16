@@ -52,13 +52,23 @@ jobs:
           pip install -U pip
           pip install -U pre-commit
 
+      - name: Set Rev name
+        run: |
+          local ENVIRONMENT_VALUE=''
+          if [[ ${{ github.event.inputs.ref_name }} == 'default' ]]; then
+            REF_NAME=${{ github.ref_name }}
+          else
+            REF_NAME=${{ github.event.inputs.ref_name }}
+          fi
+          echo "REF_NAME=REF_NAME" >> $GITHUB_ENV
+
       - name: Create Pre-commit config file
         run: |
           cat <<EOF > .pre-commit-config.yaml
           default_install_hook_types: [commit-msg]
           repos:
             - repo: https://github.com/korawica/clishelf
-              rev: ${{ github.event.inputs.ref_name == 'default' && github.ref_name || github.event.inputs.ref_name }}
+              rev: ${{ env.REF_NAME }}
               hooks:
                 - id: shelf-commit-msg
                   stages: [commit-msg]
