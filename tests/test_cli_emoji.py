@@ -9,7 +9,7 @@ import clishelf.emoji as emoji
 
 
 def side_effect_func(*args, **kwargs):
-    if "\\emoji.py" in args[0]:
+    if "emoji.py" in args[0]:
         _ = kwargs
         return pathlib.Path(__file__)
     return DEFAULT
