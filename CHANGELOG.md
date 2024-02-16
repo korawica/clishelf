@@ -6,9 +6,21 @@
 
 ### :black_nib: Code Changes
 
+- :rewind: revert: revert change for ls command on pre-commit workflow. (_2024-02-16_)
+- :test_tube: tests: add debug step for list file on local. (_2024-02-16_)
+- :bookmark: Bump up to version 0.1.7.post1 -> 0.1.8. (_2024-02-16_)
 - :construction: refactored: change option of pre-commit on workflow. (_2024-02-16_)
 
-## 0.1.7.post1
+### :bug: Fix Bugs
+
+- :fire: hotfix: fixed ls command on ubuntu does not support. (_2024-02-16_)
+- :gear: fixed: create pre-commit file on github action. (_2024-02-16_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: prepare pre-commit testing workflow. (_2024-02-16_)
+- :toolbox: build: add checkout step before testing pre-commit. (_2024-02-16_)
+- :toolbox: build: add parameter on pre-commit workflow for dynamic test. (_2024-02-16_)
 
 ## 0.1.7.post0
 
