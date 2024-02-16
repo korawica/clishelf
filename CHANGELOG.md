@@ -2,6 +2,23 @@
 
 ## Latest Changes
 
+## 0.1.7.post0
+
+### :black_nib: Code Changes
+
+- :test_tube: test: add testcase for version commands. (_2024-02-16_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: remove debug code from git command. (_2024-02-14_)
+- :gear: fixed: fix test shelf command does not find test file. (_2024-02-14_)
+- :gear: fixed: run pre-commit all files for fix hooks. (_2024-02-13_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: add coverage workflow for report quality of this proj. (_2024-02-16_)
+- :toolbox: build: add pre-commit workflow that able to test hook from this repo. (_2024-02-14_)
+
 ## 0.1.7
 
 ### :book: Documents
