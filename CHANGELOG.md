@@ -10,32 +10,21 @@
 - :test_tube: tests: add debug step for list file on local. (_2024-02-16_)
 - :bookmark: Bump up to version 0.1.7.post1 -> 0.1.8. (_2024-02-16_)
 - :construction: refactored: change option of pre-commit on workflow. (_2024-02-16_)
+- :test_tube: test: add testcase for version commands. (_2024-02-16_)
 
 ### :bug: Fix Bugs
 
 - :fire: hotfix: fixed ls command on ubuntu does not support. (_2024-02-16_)
 - :gear: fixed: create pre-commit file on github action. (_2024-02-16_)
-
-### :package: Build & Workflow
-
-- :toolbox: build: prepare pre-commit testing workflow. (_2024-02-16_)
-- :toolbox: build: add checkout step before testing pre-commit. (_2024-02-16_)
-- :toolbox: build: add parameter on pre-commit workflow for dynamic test. (_2024-02-16_)
-
-## 0.1.7.post0
-
-### :black_nib: Code Changes
-
-- :test_tube: test: add testcase for version commands. (_2024-02-16_)
-
-### :bug: Fix Bugs
-
 - :gear: fixed: remove debug code from git command. (_2024-02-14_)
 - :gear: fixed: fix test shelf command does not find test file. (_2024-02-14_)
 - :gear: fixed: run pre-commit all files for fix hooks. (_2024-02-13_)
 
 ### :package: Build & Workflow
 
+- :toolbox: build: prepare pre-commit testing workflow. (_2024-02-16_)
+- :toolbox: build: add checkout step before testing pre-commit. (_2024-02-16_)
+- :toolbox: build: add parameter on pre-commit workflow for dynamic test. (_2024-02-16_)
 - :toolbox: build: add coverage workflow for report quality of this proj. (_2024-02-16_)
 - :toolbox: build: add pre-commit workflow that able to test hook from this repo. (_2024-02-14_)
 
