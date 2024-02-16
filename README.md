@@ -35,10 +35,11 @@ custom message code.
 See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
 ```yaml
--   repo: https://github.com/korawica/clishelf
-    rev: v0.1.8
-    hooks:
-    -   id: shelf-commit-msg
+- repo: https://github.com/korawica/clishelf
+  rev: v0.1.8
+  hooks:
+    - id: shelf-commit-msg
+      stages: [commit-msg]
 ```
 
 ## Features
@@ -62,6 +63,12 @@ Commands:
   git    The Extended Git commands
   vs     The Versioning commands.
 ```
+
+**Features**:
+
+* [Extended Git](#extended-git)
+* [Versioning](#versioning)
+* [Emoji](#emoji)
 
 ### Extended Git
 
