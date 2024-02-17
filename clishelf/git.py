@@ -673,7 +673,7 @@ def init(store: bool, prune_tag: bool):  # pragma: no cover.
 
 
 @cli_git.command()
-def pf():
+def pf():  # pragma: no cover.
     """Show Profile object that contain Name and Email of Author"""
     click.echo(load_profile(), file=sys.stdout)
     sys.exit(0)
