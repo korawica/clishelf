@@ -1,5 +1,5 @@
 name: Question or Problem
-description: Ask a question or ask about a problem
+description: Ask a question or ask about a problem ⁉️
 labels: [question]
 body:
   - type: markdown
@@ -54,7 +54,7 @@ body:
         You can find the CliShelf version with:
 
         ```bash
-        python -c "import clishelf; print(clishelf.__about__.__version__)"
+        python -c "import clishelf.__about__; print(clishelf.__about__.__version__)"
         ```
     validations:
       required: true
