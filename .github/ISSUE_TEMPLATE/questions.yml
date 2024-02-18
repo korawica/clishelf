@@ -30,7 +30,6 @@ body:
 
         If I (or someone) can copy it, run it, and see it right away, there's a much higher chance I (or someone) will be able to help you.
 
-      render: python
     validations:
       required: true
   - type: textarea

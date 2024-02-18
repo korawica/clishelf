@@ -16,9 +16,13 @@
 * [Configuration](#configuration)
 
 This is the **Utility CLI Tools and Hooks on the Shelf** for my Python packages
-that help me to make versioning, abbreviate Git CLI and logging on my any Python
-package repositories, because I do not want to hard code or set up the development
-flow every time that I create the new Python package project :tired_face:.
+that help me to make Versioning, Abbreviate of Git CLI, and Wrapped Dev Python packages
+(`coverage`, `pre-commit`) on my any Python package repositories.
+
+This project was created because I do not want to hard code set up all of them
+every time when I start create a new Python package :tired_face:. I provide some
+reusable CLIs that was implemented from the [`Click`](https://github.com/pallets/click/)
+package.
 
 ## Installation
 
@@ -64,7 +68,7 @@ Commands:
   vs     The Versioning commands.
 ```
 
-**Features**:
+**List of Features**:
 
 * [Extended Git](#extended-git)
 * [Versioning](#versioning)
