@@ -498,7 +498,7 @@ def cm(
         )
     else:
         edit: bool = True
-        cm_msg: str = "\n".join(get_latest_commit(file, edit, output_file))
+        _cm_msg: str = "\n".join(get_latest_commit(file, edit, output_file))
         subprocess.run(
             [
                 "git",
@@ -507,11 +507,26 @@ def cm(
                 "-a",
                 "--no-verify",
                 "-m",
-                cm_msg,
+                _cm_msg,
             ],
             stdout=subprocess.DEVNULL,
         )
-        click.echo(make_color(cm_msg, level=Level.OK))
+        click.echo(make_color(_cm_msg, level=Level.OK))
+    sys.exit(0)
+
+
+@cli_git.command()
+@click.option("-g", "--group", is_flag=True)
+def cm_msg(group: bool = False):
+    """Return list of commit prefixes"""
+    if group:
+        for cm_prefix_g in get_commit_prefix_group():
+            click.echo(f"{cm_prefix_g.emoji} {cm_prefix_g.name}")
+    else:
+        for cm_prefix in get_commit_prefix():
+            click.echo(
+                f"{cm_prefix.emoji} {cm_prefix.name} -> {cm_prefix.group}"
+            )
     sys.exit(0)
 
 
