@@ -141,9 +141,9 @@ class CommitMsg:
     def __str__(self):
         return f"{self.mtype}: {self.content}"
 
-    def __post_init__(self, content: str, mtype: str):
+    def __post_init__(self, content: str, mtype: Optional[str] = None) -> None:
         self.content: str = self.__prepare_msg(git_demojize(content))
-        if not mtype:
+        if mtype is None:  # pragma: no cover.
             self.mtype: str = self.__gen_msg_type()
 
     def __gen_msg_type(self) -> str:
@@ -164,7 +164,7 @@ class CommitMsg:
                 if cpt.name == self.mtype
             ),
             ":black_nib:",  # ✒️
-        )
+        )  # pragma: no cover
 
     @staticmethod
     def __prepare_msg(content: str) -> str:
@@ -211,7 +211,7 @@ class CommitLog:
         )
 
 
-def __validate_for_warning(
+def _validate_for_warning(
     lines: List[str],
 ) -> List[str]:
     """Validate Commit message that should to fixed, but it does not impact to
@@ -263,7 +263,7 @@ def validate_commit_msg(
             Level.ERROR,
         )
 
-    rs: List[str] = __validate_for_warning(lines)
+    rs: List[str] = _validate_for_warning(lines)
 
     has_story_id: bool = False
     for line, msg in enumerate(lines[1:], start=2):

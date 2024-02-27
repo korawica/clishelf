@@ -1,3 +1,4 @@
+import datetime
 import sys
 import unittest
 from typing import Tuple
@@ -18,7 +19,7 @@ def side_effect_func(*args, **kwargs):
 
 
 class GitModelTestCase(unittest.TestCase):
-    def test_commit_prefix(self):
+    def test_commit_prefix_model(self):
         rs = git.CommitPrefix(
             name="test",
             group="A",
@@ -27,13 +28,61 @@ class GitModelTestCase(unittest.TestCase):
         self.assertEqual(hash(rs), hash(rs.name))
         self.assertEqual("test", str(rs))
 
-    def test_commit_prefix_group(self):
+    def test_commit_prefix_group_model(self):
         rs = git.CommitPrefixGroup(
             name="test",
             emoji=":dart:",
         )
         self.assertEqual(hash(rs), hash(rs.name))
         self.assertEqual("test", str(rs))
+
+    def test_commit_message_model(self):
+        msg = git.CommitMsg(
+            content=":dart: feat: start initial testing",
+            mtype=None,
+        )
+        self.assertEqual(
+            "Features: :dart: feat: start initial testing", str(msg)
+        )
+
+        msg = git.CommitMsg(
+            content=":dart: demo: start initial testing",
+            mtype=None,
+        )
+        self.assertEqual(
+            "Code Changes: :dart: demo: start initial testing", str(msg)
+        )
+
+        msg = git.CommitMsg(
+            content=":dart: start initial testing",
+            mtype=None,
+        )
+        self.assertEqual("Code Changes: :dart: start initial testing", str(msg))
+
+        with self.assertRaises(ValueError):
+            git.CommitMsg(
+                content="demo: start initial testing",
+                mtype=None,
+            )
+
+    def test_commit_log_model(self):
+        log = git.CommitLog(
+            hash="test",
+            refs="HEAD",
+            date=datetime.date(2023, 1, 1),
+            msg=git.CommitMsg(":dart: feat: start initial testing"),
+            author=git.Profile(
+                name="test",
+                email="test@mail.com",
+            ),
+        )
+        self.assertEqual(
+            (
+                "test|2023-01-01|:dart: feat: start initial testing|"
+                "test|test@mail.com|HEAD"
+            ),
+            str(log),
+        )
 
 
 class GitTestCase(unittest.TestCase):
@@ -66,3 +115,60 @@ class GitTestCase(unittest.TestCase):
     def test_get_latest_tag(self): ...
 
     def test_gen_commit_log(self): ...
+
+    def test_git_demojize(self):
+        self.assertEqual(
+            "test :fire: :fire:",
+            git.git_demojize("test 🔥 :fire:"),
+        )
+
+    def test_validate_for_warning(self):
+        rs = git._validate_for_warning([":dart: feat: demo", ""])
+        self.assertListEqual(
+            rs,
+            [
+                (
+                    "There should be between 21 and 50 characters in the "
+                    "commit title."
+                ),
+                "There should at least 3 lines in your commit message.",
+                "There should not has dot in the end of commit message.",
+            ],
+        )
+
+        rs = git._validate_for_warning(
+            [":dart: feat: demo test validate for warning.", "empty"]
+        )
+        self.assertListEqual(
+            rs,
+            [
+                "There should at least 3 lines in your commit message.",
+                (
+                    "There should be an empty line between the commit title "
+                    "and body."
+                ),
+            ],
+        )
+
+        rs = git._validate_for_warning(
+            [
+                ":dart: feat: demo test validate for warning.",
+                "",
+                "body of commit log",
+                "",
+            ]
+        )
+        self.assertListEqual(
+            rs,
+            [],
+        )
+
+    def test_validate_commit_msg(self):
+        rs = git.validate_commit_msg([])
+        self.assertTupleEqual(
+            rs,
+            (
+                ["Please supply commit message without start with ``#``."],
+                git.Level.ERROR,
+            ),
+        )
