@@ -296,7 +296,7 @@ def get_branch_name() -> str:
     )
 
 
-def get_latest_tag(default: bool = True) -> Optional[str]:
+def get_latest_tag(default: bool = True) -> str:
     """Return the latest tag if it exists, otherwise it will return the
     version from ``.__about__`` file.
     """
@@ -309,12 +309,14 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
             .decode(sys.stdout.encoding)
             .strip()
         )
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as err:
         if default:
             from .__about__ import __version__
 
             return f"v{__version__}"
-        return None
+        raise RuntimeError(
+            "Can not extract the latest version from this project"
+        ) from err
 
 
 def gen_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
@@ -633,6 +635,30 @@ def bn_clear():  # pragma: no cover.
         if ": gone]" in branch:
             subprocess.run(["git", "branch", "-D", branch.strip().split()[0]])
     subprocess.run(["git", "checkout", "-"])
+    sys.exit(0)
+
+
+@cli_git.command()
+@click.option(
+    "-p",
+    "--push",
+    is_flag=True,
+    help="If True, it will auto push to remote",
+)
+def tg_bump(push: bool = False):  # pragma: no cover.
+    """Create Tag from current version after bumping"""
+    latest_tag: str = get_latest_tag(default=False)
+    subprocess.run(
+        ["git", "tag", "-d", f"v{latest_tag}"],
+        stderr=subprocess.DEVNULL,
+    )
+    subprocess.run(
+        ["git", "fetch", "--prune", "--prune-tags"],
+        stdout=subprocess.DEVNULL,
+    )
+    subprocess.run(["git", "tag", f"v{latest_tag}"])
+    if push:
+        subprocess.run(["git", "push", f"v{latest_tag}", "--tags"])
     sys.exit(0)
 
 

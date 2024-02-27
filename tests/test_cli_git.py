@@ -119,5 +119,5 @@ class GitTestCase(unittest.TestCase):
         self.assertTrue(mock.called)
         self.assertEqual("v0.0.9", result)
 
-        result = git.get_latest_tag(default=False)
-        self.assertIsNone(result)
+        with self.assertRaises(RuntimeError):
+            git.get_latest_tag(default=False)
