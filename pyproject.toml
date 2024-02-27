@@ -29,7 +29,7 @@ dependencies = [
     "more-itertools==10.2.0",
     "click==8.1.7,<9.0.0",
     "tomli==2.0.1",
-    "pre-commit==3.5.0",
+    "pre-commit==3.6.2",
     # TODO: able to change this package from `bump2version` to `bump-my-version`
     #   docs: https://github.com/callowayproject/bump-my-version
     "bump2version==1.0.1",
