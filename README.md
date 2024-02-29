@@ -166,7 +166,7 @@ changelog = "CHANGELOG.md"
 mode = "normal"
 ```
 
-> **Note**:\
+> [!IMPORTANT]
 > The bump version mode able to be `normal` or `datetime` only.
 
 ## License
