@@ -51,7 +51,7 @@ jobs:
       - name: Store coverage file
         # FIXED: Revert version of upload-artifact from 4 to 3
         # https://github.com/actions/upload-artifact/issues/478
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage
@@ -112,7 +112,7 @@ jobs:
       - name: Store coverage HTML
         # FIXED: Revert version of upload-artifact from 4 to 3
         # https://github.com/actions/upload-artifact/issues/478
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-html
           path: htmlcov
