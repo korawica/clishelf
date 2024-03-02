@@ -82,8 +82,9 @@ jobs:
         uses: actions/download-artifact@v4
         id: download
         with:
-          name: coverage
+          name: coverage-*
           path: coverage
+          merge-multiple: true
 
       - run: |
           pip install "coverage[toml]"
