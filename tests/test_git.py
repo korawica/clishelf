@@ -172,3 +172,38 @@ class GitTestCase(unittest.TestCase):
                 git.Level.ERROR,
             ),
         )
+
+        rs = git.validate_commit_msg(
+            [
+                ":dart: feat: demo test validate for warning.",
+                "",
+                "body of commit log",
+                "",
+            ]
+        )
+        self.assertTupleEqual(
+            rs,
+            (
+                ["The commit message has the required pattern."],
+                git.Level.OK,
+            ),
+        )
+
+        rs = git.validate_commit_msg(
+            [
+                ":dart: feat: demo test validate for warning.",
+                "",
+                (
+                    "body of commit log that has character more that 72 and "
+                    "it will return some warning message from function"
+                ),
+                "",
+            ]
+        )
+        self.assertTupleEqual(
+            rs,
+            (
+                ["The commit body should wrap at 72 characters at line: 3."],
+                git.Level.WARNING,
+            ),
+        )

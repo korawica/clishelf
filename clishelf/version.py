@@ -128,7 +128,7 @@ def writer_changelog(
                 skip_line = True
             elif m := re.match(rf"^##\s({regex})", line):
                 get_tag: str = m.group(1)
-                if get_tag in tags:
+                if get_tag in tags:  # pragma: no cover.
                     write_group_log(
                         writer,
                         group_logs[get_tag],
@@ -270,7 +270,7 @@ def cli_vs():
 
 
 @cli_vs.command()
-def conf() -> NoReturn:
+def conf() -> NoReturn:  # pragma: no cover.
     """Return the config data for bumping version."""
     for k, v in load_config().get("version", {}).items():
         click.echo(f"{k}: {v!r}")
@@ -283,7 +283,7 @@ def conf() -> NoReturn:
 def changelog(
     file: Optional[str],
     new: bool,
-) -> NoReturn:
+) -> NoReturn:  # pragma: no cover.
     """Make Changelogs file"""
     if not file:
         file: str = (
@@ -304,7 +304,7 @@ def changelog(
     type=click.Path(exists=True),
     help="The contain version file that able to search with regex.",
 )
-def current(file: str) -> NoReturn:
+def current(file: str) -> NoReturn:  # pragma: no cover.
     """Return Current Version that read from ``__about__`` by default."""
     if not file:
         file = (
@@ -322,7 +322,7 @@ def current(file: str) -> NoReturn:
     is_flag=True,
     help="If True, it will push the tag to remote repository",
 )
-def tag(push: bool) -> NoReturn:
+def tag(push: bool) -> NoReturn:  # pragma: no cover.
     """Create the Git tag by version from the ``__about__`` file.
 
     \f
@@ -332,7 +332,7 @@ def tag(push: bool) -> NoReturn:
     from .__about__ import __version__
 
     subprocess.run(["git", "tag", f"v{__version__}"])
-    if push:  # pragma: no cover.
+    if push:
         subprocess.run(["git", "push", "--tags"])
 
 

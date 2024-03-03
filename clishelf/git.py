@@ -13,7 +13,7 @@ from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Generator, Iterator, List, Optional, Tuple
+from typing import Dict, Generator, Iterator, List, NoReturn, Optional, Tuple
 
 import click
 
@@ -264,20 +264,12 @@ def validate_commit_msg(
         )
 
     rs: List[str] = _validate_for_warning(lines)
-
-    has_story_id: bool = False
     for line, msg in enumerate(lines[1:], start=2):
         # RULE 06: Wrap the body at 72 characters
         if len(msg) > 72:
             rs.append(
                 f"The commit body should wrap at 72 characters at line: {line}."
             )
-
-        if not msg.startswith("["):
-            has_story_id = True
-
-    if not has_story_id and len(lines) > 1:
-        rs.append("Please add a Story ID in the commit message.")
 
     if not rs:
         return (
@@ -319,7 +311,9 @@ def get_latest_tag(default: bool = True) -> str:
         ) from err
 
 
-def gen_commit_logs(tag2head: str) -> Generator[List[str], None, None]:
+def gen_commit_logs(
+    tag2head: str,
+) -> Generator[List[str], None, None]:  # pragma: no cover.
     """Prepare contents logs to List of commit log."""
     prepare: List[str] = []
     for line in (
@@ -349,7 +343,7 @@ def get_commit_logs(
     all_logs: bool = False,
     excluded: Optional[List[str]] = None,
     is_dt: bool = False,
-) -> Iterator[CommitLog]:
+) -> Iterator[CommitLog]:  # pragma: no cover.
     """Return a list of commit message logs."""
     from .settings import BumpVerConf
 
@@ -399,7 +393,7 @@ def get_latest_commit(
     file: Optional[str] = None,
     edit: bool = False,
     output_file: bool = False,
-) -> List[str]:
+) -> List[str]:  # pragma: no cover.
     if file:
         with Path(file).open(encoding="utf-8") as f_msg:
             raw_msg = f_msg.read().splitlines()
@@ -459,7 +453,11 @@ def tg():
 @click.option("-t", "--tag", type=click.STRING, default=None)
 @click.option("-a", "--all-logs", is_flag=True)
 @click.option("-d", "--datetime-mode", is_flag=True)
-def log(tag: Optional[str], all_logs: bool, datetime_mode: bool):
+def log(
+    tag: Optional[str],
+    all_logs: bool,
+    datetime_mode: bool,
+):  # pragma: no cover.
     """Show the Commit Logs from the latest Tag to HEAD."""
     click.echo(
         "\n".join(
@@ -519,7 +517,7 @@ def cm(
 
 @cli_git.command()
 @click.option("-g", "--group", is_flag=True)
-def cm_msg(group: bool = False):
+def cm_msg(group: bool = False) -> NoReturn:  # pragma: no cover.
     """Return list of commit prefixes"""
     if group:
         for cm_prefix_g in get_commit_prefix_group():
@@ -534,7 +532,7 @@ def cm_msg(group: bool = False):
 
 @cli_git.command()
 @click.option("--verify", is_flag=True)
-def cm_prev(verify: bool):  # pragma: no cover.
+def cm_prev(verify: bool) -> NoReturn:  # pragma: no cover.
     """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
@@ -581,7 +579,7 @@ def mg(
     theirs: bool = False,
     ours: bool = False,
     squash: bool = False,
-):  # pragma: no cover.
+) -> NoReturn:  # pragma: no cover.
     """Merge change from another branch with strategy, `theirs` or `ours`.
 
     BRANCH is a name of branch that you want to merge with current branch.
@@ -613,7 +611,7 @@ def mg(
 
 
 @cli_git.command()
-def bn_clear():  # pragma: no cover.
+def bn_clear() -> NoReturn:  # pragma: no cover.
     """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
         ["git", "checkout", "main"],
@@ -645,7 +643,7 @@ def bn_clear():  # pragma: no cover.
     is_flag=True,
     help="If True, it will auto push to remote",
 )
-def tg_bump(push: bool = False):  # pragma: no cover.
+def tg_bump(push: bool = False) -> NoReturn:  # pragma: no cover.
     """Create Tag from current version after bumping"""
     latest_tag: str = get_latest_tag(default=False)
     subprocess.run(
@@ -663,7 +661,7 @@ def tg_bump(push: bool = False):  # pragma: no cover.
 
 
 @cli_git.command()
-def tg_clear():  # pragma: no cover.
+def tg_clear() -> NoReturn:  # pragma: no cover.
     """Clear Local Tags that sync from the Remote repository."""
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],
@@ -683,7 +681,7 @@ def tg_clear():  # pragma: no cover.
     is_flag=True,
     help="If True, it will set fetch handle prune tag.",
 )
-def init(store: bool, prune_tag: bool):  # pragma: no cover.
+def init(store: bool, prune_tag: bool) -> NoReturn:  # pragma: no cover.
     """Initialize GIT config on local"""
     if not Path(".git").exists():
         click.echo("Start initialize git on current path ...")
@@ -714,14 +712,14 @@ def init(store: bool, prune_tag: bool):  # pragma: no cover.
 
 
 @cli_git.command()
-def pf():  # pragma: no cover.
+def pf() -> NoReturn:  # pragma: no cover.
     """Show Profile object that contain Name and Email of Author"""
     click.echo(load_profile(), file=sys.stdout)
     sys.exit(0)
 
 
 @cli_git.command()
-def df():  # pragma: no cover.
+def df() -> NoReturn:  # pragma: no cover.
     """Show changed files from previous commit to HEAD"""
     # NOTE: We can use `git show --name-only HEAD~1`, but it got commit message.
     subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"])
