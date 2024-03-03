@@ -2,9 +2,19 @@
 
 ## Latest Changes
 
+## 0.2.0
+
+> [!WARNING]
+> This version start support python version >= 3.9.13
+
+### :black_nib: Code Changes
+
+- :construction: refactored: upgrade python version from 38 to 39. (_2024-03-03_)
+- :construction: refactored: 📦 bump pytest from 8.0.1 to 8.0.2 (_2024-02-26_)
+
 ## 0.1.10
 
-> ![NOTE]
+> [!NOTE]
 > This version combine fixed code from v0.1.9 post releases.
 
 ### 0.1.9.post2
