@@ -2,19 +2,24 @@
 
 ## Latest Changes
 
-## 0.1.9.post2
+## 0.1.10
+
+> ![NOTE]
+> This version combine fixed code from v0.1.9 post releases.
+
+### 0.1.9.post2
 
 ### :bug: Fix Bugs
 
 - :gear: fixed: add path param on download-artifact. (_2024-03-03_)
 
-## 0.1.9.post1
+### 0.1.9.post1
 
 ### :bug: Fix Bugs
 
 - :gear: fixed: remove ls coverage file step on coverage workflow. (_2024-03-03_)
 
-## 0.1.9.post0
+### 0.1.9.post0
 
 ### :bug: Fix Bugs
 
