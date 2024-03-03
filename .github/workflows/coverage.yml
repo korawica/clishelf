@@ -85,11 +85,11 @@ jobs:
           pattern: coverage-*
           merge-multiple: true
 
-      - run: |
+      - name: Install Coverage Dependency
+        run: |
           pip install "coverage[toml]"
           pip install "pytest>=7.4.3,<8.0.0"
 
-      - run: ls -al coverage
       - name: Run coverage
         run: |
           coverage combine coverage
