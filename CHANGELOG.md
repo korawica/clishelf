@@ -2,6 +2,41 @@
 
 ## Latest Changes
 
+## 0.1.9
+
+### :tada: Features
+
+- :dart: feat: add tg-bump command for auto create tag from latest after bumpping. (_2024-02-27_)
+- :dart: feat: add cm-msg command for list commit prefixes. (_2024-02-19_)
+- :dart: feat: add files param for bump version command for change version other files. (_2024-02-16_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update option highlight for note on README file. (_2024-02-29_)
+- :page_facing_up: docs: add noted on bump2version will change to new fork repo. (_2024-02-26_)
+- :page_facing_up: docs: update README for more info of this project. (_2024-02-18_)
+- :page_facing_up: docs: update README on pre-commit hook topic. (_2024-02-16_)
+
+### :black_nib: Code Changes
+
+- :test_tube: test: add testcase and comment for coverage. (_2024-03-03_)
+- :construction: refactored: change the name of converage file store on coverage workflow. (_2024-03-02_)
+- :construction: refactored: add merge multiple name of coverage file store on coverage workflow. (_2024-03-02_)
+- :construction: refactored: ⬆ bump actions/upload-artifact from 3 to 4 (_2024-03-01_)
+- :construction: refactored: ⬆ bump actions/download-artifact from 3 to 4 (_2024-03-01_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.8.11 to 1.8.12 (_2024-03-01_)
+- :test_tube: test: add more testcase for increase coverage value. (_2024-02-27_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.4.1 to 7.4.3 (_2024-02-26_)
+- :construction: refactored: 📦 bump pytest from 8.0.0 to 8.0.1 (_2024-02-19_)
+- :test_tube: test: add more testcases for support coverage. (_2024-02-17_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: add emoji for issue template. (_2024-02-17_)
+- :toolbox: build: fix desc of question template. (_2024-02-16_)
+- :toolbox: build: add issue template for question. (_2024-02-16_)
+- :toolbox: build: add question template. (_2024-02-16_)
+
 ## 0.1.8
 
 ### :black_nib: Code Changes
