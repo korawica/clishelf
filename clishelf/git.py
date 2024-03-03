@@ -9,11 +9,12 @@ import os
 import re
 import subprocess
 import sys
+from collections.abc import Generator, Iterator
 from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Generator, Iterator, List, NoReturn, Optional, Tuple
+from typing import NoReturn, Optional
 
 import click
 
@@ -33,7 +34,7 @@ def load_profile() -> Profile:
     """Load Profile function that return name and email."""
     from .utils import load_pyproject
 
-    _authors: Dict[str, str] = (
+    _authors: dict[str, str] = (
         load_pyproject().get("project", {}).get("authors", {})
     )
     return Profile(
@@ -85,10 +86,10 @@ class CommitPrefixGroup:
         return self.name
 
 
-def get_commit_prefix() -> Tuple[CommitPrefix, ...]:
+def get_commit_prefix() -> tuple[CommitPrefix, ...]:
     """Return tuple of CommitPrefix"""
-    conf: List[str] = load_config().get("git", {}).get("commit_prefix", [])
-    prefix_conf: Tuple[str, ...] = tuple(_[0] for _ in conf)
+    conf: list[str] = load_config().get("git", {}).get("commit_prefix", [])
+    prefix_conf: tuple[str, ...] = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefix(name=n, group=g, emoji=e)
         for n, g, e in (
@@ -98,12 +99,12 @@ def get_commit_prefix() -> Tuple[CommitPrefix, ...]:
     )
 
 
-def get_commit_prefix_group() -> Tuple[CommitPrefixGroup, ...]:
+def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
     """Return tuple of CommitPrefixGroup"""
-    conf: List[str] = (
+    conf: list[str] = (
         load_config().get("git", {}).get("commit_prefix_group", [])
     )
-    prefix_conf: Tuple[str, ...] = tuple(_[0] for _ in conf)
+    prefix_conf: tuple[str, ...] = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefixGroup(name=n, emoji=e)
         for n, e in (
@@ -212,8 +213,8 @@ class CommitLog:
 
 
 def _validate_for_warning(
-    lines: List[str],
-) -> List[str]:
+    lines: list[str],
+) -> list[str]:
     """Validate Commit message that should to fixed, but it does not impact to
     target repository.
 
@@ -224,7 +225,7 @@ def _validate_for_warning(
     :return: A list of warning message.
     """
     subject: str = lines[0]
-    rs: List[str] = []
+    rs: list[str] = []
 
     # RULE 02: Limit the subject line to 50 characters
     if len(subject) <= 20 or len(subject) > 50:
@@ -247,8 +248,8 @@ def _validate_for_warning(
 
 
 def validate_commit_msg(
-    lines: List[str],
-) -> Tuple[List[str], Level]:
+    lines: list[str],
+) -> tuple[list[str], Level]:
     """Validate Commit message
 
     :param lines: A list of line from commit message.
@@ -263,7 +264,7 @@ def validate_commit_msg(
             Level.ERROR,
         )
 
-    rs: List[str] = _validate_for_warning(lines)
+    rs: list[str] = _validate_for_warning(lines)
     for line, msg in enumerate(lines[1:], start=2):
         # RULE 06: Wrap the body at 72 characters
         if len(msg) > 72:
@@ -313,9 +314,9 @@ def get_latest_tag(default: bool = True) -> str:
 
 def gen_commit_logs(
     tag2head: str,
-) -> Generator[List[str], None, None]:  # pragma: no cover.
+) -> Generator[list[str], None, None]:  # pragma: no cover.
     """Prepare contents logs to List of commit log."""
-    prepare: List[str] = []
+    prepare: list[str] = []
     for line in (
         subprocess.check_output(
             [
@@ -341,14 +342,14 @@ def get_commit_logs(
     tag: Optional[str] = None,
     *,
     all_logs: bool = False,
-    excluded: Optional[List[str]] = None,
+    excluded: Optional[list[str]] = None,
     is_dt: bool = False,
 ) -> Iterator[CommitLog]:  # pragma: no cover.
     """Return a list of commit message logs."""
     from .settings import BumpVerConf
 
     regex: str = BumpVerConf.get_regex(is_dt)
-    _exc: List[str] = excluded or [r"^Merge"]
+    _exc: list[str] = excluded or [r"^Merge"]
     if tag:
         tag2head: str = f"{tag}..HEAD"
     elif all_logs or not (tag := get_latest_tag(default=False)):
@@ -359,7 +360,7 @@ def get_commit_logs(
     for logs in gen_commit_logs(tag2head):
         if any((re.search(s, logs[1]) is not None) for s in _exc):
             continue
-        header: List[str] = logs[0].split("|")
+        header: list[str] = logs[0].split("|")
         if ref_tag := [
             ref.strip()
             for ref in header[1].strip().split(",")
@@ -393,7 +394,7 @@ def get_latest_commit(
     file: Optional[str] = None,
     edit: bool = False,
     output_file: bool = False,
-) -> List[str]:  # pragma: no cover.
+) -> list[str]:  # pragma: no cover.
     if file:
         with Path(file).open(encoding="utf-8") as f_msg:
             raw_msg = f_msg.read().splitlines()
@@ -406,7 +407,7 @@ def get_latest_commit(
             .strip()
             .splitlines()
         )
-    lines: List[str] = [
+    lines: list[str] = [
         msg for msg in raw_msg if not msg.strip().startswith("#")
     ]
     if lines[-1] != "":

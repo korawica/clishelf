@@ -8,18 +8,17 @@ from __future__ import annotations
 import datetime
 import re
 from textwrap import dedent
-from typing import Dict, List, Tuple
 
 
 class GitConf:
     """Git Config."""
 
-    branch_types: List[str] = ["feature", "bug", "hot"]
+    branch_types: list[str] = ["feature", "bug", "hot"]
 
     # These branch names are not validated with this same rules
     # (permissions should be configured on the server if you want to prevent
     # pushing to any of these):
-    branch_excepts: List[str] = [
+    branch_excepts: list[str] = [
         "feature",
         "dev",
         "main",
@@ -41,7 +40,7 @@ class GitConf:
     # TODO: reference emoji from https://gitmoji.dev/
     #   All emojis, https://github.com/ikatyang/emoji-cheat-sheet
     #   GitHub API: https://api.github.com/emojis
-    commit_prefix: Tuple[Tuple[str, str, str]] = (
+    commit_prefix: tuple[tuple[str, str, str]] = (
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("hotfix", "Fix Bugs", ":fire:"),  # 🔥, 🚑 :ambulance:
@@ -69,7 +68,7 @@ class GitConf:
         ("revert", "Code Changes", ":rewind:"),  # ⏪
     )
 
-    commit_prefix_group: Tuple[Tuple[str, str]] = (
+    commit_prefix_group: tuple[tuple[str, str]] = (
         ("Features", ":sparkles:"),  # ✨
         ("Code Changes", ":black_nib:"),  # ✒️
         ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
@@ -194,7 +193,7 @@ class BumpVerConf:
     def get_version(
         cls,
         version: int,
-        params: Dict[str, str],
+        params: dict[str, str],
         is_dt: bool = False,
     ):
         """Generate the `bump2version` config from specific version"""
@@ -240,7 +239,7 @@ class BumpVerConf:
             20240101.post   ->  20240101.1
         """
         if search := re.search(BumpVerConf.regex_dt, version):
-            search_dict: Dict[str, str] = search.groupdict()
+            search_dict: dict[str, str] = search.groupdict()
             if pre := search_dict.get("pre"):
                 pre = str(int(pre) + 1)
             else:

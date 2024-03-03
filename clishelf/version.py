@@ -11,7 +11,7 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, NoReturn, Optional
+from typing import Any, NoReturn, Optional
 
 import click
 
@@ -20,8 +20,8 @@ from .settings import BumpVerConf
 from .utils import load_config, load_project
 
 cli_vs: click.Command
-GroupCommitLog = Dict[str, List[CommitLog]]
-TagGroupCommitLog = Dict[str, GroupCommitLog]
+GroupCommitLog = dict[str, list[CommitLog]]
+TagGroupCommitLog = dict[str, GroupCommitLog]
 
 
 def gen_group_commit_log(
@@ -56,10 +56,10 @@ def gen_group_commit_log(
 
 def get_changelog(
     file: str,
-    tags: Optional[List[str]] = None,
+    tags: Optional[list[str]] = None,
     refresh: bool = False,
 ):
-    changes: List[str]
+    changes: list[str]
     if refresh or not Path(file).exists():
         from more_itertools import roundrobin
 
@@ -111,7 +111,7 @@ def writer_changelog(
         all_tags=all_tags,
         is_dt=is_dt,
     )
-    tags: List[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
+    tags: list[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
 
     changes = get_changelog(file, tags=tags, refresh=refresh)
     regex: str = BumpVerConf.get_regex(is_dt)
@@ -145,13 +145,13 @@ def writer_changelog(
 
 
 def write_bump_file(
-    param: Dict[str, Any],
+    param: dict[str, Any],
     *,
     version: int = 1,
     is_dt: bool = False,
 ) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path."""
-    files: List[str] = load_config().get("version", {}).get("files", [])
+    files: list[str] = load_config().get("version", {}).get("files", [])
     with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
         f_bump.write(
             BumpVerConf.get_version(
@@ -398,7 +398,7 @@ def bump(
     :param dry_run: Dry run the bumpversion command if set be True.
     :type dry_run: boolean
     """
-    vs_conf: Dict[str, Any] = load_config().get("version", {})
+    vs_conf: dict[str, Any] = load_config().get("version", {})
     if not file:
         file: str = vs_conf.get("version", None) or (
             f"./{load_project().get('name', 'unknown')}/__about__.py"

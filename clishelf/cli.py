@@ -9,7 +9,7 @@ import json
 import pathlib
 import subprocess
 import sys
-from typing import List, NoReturn, Optional
+from typing import NoReturn, Optional
 
 import click
 
@@ -90,11 +90,11 @@ def dep(
     from .utils import load_pyproject
 
     project: str = load_pyproject().get("project", {}).get("name", "unknown")
-    deps: List[str] = (
+    deps: list[str] = (
         load_pyproject().get("project", {}).get("dependencies", [])
     )
 
-    optional_deps: List[str] = []
+    optional_deps: list[str] = []
     if optional:
         optional_deps = [
             f"./{output_file}" if (x == project and output_file) else x

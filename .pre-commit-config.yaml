@@ -1,6 +1,6 @@
 default_install_hook_types: [pre-commit, commit-msg]  # pre-push
 default_language_version:
-    python: python3.8
+    python: python3.9
 
 ci:
     skip: [pytest-check, commit-msg-hook]
@@ -17,7 +17,7 @@ repos:
     rev:  v3.15.1
     hooks:
     -   id: pyupgrade
-        args: ["--py38-plus", "--keep-runtime-typing"]
+        args: ["--py39-plus", "--keep-runtime-typing"]
         stages: [commit]
 
 # Python package sorting

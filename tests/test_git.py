@@ -1,7 +1,6 @@
 import datetime
 import sys
 import unittest
-from typing import Tuple
 from unittest.mock import DEFAULT, patch
 
 import clishelf.git as git
@@ -104,7 +103,7 @@ class GitTestCase(unittest.TestCase):
         self.assertEqual(24, len(data))
 
     def test_get_commit_prefix_group(self):
-        data: Tuple[git.CommitPrefixGroup] = git.get_commit_prefix_group()
+        data: tuple[git.CommitPrefixGroup] = git.get_commit_prefix_group()
         feat: git.CommitPrefixGroup = [
             cm for cm in data if cm.name == "Features"
         ][0]

@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import tomli
 import yaml
@@ -19,21 +19,21 @@ def pwd() -> Path:
     return Path(".")
 
 
-def load_pyproject(file: Optional[str] = None) -> Dict[str, Any]:
+def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
     """Load Configuration from pyproject.toml file."""
     f: str = file or "pyproject.toml"
     pyproject: Path = Path(f)
     return tomli.loads(pyproject.read_text()) if pyproject.exists() else {}
 
 
-def load_project() -> Dict[str, Any]:
+def load_project() -> dict[str, Any]:
     return load_pyproject().get("project", {})
 
 
-def load_config() -> Dict[str, Any]:
+def load_config() -> dict[str, Any]:
     """Return config of the shelf package that was set on pyproject.toml."""
 
-    data: Dict[str, Any] = {}
+    data: dict[str, Any] = {}
     conf_file = Path(".clishelf.yaml")
     if conf_file.exists():
         data = yaml.safe_load(conf_file.read_text(encoding="utf-8"))
