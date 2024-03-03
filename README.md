@@ -34,6 +34,13 @@ In the future, I will add more the CLI tools that able to dynamic with
 many style of config such as I want to make changelog file with style B by my
 custom message code.
 
+**Dependency supported**:
+
+| Python Version   | Installation                            |
+|------------------|-----------------------------------------|
+| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.0"` |
+| `>=3.9.13,<3.13` | `pip install -U clishelf`               |
+
 ## Pre-Commit Hook
 
 See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
