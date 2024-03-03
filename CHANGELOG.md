@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.1.9.post0
+
+### :bug: Fix Bugs
+
+- :gear: fixed: fix attr on download-artifact v4 does not use name for merge multiple. (_2024-03-03_)
+
 ## 0.1.9
 
 ### :tada: Features
