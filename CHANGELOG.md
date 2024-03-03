@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.1.9.post2
+
+### :bug: Fix Bugs
+
+- :gear: fixed: add path param on download-artifact. (_2024-03-03_)
+
 ## 0.1.9.post1
 
 ### :bug: Fix Bugs
