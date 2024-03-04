@@ -147,17 +147,9 @@ Commands:
 
 ## Configuration
 
-The configuration able to be `.clishelf.yaml` or mapping value in `pyproject.toml`.
-
 `.clishelf.yaml`:
 
 ```yaml
-git:
-  commit_prefix:
-    - ["comment", "Documents", ":bulb:"]  # 💡
-    - ["typos", "Documents", ":pencil2:"]  # ✏️
-  commit_prefix_group:
-    - ["Features", ":tada:"]  # 🎉
 version:
   version: "./clishelf/__about__.py"
   changelog: "CHANGELOG.md"
@@ -175,6 +167,17 @@ mode = "normal"
 
 > [!IMPORTANT]
 > The bump version mode able to be `normal` or `datetime` only.
+
+### Override Commit Prefix
+
+```yaml
+git:
+  commit_prefix:
+    - ["comment", "Documents", ":bulb:"]  # 💡
+    - ["typos", "Documents", ":pencil2:"]  # ✏️
+  commit_prefix_group:
+    - ["Features", ":tada:"]  # 🎉
+```
 
 ## License
 

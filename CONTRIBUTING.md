@@ -23,7 +23,7 @@ with the base version of this package.
 git clone https://github.com/korawica/clishelf.git
 ```
 
-> **Note**:\
+> [!NOTE]
 > If you want to set new user and email before push your edited code, you should
 > follow below command:
 > ```shell
@@ -38,12 +38,13 @@ git clone https://github.com/korawica/clishelf.git
 >   --author="Korawich Anuttra <korawich.anu@gmail.com>"
 > ```
 
-> ```Note: \
+> [!NOTE]
+> ```shell
 > git filter-branch -f --env-filter "GIT_AUTHOR_NAME='Korawich Anuttra'; GIT_AUTHOR_EMAIL='korawich.anu@gmail.com'; GIT_COMMITTER_NAME='Korawich Anuttra'; GIT_COMMITTER_EMAIL='korawich.anu@gmail.com';" HEAD
 > git push --force --tags origin 'refs/heads/*'
 > ```
 
-> **Warning**: \
+> [!WARNING]
 > If you want to store your credential, you can set git config by
 > ```shell
 > git config credential.helper store
@@ -57,7 +58,7 @@ $ python -m venv venv
 $ ./env/Scripts/activate
 ```
 
-> **Note**:\
+> [!TIP]
 > For create performance, you can use `virtualenv` instead of built-in `venv`.
 
 Third, I will install this package dependencies on my local environment.
@@ -89,7 +90,7 @@ feature branch from that branch first.
 
 If I finish my code develop, I will pull request to my parent versioning branch.
 
-> **Note**:\
+> [!NOTE]
 > If you have `hotfix` or some little change of the versioning code, you can directly
 > develop on your versioning branch and then push the code with the commit format.
 
@@ -120,7 +121,7 @@ you want to add.
 (venv) $ git push --tags
 ```
 
-> **Note**:\
+> [!IMPORTANT]
 > If it has some accident, you can restore all the change:
 > ```shell
 > (env) $ shelf cm-revert
