@@ -55,6 +55,10 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
 ## Features
 
+> [!NOTE]
+> I will migrate this code from **Python** to **Rust** for performance of CLI
+> (But I will observe for this again because this package does not have any issue with perf as well.)
+
 This Utility Package provide some CLI tools for handler development process.
 
 ```text
