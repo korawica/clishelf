@@ -51,6 +51,9 @@ def load_profile() -> Profile:
         email=_authors.get(
             "email",
             (
+                # FIXME: subprocess.CalledProcessError:
+                #   Command '['git', 'config', '--local', 'user.email']'
+                #   returned non-zero exit status 1.
                 subprocess.check_output(
                     ["git", "config", "--local", "user.email"]
                 )
