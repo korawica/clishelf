@@ -55,10 +55,6 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
 ## Features
 
-> [!NOTE]
-> I will migrate this code from **Python** to **Rust** for performance of CLI
-> (But I will observe for this again because this package does not have any issue with perf as well.)
-
 This Utility Package provide some CLI tools for handler development process.
 
 ```text
@@ -182,6 +178,17 @@ git:
   commit_prefix_group:
     - ["Features", ":tada:"]  # 🎉
 ```
+
+## Mini-Roadmap
+
+- I will implement use `rich` and `alive-progress` to this project for make
+  interface terminal prettier.
+- Dynamic emoji changing for support other platform such as GitLab.
+- (BIG) Remove `bump2version` package and implement the own bump function.
+
+> [!NOTE]
+> I will migrate this code from **Python** to **Rust** for performance of CLI
+> (But I will observe for this again because this package does not have any issue with perf as well.)
 
 ## License
 
