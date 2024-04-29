@@ -18,7 +18,7 @@ from typing import NoReturn, Optional
 
 import click
 
-from .emoji import get_emojis
+from .emoji import demojize, get_emojis
 from .settings import GitConf
 from .utils import (
     Level,
@@ -185,11 +185,19 @@ class CommitMsg:
             if prefix == cp.name:
                 emoji = f"{cp.emoji} "
         if emoji is None:
+            if (
+                load_config()
+                .get("git", {})
+                .get("commit_prefix_force_fix", False)
+            ):
+                _prefix: str = demojize(prefix)
+                if re.match(r"^(?P<emoji>:\w+:)", _prefix):
+                    return f"{_prefix}: {content}"
             raise ValueError(
                 f"The prefix of this commit message does not support, "
                 f"{prefix!r}."
             )
-        return f"{emoji}{prefix}: {content.strip()}"
+        return f"{emoji or ''}{prefix}: {content.strip()}"
 
 
 @dataclass(frozen=True)

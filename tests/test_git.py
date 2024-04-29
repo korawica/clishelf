@@ -58,9 +58,33 @@ class GitModelTestCase(unittest.TestCase):
         )
         self.assertEqual("Code Changes: :dart: start initial testing", str(msg))
 
+        msg = git.CommitMsg(
+            content="⬆️ deps: upgrade dependencies from main branch (#63)",
+            mtype=None,
+        )
+        self.assertEqual(
+            (
+                "Dependencies: :arrow_up: deps:  upgrade dependencies from "
+                "main branch (#63)"
+            ),
+            str(msg),
+        )
+
+    def test_commit_message_model_raise(self):
         with self.assertRaises(ValueError):
             git.CommitMsg(
                 content="demo: start initial testing",
+                mtype=None,
+            )
+
+    @patch("clishelf.utils.load_pyproject")
+    def test_commit_message_model_raise_without_conf(self, mock_load_pyproject):
+        with self.assertRaises(ValueError):
+            mock_load_pyproject.return_value = {
+                "tool": {"shelf": {"git": {"commit_prefix_force_fix": False}}},
+            }
+            git.CommitMsg(
+                content="⬆️ demo: start initial testing",
                 mtype=None,
             )
 

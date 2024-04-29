@@ -5,3 +5,4 @@ git:
   commit_prefix_group:
     - ["Features", ":tada:"]  # 🎉
     - ["Documents", ":book:"]  # 📖
+  commit_prefix_force_fix: true
