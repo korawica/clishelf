@@ -2,6 +2,31 @@
 
 ## Latest Changes
 
+## 0.2.1
+
+### :tada: Features
+
+- :dart: feat: add commit_prefix_force_fix config key for support force receive commit msg. (_2024-04-29_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update mini-roadmap on README file. (_2024-04-25_)
+- :page_facing_up: docs: add comment for profiling command raise error when does not set git config. (_2024-04-17_)
+- :page_facing_up: docs: update README file for noted about migration roadmap. (_2024-04-14_)
+- :page_facing_up: docs: update contributing and readme docs. (_2024-03-04_)
+- :page_facing_up: docs: update README file. (_2024-03-03_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: 📦 bump mypy from 1.9.0 to 1.10.0 (_2024-04-29_)
+- :construction: refactored: 📦 bump pytest from 8.1.1 to 8.2.0 (#66) (_2024-04-29_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.4.4 to 7.5.0 (_2024-04-29_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.8.12 to 1.8.14 (_2024-04-01_)
+- :construction: refactored: 📦 bump coverage[toml] from 7.4.3 to 7.4.4 (_2024-03-18_)
+- :construction: refactored: 📦 bump pytest from 8.1.0 to 8.1.1 (_2024-03-11_)
+- :construction: refactored: 📦 bump mypy from 1.8.0 to 1.9.0 (_2024-03-11_)
+- :construction: refactored: 📦 bump pytest from 8.0.2 to 8.1.0 (_2024-03-04_)
+
 ## 0.2.0
 
 > [!WARNING]
