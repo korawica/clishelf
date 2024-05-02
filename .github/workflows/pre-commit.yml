@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
-        description: Ref of pre-commit to test
+        description: Ref of the pre-commit
         required: false
         default: 'default'
 
@@ -46,10 +46,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv venv
           pip install -U pip
           pip install -U pre-commit
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+          echo "VIRTUAL_ENV=$GITHUB_WORKSPACE/.venv" >> $GITHUB_ENV
 
       - name: Set Rev name
         run: |

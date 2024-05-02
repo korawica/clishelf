@@ -35,14 +35,6 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-[project.optional-dependencies]
-dev = [
-    "pytest==8.2.0",
-    "coverage[toml]==7.5.0",
-    "mypy==1.10.0",
-
-]
-
 [project.urls]
 Homepage = "https://github.com/korawica/clishelf/"
 "Source Code" = "https://github.com/korawica/clishelf/"

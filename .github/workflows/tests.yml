@@ -45,21 +45,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache-dependency-path: pyproject.toml
 
-      # Cache your dependencies (i.e. all the stuff in your `pyproject.toml`).
       - uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.pythonLocation }}
-          key:  ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-test
+          path: .venv
+          key:  ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-test
 
-      # The `if` statement ensures this only runs on a cache miss.
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         if:  steps.cache.outputs.cache-hit != 'true'
         run: |
-          pip install --upgrade pip
-          pip install -e .[dev]
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv venv
+          uv pip install -U pip
+          uv pip install -e .
+          uv pip install pytest
+
+      - name: Use Python virtual environment
+        run: |
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+          echo "VIRTUAL_ENV=$GITHUB_WORKSPACE/.venv" >> $GITHUB_ENV
 
       - name: Check git is working
         run: |
@@ -68,11 +73,11 @@ jobs:
           git --version
           git config --list
 
-      - name: Test with pytest
+      - name: Test with Pytest
         run: |
           pytest -v
 
-      - name: Test shelf commands
+      - name: Test Shelf commands
         run: |
           echo "test: test prepare commit message" > test-pre-commit-hook.txt
           shelf git cm test-pre-commit-hook.txt --output-file --edit

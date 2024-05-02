@@ -27,30 +27,33 @@ jobs:
       - uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
+          path: .venv
+          key: ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-coverage
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          pip install -e .[dev]
-          pip install "coverage[toml]"
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv venv
+          uv pip install -U pip
+          uv pip install -e .
+          uv pip install pytest "coverage[toml]"
 
-      - run: mkdir coverage
+      - name: Use Python virtual environment
+        run: |
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+          echo "VIRTUAL_ENV=$GITHUB_WORKSPACE/.venv" >> $GITHUB_ENV
 
       - name: Run coverage and produce a .coverage file
         env:
           COVERAGE_FILE: coverage/.coverage.${{ runner.os }}-py${{ matrix.python-version }}
           CONTEXT: ${{ runner.os }}-py${{ matrix.python-version }}
         run: |
+          mkdir coverage
           coverage run -m pytest --disable-pytest-warnings
-
-      - name: Test list coverage file
-        run: ls -al
+          ls -al
 
       - name: Store coverage file
-        # FIXED: Revert version of upload-artifact from 4 to 3
-        # https://github.com/actions/upload-artifact/issues/478
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.python-version }}
@@ -63,13 +66,15 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     permissions:
-      # Gives the action the necessary permissions for publishing new
-      # comments in pull requests.
+      # NOTE:
+      #   Gives the action the necessary permissions for publishing new
+      #   comments in pull requests.
       pull-requests: write
 
-      # Gives the action the necessary permissions for pushing data to the
-      # python-coverage-comment-action branch, and for editing existing
-      # comments (to avoid publishing multiple comments in the same PR)
+      # NOTE:
+      #   Gives the action the necessary permissions for pushing data to the
+      #   python-coverage-comment-action branch, and for editing existing
+      #   comments (to avoid publishing multiple comments in the same PR)
       contents: write
     steps:
       - uses: actions/checkout@v4
@@ -108,20 +113,15 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      - run: |
-          ls -al
-          cat .gitignore
-
       - name: Store coverage HTML
-        # FIXED: Revert version of upload-artifact from 4 to 3
-        # https://github.com/actions/upload-artifact/issues/478
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html
           path: htmlcov
 
-  # This job does nothing and is only used for the branch protection
-  # docs: https://github.com/marketplace/actions/alls-green
+  # NOTE:
+  #   This job does nothing and is only used for the branch protection
+  #   (docs: https://github.com/marketplace/actions/alls-green)
   check:
     if: always()
     needs:
