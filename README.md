@@ -75,7 +75,7 @@ Commands:
   vs     The Versioning commands.
 ```
 
-**List of Features**:
+**List of Feature Groups**:
 
 * [Extended Git](#extended-git)
 * [Versioning](#versioning)
@@ -146,6 +146,8 @@ Commands:
 ```
 
 ## Configuration
+
+### Basic Setting
 
 `.clishelf.yaml`:
 
