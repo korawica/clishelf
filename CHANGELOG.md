@@ -2,6 +2,22 @@
 
 ## Latest Changes
 
+## 0.2.1.a0
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme for add more detail. (_2024-05-02_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: remove optional dependencies that does not necessary. (_2024-05-02_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: change build backend package from hatch to pdm. (_2024-05-02_)
+- :toolbox: build: add evironment on publish workflow. (_2024-05-02_)
+- :toolbox: build: change timezone of dependabot. (_2024-05-02_)
+
 ## 0.2.1
 
 ### :tada: Features
