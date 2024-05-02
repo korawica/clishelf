@@ -28,13 +28,6 @@ def cli():
 
 
 @cli.command()
-def echo():
-    """Echo Hello World"""
-    click.echo("Hello World", file=sys.stdout)
-    sys.exit(0)
-
-
-@cli.command()
 def conf():
     """Return config for clishelf commands"""
     click.echo(json.dumps(load_config(), indent=4))

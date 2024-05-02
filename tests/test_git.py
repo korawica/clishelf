@@ -145,8 +145,8 @@ class GitTestCase(unittest.TestCase):
             git.git_demojize("test 🔥 :fire:"),
         )
 
-    def test_validate_for_warning(self):
-        rs = git._validate_for_warning([":dart: feat: demo", ""])
+    def test_validate_commit_msg_warning(self):
+        rs = git._validate_commit_msg_warning([":dart: feat: demo", ""])
         self.assertListEqual(
             rs,
             [
@@ -159,7 +159,7 @@ class GitTestCase(unittest.TestCase):
             ],
         )
 
-        rs = git._validate_for_warning(
+        rs = git._validate_commit_msg_warning(
             [":dart: feat: demo test validate for warning.", "empty"]
         )
         self.assertListEqual(
@@ -173,7 +173,7 @@ class GitTestCase(unittest.TestCase):
             ],
         )
 
-        rs = git._validate_for_warning(
+        rs = git._validate_commit_msg_warning(
             [
                 ":dart: feat: demo test validate for warning.",
                 "",

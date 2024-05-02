@@ -58,7 +58,14 @@ def get_changelog(
     file: str,
     tags: Optional[list[str]] = None,
     refresh: bool = False,
-):
+) -> list[str]:
+    """Return the list of content in the changelog file.
+
+    :param file: A change log file path.
+    :type file: str
+    :param tags:
+    :param refresh:
+    """
     changes: list[str]
     if refresh or not Path(file).exists():
         from more_itertools import roundrobin
@@ -66,10 +73,9 @@ def get_changelog(
         _changes = ["# Changelogs", "## Latest Changes"]
         if tags:
             _changes.extend(f"## {t}" for t in tags)
-        changes = roundrobin(_changes, ([""] * (len(_changes) - 1)))
-    else:
-        with Path(file).open(mode="r", encoding="utf-8") as f_changes:
-            changes = f_changes.read().splitlines()
+        return roundrobin(_changes, ([""] * (len(_changes) - 1)))
+    with Path(file).open(mode="r", encoding="utf-8") as f_changes:
+        changes = f_changes.read().splitlines()
     return changes
 
 
@@ -106,19 +112,17 @@ def writer_changelog(
     *,
     is_dt: bool = False,
 ) -> None:
-    """Writer Changelog."""
+    """Writer Changelog that generate from Git Log command."""
     group_logs: TagGroupCommitLog = gen_group_commit_log(
         all_tags=all_tags,
         is_dt=is_dt,
     )
     tags: list[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
-
-    changes = get_changelog(file, tags=tags, refresh=refresh)
-    regex: str = BumpVerConf.get_regex(is_dt)
+    prev_change: list[str] = get_changelog(file, tags=tags, refresh=refresh)
 
     with Path(file).open(mode="w", encoding="utf-8", newline="") as writer:
         skip_line: bool = False
-        for line in changes:
+        for line in prev_change:
             if line.startswith("## Latest Changes"):
                 write_group_log(
                     writer,
@@ -126,7 +130,7 @@ def writer_changelog(
                     tag_value="Latest Changes",
                 )
                 skip_line = True
-            elif m := re.match(rf"^##\s({regex})", line):
+            elif m := re.match(rf"^##\s({BumpVerConf.get_regex(is_dt)})", line):
                 get_tag: str = m.group(1)
                 if get_tag in tags:  # pragma: no cover.
                     write_group_log(
@@ -175,7 +179,15 @@ def bump2version(
     *,
     is_dt: bool = False,
 ) -> None:  # pragma: no cover.
-    """Bump version process.
+    """Bump version processes that include:
+
+        - write the bump2version file config on the current path
+        - write changelog file if not ignore flag
+        - commit the above steps to git
+        - running bump2version cli for bump the version with the config
+        - reset the latest commit
+        - remove the bump2version file config
+        - commit all change to the latest commit the running from bump2version
 
     :param action
     :param file
@@ -186,6 +198,7 @@ def bump2version(
     :param is_dt: A datetime mode flag
     """
     # Start writing ``.bump2version.cfg`` file on current path.
+    click.echo("Start write '.bump2version.cfg' config file ...")
     write_bump_file(
         param={
             "changelog": changelog_file,
@@ -212,7 +225,7 @@ def bump2version(
         ],
         stdout=subprocess.DEVNULL,
     )
-    click.echo("Start write '.bump2version.cfg' config file ...")
+    click.echo("Running the `bump2version` cli with that config file ...")
     subprocess.run(
         [
             "bump2version",
@@ -234,8 +247,8 @@ def bump2version(
     )
 
     # Remove ``.bump2version.cfg`` file.
-    Path(".bumpversion.cfg").unlink(missing_ok=False)
     click.echo("Unlink '.bump2version.cfg' config file ...")
+    Path(".bumpversion.cfg").unlink(missing_ok=False)
 
     with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
         raw_msg = f_msg.read().splitlines()
@@ -255,6 +268,7 @@ def bump2version(
 
 
 def current_version(file: str, *, is_dt: bool = False) -> str:
+    """Return the current version."""
     with Path(file).open(encoding="utf-8") as f:
         if is_dt and (search_dt := re.search(BumpVerConf.regex_dt, f.read())):
             return search_dt[0]
@@ -337,7 +351,11 @@ def tag(push: bool) -> NoReturn:  # pragma: no cover.
 
 
 @cli_vs.command()
-@click.argument("action", type=click.STRING, required=1)
+@click.argument(
+    "action",
+    type=click.STRING,
+    required=1,
+)
 @click.option(
     "-f",
     "--file",
@@ -349,6 +367,12 @@ def tag(push: bool) -> NoReturn:  # pragma: no cover.
     "--changelog-file",
     type=click.Path(exists=True),
     help="A changelog file path that want to write new version.",
+)
+@click.option(
+    "-m",
+    "--mode",
+    type=click.STRING,
+    help="A bump version mode that should be normal or datetime.",
 )
 @click.option(
     "-v",
@@ -367,20 +391,14 @@ def tag(push: bool) -> NoReturn:  # pragma: no cover.
     is_flag=True,
     help="If True, it will pass --dry-run option to bump2version",
 )
-@click.option(
-    "-m",
-    "--mode",
-    type=click.STRING,
-    help="A bump version mode that should be normal or datetime.",
-)
 def bump(
     action: str,
-    file: Optional[str],
-    changelog_file: Optional[str],
-    mode: Optional[str],
-    version: int,
-    ignore_changelog: bool,
-    dry_run: bool,
+    file: str | None,
+    changelog_file: str | None,
+    mode: str | None,
+    version: int = 1,
+    ignore_changelog: bool = False,
+    dry_run: bool = False,
 ) -> NoReturn:  # pragma: no cover.
     """Bump Version with specific action.
 
@@ -389,9 +407,10 @@ def bump(
     \f
     :param action: A action path for bump the next version.
     :type action: str
-    :param file: Optional[str]
-    :param changelog_file: Optional[str]
-    :param mode: Optional[str]
+    :param file:
+    :type file: str | None
+    :param changelog_file: str | None
+    :param mode: str | None
     :param version: int
     :param ignore_changelog: Ignore the changelog file if set be True.
     :type ignore_changelog: boolean

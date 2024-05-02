@@ -30,6 +30,9 @@ from .utils import (
 cli_git: click.Command
 
 
+TupleStr = tuple[str, ...]
+
+
 def load_profile() -> Profile:
     """Load Profile function that return name and email."""
     from .utils import load_pyproject
@@ -82,10 +85,10 @@ class CommitPrefixGroup:
     name: str
     emoji: str
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__str__())
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -122,12 +125,12 @@ def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
 
 
 @lru_cache
-def get_git_emojis():
-    cm_prefix = tuple(p.emoji.strip(":") for p in get_commit_prefix())
+def get_git_emojis() -> list[str]:
+    cm_prefix: TupleStr = tuple(p.emoji.strip(":") for p in get_commit_prefix())
     return [emojis for emojis in get_emojis() if emojis["alias"] in cm_prefix]
 
 
-def git_demojize(msg: str):
+def git_demojize(msg: str) -> str:
     for emojis in get_git_emojis():
         if (emoji := emojis["emoji"]) in msg:
             msg = msg.replace(emoji, f':{emojis["alias"]}:')
@@ -142,10 +145,10 @@ class CommitMsg:
     mtype: InitVar[str] = field(default=None)
     body: str = field(default=None)  # Mark new-line with |
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.mtype}: {self.content}"
 
-    def __post_init__(self, content: str, mtype: Optional[str] = None) -> None:
+    def __post_init__(self, content: str, mtype: str | None = None) -> None:
         self.content: str = self.__prepare_msg(git_demojize(content))
         if mtype is None:  # pragma: no cover.
             self.mtype: str = self.__gen_msg_type()
@@ -160,7 +163,7 @@ class CommitMsg:
         return "Code Changes"
 
     @property
-    def mtype_icon(self):
+    def mtype_icon(self) -> str:
         return next(
             (
                 cpt.emoji
@@ -172,6 +175,14 @@ class CommitMsg:
 
     @staticmethod
     def __prepare_msg(content: str) -> str:
+        """Prepare string content that receive on post initialize step.
+
+        :param content: A string content that want to prepare.
+        :type content: str
+
+        :rtype: str
+        :return: A prepared string content that has an emoji prefix.
+        """
         if re.match(r"^(?P<emoji>:\w+:)", content):
             return content
 
@@ -184,6 +195,7 @@ class CommitMsg:
         for cp in get_commit_prefix():
             if prefix == cp.name:
                 emoji = f"{cp.emoji} "
+                break
         if emoji is None:
             if (
                 load_config()
@@ -223,16 +235,14 @@ class CommitLog:
         )
 
 
-def _validate_for_warning(
-    lines: list[str],
-) -> list[str]:
+def _validate_commit_msg_warning(lines: list[str]) -> list[str]:
     """Validate Commit message that should to fixed, but it does not impact to
     target repository.
 
     :param lines: A list of line from commit message.
-    :type lines: List[str]
+    :type lines: list[str]
 
-    :rtype: List[str]
+    :rtype: list[str]
     :return: A list of warning message.
     """
     subject: str = lines[0]
@@ -258,9 +268,7 @@ def _validate_for_warning(
     return rs
 
 
-def validate_commit_msg(
-    lines: list[str],
-) -> tuple[list[str], Level]:
+def validate_commit_msg(lines: list[str]) -> tuple[list[str], Level]:
     """Validate Commit message
 
     :param lines: A list of line from commit message.
@@ -275,7 +283,7 @@ def validate_commit_msg(
             Level.ERROR,
         )
 
-    rs: list[str] = _validate_for_warning(lines)
+    rs: list[str] = _validate_commit_msg_warning(lines)
     for line, msg in enumerate(lines[1:], start=2):
         # RULE 06: Wrap the body at 72 characters
         if len(msg) > 72:
@@ -350,17 +358,23 @@ def gen_commit_logs(
 
 
 def get_commit_logs(
-    tag: Optional[str] = None,
+    tag: str | None = None,
     *,
     all_logs: bool = False,
     excluded: Optional[list[str]] = None,
     is_dt: bool = False,
 ) -> Iterator[CommitLog]:  # pragma: no cover.
-    """Return a list of commit message logs."""
+    """Return a list of message that getting from commit log command.
+
+    :param tag: A tag name that want to filter the commit log get to HEAD.
+    :type tag: str | None(=None)
+    :param all_logs:
+    :param excluded:
+    :param is_dt: A datetime mode flag.
+    :type is_dt: bool(=False)
+    """
     from .settings import BumpVerConf
 
-    regex: str = BumpVerConf.get_regex(is_dt)
-    _exc: list[str] = excluded or [r"^Merge"]
     if tag:
         tag2head: str = f"{tag}..HEAD"
     elif all_logs or not (tag := get_latest_tag(default=False)):
@@ -369,7 +383,10 @@ def get_commit_logs(
         tag2head = f"{tag}..HEAD"
     refs: str = "HEAD"
     for logs in gen_commit_logs(tag2head):
-        if any((re.search(s, logs[1]) is not None) for s in _exc):
+        if any(
+            (re.search(s, logs[1]) is not None)
+            for s in (excluded or [r"^Merge"])
+        ):
             continue
         header: list[str] = logs[0].split("|")
         if ref_tag := [
@@ -377,7 +394,10 @@ def get_commit_logs(
             for ref in header[1].strip().split(",")
             if "tag: " in ref
         ]:
-            if search := re.search(rf"tag:\sv(?P<version>{regex})", ref_tag[0]):
+            if search := re.search(
+                rf"tag:\sv(?P<version>{BumpVerConf.get_regex(is_dt)})",
+                ref_tag[0],
+            ):
                 refs = search.groupdict()["version"]
         yield CommitLog(
             hash=header[0],
@@ -394,7 +414,7 @@ def get_commit_logs(
         )
 
 
-def merge2latest_commit(no_verify: bool = False):  # pragma: no cover.
+def merge2latest_commit(no_verify: bool = False) -> None:  # pragma: no cover.
     subprocess.run(
         ["git", "commit", "--amend", "--no-edit", "-a"]
         + (["--no-verify"] if no_verify else [])
@@ -446,14 +466,14 @@ def cli_git():
 
 
 @cli_git.command()
-def bn():
+def bn() -> None:
     """Show the Current Branch name."""
     click.echo(get_branch_name(), file=sys.stdout)
     sys.exit(0)
 
 
 @cli_git.command()
-def tg():
+def tg() -> None:
     """Show the Latest Tag if it exists, otherwise it will show version from
     about file.
     """
@@ -469,7 +489,7 @@ def log(
     tag: Optional[str],
     all_logs: bool,
     datetime_mode: bool,
-):  # pragma: no cover.
+) -> None:  # pragma: no cover.
     """Show the Commit Logs from the latest Tag to HEAD."""
     click.echo(
         "\n".join(
@@ -499,7 +519,7 @@ def cm(
     edit: bool,
     output_file: bool,
     prepare: bool,
-):  # pragma: no cover.
+) -> None:  # pragma: no cover.
     """Show the latest Commit message"""
     if not prepare:
         click.echo(
@@ -529,7 +549,7 @@ def cm(
 
 @cli_git.command()
 @click.option("-g", "--group", is_flag=True)
-def cm_msg(group: bool = False) -> NoReturn:  # pragma: no cover.
+def cm_msg(group: bool = False) -> None:  # pragma: no cover.
     """Return list of commit prefixes"""
     if group:
         for cm_prefix_g in get_commit_prefix_group():
@@ -544,7 +564,7 @@ def cm_msg(group: bool = False) -> NoReturn:  # pragma: no cover.
 
 @cli_git.command()
 @click.option("--verify", is_flag=True)
-def cm_prev(verify: bool) -> NoReturn:  # pragma: no cover.
+def cm_prev(verify: bool) -> None:  # pragma: no cover.
     """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
@@ -553,7 +573,7 @@ def cm_prev(verify: bool) -> NoReturn:  # pragma: no cover.
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 @click.option("-n", "--number", type=click.INT, default=1)
-def cm_revert(force: bool, number: int):  # pragma: no cover.
+def cm_revert(force: bool, number: int) -> None:  # pragma: no cover.
     """Revert the latest Commit on the Local repository."""
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
@@ -591,7 +611,7 @@ def mg(
     theirs: bool = False,
     ours: bool = False,
     squash: bool = False,
-) -> NoReturn:  # pragma: no cover.
+) -> None:  # pragma: no cover.
     """Merge change from another branch with strategy, `theirs` or `ours`.
 
     BRANCH is a name of branch that you want to merge with current branch.
@@ -655,7 +675,7 @@ def bn_clear() -> NoReturn:  # pragma: no cover.
     is_flag=True,
     help="If True, it will auto push to remote",
 )
-def tg_bump(push: bool = False) -> NoReturn:  # pragma: no cover.
+def tg_bump(push: bool = False) -> None:  # pragma: no cover.
     """Create Tag from current version after bumping"""
     latest_tag: str = get_latest_tag(default=False)
     subprocess.run(
@@ -673,7 +693,7 @@ def tg_bump(push: bool = False) -> NoReturn:  # pragma: no cover.
 
 
 @cli_git.command()
-def tg_clear() -> NoReturn:  # pragma: no cover.
+def tg_clear() -> None:  # pragma: no cover.
     """Clear Local Tags that sync from the Remote repository."""
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],
@@ -693,7 +713,7 @@ def tg_clear() -> NoReturn:  # pragma: no cover.
     is_flag=True,
     help="If True, it will set fetch handle prune tag.",
 )
-def init(store: bool, prune_tag: bool) -> NoReturn:  # pragma: no cover.
+def init(store: bool, prune_tag: bool) -> None:  # pragma: no cover.
     """Initialize GIT config on local"""
     if not Path(".git").exists():
         click.echo("Start initialize git on current path ...")
@@ -724,14 +744,14 @@ def init(store: bool, prune_tag: bool) -> NoReturn:  # pragma: no cover.
 
 
 @cli_git.command()
-def pf() -> NoReturn:  # pragma: no cover.
+def pf() -> None:  # pragma: no cover.
     """Show Profile object that contain Name and Email of Author"""
     click.echo(load_profile(), file=sys.stdout)
     sys.exit(0)
 
 
 @cli_git.command()
-def df() -> NoReturn:  # pragma: no cover.
+def df() -> None:  # pragma: no cover.
     """Show changed files from previous commit to HEAD"""
     # NOTE: We can use `git show --name-only HEAD~1`, but it got commit message.
     subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"])

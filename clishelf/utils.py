@@ -14,11 +14,6 @@ import tomli
 import yaml
 
 
-def pwd() -> Path:
-    """Return current path."""
-    return Path(".")
-
-
 def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
     """Load Configuration from pyproject.toml file."""
     f: str = file or "pyproject.toml"
@@ -41,16 +36,6 @@ def load_config() -> dict[str, Any]:
         **data,
         **load_pyproject().get("tool", {}).get("shelf", {}),
     }
-
-
-def ls(path: str):
-    """Generate path at the current position."""
-    yield from pwd().glob(path)  # pragma: no cover.
-
-
-def readline(path: str) -> str:
-    """Return string information of file."""
-    return (pwd() / Path(path)).read_text(encoding="utf-8")  # pragma: no cover.
 
 
 class Bcolors(str, Enum):

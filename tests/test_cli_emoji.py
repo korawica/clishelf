@@ -9,6 +9,7 @@ import clishelf.emoji as emoji
 
 
 def side_effect_func(*args, **kwargs):
+    print("----------", args, kwargs)
     if "emoji.py" in args[0]:
         _ = kwargs
         return pathlib.Path(__file__)
@@ -19,12 +20,6 @@ class CLIEmojiTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.maxDiff = None
         self.runner = CliRunner()
-
-    def test_ls_emoji(self):
-        result = self.runner.invoke(emoji.ls)
-        respec = [str(info) for info in emoji.get_emojis()]
-        self.assertListEqual(respec, result.output.rstrip("\n").split("\n"))
-        self.assertEqual(0, result.exit_code)
 
     @patch("clishelf.emoji.Path", side_effect=side_effect_func)
     @patch("clishelf.emoji.datetime")

@@ -15,9 +15,9 @@
   * [Emoji](#emoji)
 * [Configuration](#configuration)
 
-This is the **Utility CLI Tools and Hooks on the Shelf** for my Python packages
-that help me to make Versioning, Abbreviate of Git CLI, and Wrapped Dev Python packages
-(`coverage`, `pre-commit`) on my any Python package repositories.
+This is the **CLI Shelf Tools and Hooks** for my Python packages that help me
+to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Python packages
+(`more-itertools`, `pre-commit`, ...) on my any Python package repositories.
 
 This project was created because I do not want to hard code set up all of them
 every time when I start create a new Python package :tired_face:. I provide some
@@ -69,7 +69,6 @@ Commands:
   conf   Return config for clishelf commands
   cove   Run the coverage command.
   dep    List of Dependencies that was set in pyproject.toml file.
-  echo   Echo Hello World
   emoji  The Emoji commands
   git    The Extended Git commands
   vs     The Versioning commands.
@@ -142,7 +141,6 @@ Options:
 
 Commands:
   fetch  Refresh emoji metadata file on assets folder.
-  ls     List all emojis from metadata file.
 ```
 
 ## Configuration

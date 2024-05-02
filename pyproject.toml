@@ -1,6 +1,6 @@
 [project]
 name = "clishelf"
-description = "Utility CLI Tools that reusable for develop any Python Package"
+description = "CLI Shelf Tools and Hooks for My Python Packages"
 readme = "README.md"
 requires-python = ">=3.9.13"
 dynamic = ["version"]
@@ -24,7 +24,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "requests==2.31.0",
     "more-itertools==10.2.0",
     "click==8.1.7,<9.0.0",
     "tomli==2.0.1",
