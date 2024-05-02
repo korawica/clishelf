@@ -2,7 +2,7 @@
 
 ## Latest Changes
 
-## 0.2.1.a0
+## 0.2.2
 
 ### :book: Documents
 
@@ -15,7 +15,7 @@
 ### :package: Build & Workflow
 
 - :toolbox: build: change build backend package from hatch to pdm. (_2024-05-02_)
-- :toolbox: build: add evironment on publish workflow. (_2024-05-02_)
+- :toolbox: build: add environment on publish workflow. (_2024-05-02_)
 - :toolbox: build: change timezone of dependabot. (_2024-05-02_)
 
 ## 0.2.1
