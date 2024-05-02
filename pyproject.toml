@@ -3,6 +3,7 @@ name = "clishelf"
 description = "Utility CLI Tools that reusable for develop any Python Package"
 readme = "README.md"
 requires-python = ">=3.9.13"
+dynamic = ["version"]
 license = "MIT"
 keywords = [
     'utility',
@@ -33,15 +34,14 @@ dependencies = [
     #   docs: https://github.com/callowayproject/bump-my-version
     "bump2version==1.0.1",
 ]
-dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://github.com/korawica/clishelf/"
 "Source Code" = "https://github.com/korawica/clishelf/"
 
 [build-system]
-requires = ["hatchling>=1.8.0"]
-build-backend = "hatchling.build"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project.scripts]
 shelf = "clishelf.__main__:main"
@@ -69,20 +69,16 @@ omit = [
 ]
 relative_files = true
 
-[tool.hatch.version]
-scheme = "standard"
-source = "code"
-path = "clishelf/__about__.py"
+[tool.pdm]
+version = { source = "file", path = "clishelf/__about__.py" }
+distribution = true
 
-[tool.hatch.build.targets.sdist]
-exclude = [
+[tool.pdm.build]
+excludes = [
     "/.github",
-    "/docs",
     "/.pre-commit-config.yaml",
+    "/.pre-commit-hooks.yaml",
 ]
-
-[tool.hatch.build.targets.wheel]
-packages = ["clishelf"]
 
 [tool.coverage.report]
 exclude_lines = [
