@@ -28,7 +28,7 @@ jobs:
         id: cache
         with:
           path: .venv
-          key: ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-coverage
+          key: ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-coverage-01
 
       - name: Install Python Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -37,7 +37,7 @@ jobs:
           uv venv
           uv pip install -U pip
           uv pip install -e .
-          uv pip install pytest "coverage[toml]"
+          uv pip install requests pytest "coverage[toml]"
 
       - name: Use Python virtual environment
         run: |
