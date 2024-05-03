@@ -164,3 +164,6 @@ cython_debug/
 
 # ruff
 .ruff_cache/
+
+# PDM builder
+.pdm-build/
