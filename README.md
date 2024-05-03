@@ -62,9 +62,6 @@ Usage: shelf.exe [OPTIONS] COMMAND [ARGS]...
 
   The Main Shelf commands.
 
-Options:
-  --help  Show this message and exit.
-
 Commands:
   conf   Return config for clishelf commands
   cove   Run the coverage command.
@@ -88,9 +85,6 @@ This is abbreviation of Git CLI that warped with the Python subprocess package.
 Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
 
   The Extended Git commands
-
-Options:
-  --help  Show this message and exit.
 
 Commands:
   bn           Show the Current Branch name.
@@ -116,9 +110,6 @@ Usage: shelf.exe vs [OPTIONS] COMMAND [ARGS]...
 
   The Versioning commands.
 
-Options:
-  --help  Show this message and exit.
-
 Commands:
   bump       Bump Version with specific action.
   changelog  Make Changelogs file
@@ -135,9 +126,6 @@ This is the emoji CLI that getting data from GitHub dataset.
 Usage: shelf.exe emoji [OPTIONS] COMMAND [ARGS]...
 
   The Emoji commands
-
-Options:
-  --help  Show this message and exit.
 
 Commands:
   fetch  Refresh emoji metadata file on assets folder.
