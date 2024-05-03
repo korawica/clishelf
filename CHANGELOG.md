@@ -2,6 +2,17 @@
 
 ## Latest Changes
 
+## 0.2.3
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme file that remove help command. (_2024-05-03_)
+- :page_facing_up: docs: update description of this project for pypi. (_2024-05-02_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: add gitignore for pdm and add requests package on test workflow. (_2024-05-03_)
+
 ## 0.2.2
 
 ### :book: Documents
