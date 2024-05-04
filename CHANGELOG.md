@@ -2,6 +2,18 @@
 
 ## Latest Changes
 
+## 0.2.4
+
+### :bug: Fix Bugs
+
+- :gear: fixed: remove dynamic tag from __about__ to fix value. (_2024-05-04_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: chnage url for testpypi publish workflow. (_2024-05-04_)
+- :toolbox: build: add tags regex for coverage workflow. (_2024-05-03_)
+- :toolbox: build: add request package on coverage workflow. (_2024-05-03_)
+
 ## 0.2.3
 
 ### :book: Documents
