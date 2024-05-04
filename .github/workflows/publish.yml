@@ -77,7 +77,7 @@ jobs:
     if: github.event.action == 'prereleased' && startsWith(github.ref, 'refs/tags')
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/fmtutil/
+      url: https://test.pypi.org/p/clishelf/
     needs:
       - release-build
     permissions:
