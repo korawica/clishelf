@@ -112,12 +112,8 @@ class GitTestCase(unittest.TestCase):
         "clishelf.git.subprocess.check_output",
         side_effect=subprocess.CalledProcessError(1, "git"),
     )
-    @patch("clishelf.__about__.__version__", "0.0.9")
     def test_get_latest_tag_raise(self, mock):
         # Start Test after mock subprocess.
         result = git.get_latest_tag()
         self.assertTrue(mock.called)
-        self.assertEqual("v0.0.9", result)
-
-        with self.assertRaises(RuntimeError):
-            git.get_latest_tag(default=False)
+        self.assertEqual("v0.0.0", result)

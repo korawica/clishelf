@@ -308,10 +308,8 @@ def get_branch_name() -> str:
     )
 
 
-def get_latest_tag(default: bool = True) -> str:
-    """Return the latest tag if it exists, otherwise it will return the
-    version from ``.__about__`` file.
-    """
+def get_latest_tag(default: bool = True) -> str | None:
+    """Return the latest tag if it exists, otherwise it will v0.0.0 tag."""
     try:
         return (
             subprocess.check_output(
@@ -321,14 +319,8 @@ def get_latest_tag(default: bool = True) -> str:
             .decode(sys.stdout.encoding)
             .strip()
         )
-    except subprocess.CalledProcessError as err:
-        if default:
-            from .__about__ import __version__
-
-            return f"v{__version__}"
-        raise RuntimeError(
-            "Can not extract the latest version from this project"
-        ) from err
+    except subprocess.CalledProcessError:
+        return "v0.0.0" if default else None
 
 
 def gen_commit_logs(
@@ -679,16 +671,16 @@ def tg_bump(push: bool = False) -> None:  # pragma: no cover.
     """Create Tag from current version after bumping"""
     latest_tag: str = get_latest_tag(default=False)
     subprocess.run(
-        ["git", "tag", "-d", f"v{latest_tag}"],
+        ["git", "tag", "-d", f"{latest_tag}"],
         stderr=subprocess.DEVNULL,
     )
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],
         stdout=subprocess.DEVNULL,
     )
-    subprocess.run(["git", "tag", f"v{latest_tag}"])
+    subprocess.run(["git", "tag", f"{latest_tag}"])
     if push:
-        subprocess.run(["git", "push", f"v{latest_tag}", "--tags"])
+        subprocess.run(["git", "push", f"{latest_tag}", "--tags"])
     sys.exit(0)
 
 
