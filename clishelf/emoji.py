@@ -35,7 +35,6 @@ def get_emojis() -> Iterator[str]:
 
 
 def demojize(msg: str) -> str:
-    print(list(get_emojis()))
     for emojis in get_emojis():
         if (emoji := emojis["emoji"]) in msg:
             msg = msg.replace(emoji, f':{emojis["alias"]}:')
