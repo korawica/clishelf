@@ -49,6 +49,13 @@ def conf():
 )
 def cove(module: str, html: bool):
     """Run the coverage command."""
+    try:
+        _ = __import__("coverage")
+    except ImportError:
+        raise ImportError(  # no cove
+            "Please install `coverage` before using the cove cmd"
+        ) from None
+
     subprocess.run(["coverage", "run", "--m", module, "tests"])
     subprocess.run(
         ["coverage", "combine"],
