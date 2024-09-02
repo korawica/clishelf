@@ -2,8 +2,11 @@
 
 [![test](https://github.com/korawica/clishelf/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/korawica/clishelf/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/korawica/clishelf/graph/badge.svg?token=7PF8JN2EIG)](https://codecov.io/gh/korawica/clishelf)
+[![pypi version](https://img.shields.io/pypi/v/clishelf)](https://pypi.org/project/clishelf/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/clishelf?logo=pypi)](https://pypi.org/project/clishelf/)
 [![size](https://img.shields.io/github/languages/code-size/korawica/clishelf)](https://github.com/korawica/clishelf)
+[![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-observe)](https://github.com/ddeutils/ddeutil-workflow/blob/main/LICENSE)
 
 **Table of Contents**:
 
@@ -15,9 +18,10 @@
   * [Emoji](#emoji)
 * [Configuration](#configuration)
 
-This is the **CLI Shelf Tools and Hooks** for my Python packages that help me
-to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Python packages
-(`more-itertools`, `pre-commit`, ...) on my any Python package repositories.
+This is the **CLI on my shelf (Tools and Hooks) for any my Python packages**
+that help me to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Python
+packages (`more-itertools`, `pre-commit`, ...) on my any Python package
+repositories.
 
 This project was created because I do not want to hard code set up all of them
 every time when I start create a new Python package :tired_face:. I provide some
