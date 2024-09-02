@@ -55,8 +55,9 @@ jobs:
           CONTEXT: ${{ runner.os }}-py${{ matrix.python-version }}
         run: |
           mkdir coverage
+          echo $COVERAGE_FILE
           coverage run -m pytest --disable-pytest-warnings
-          ls -al
+          ls -al ./coverage
 
       - name: Store coverage file
         uses: actions/upload-artifact@v4
