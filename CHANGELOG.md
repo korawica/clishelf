@@ -2,6 +2,24 @@
 
 ## Latest Changes
 
+## 0.2.5
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme file. (_2024-09-02_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.9.0 to 1.10.0 (_2024-09-01_)
+- :construction: refactored: 📦 bump more-itertools from 10.3.0 to 10.4.0 (_2024-08-12_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.8.14 to 1.9.0 (_2024-07-01_)
+- :construction: refactored: 📦 bump more-itertools from 10.2.0 to 10.3.0 (_2024-06-17_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: add try-except for cove command. (_2024-06-09_)
+- :gear: fixed: remove print statement. (_2024-05-05_)
+
 ## 0.2.4
 
 ### :bug: Fix Bugs
