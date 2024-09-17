@@ -44,6 +44,7 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v5
+        id: setup_python
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
@@ -52,7 +53,7 @@ jobs:
         id: cache
         with:
           path: .venv
-          key:  ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-test-02
+          key:  ${{ runner.os }}-python-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}-test
 
       - name: Install Python Dependencies
         if:  steps.cache.outputs.cache-hit != 'true'
