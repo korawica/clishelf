@@ -417,6 +417,11 @@ def bump(
     :param dry_run: Dry run the bumpversion command if set be True.
     :type dry_run: boolean
     """
+    click.echo("Be noted that:")
+    click.echo("  * `major`:  means breaking changes and removed deprecations")
+    click.echo("  * `minor`:  new features, sometimes automatic migrations")
+    click.echo("  * `patch`:  bug fixes")
+
     vs_conf: dict[str, Any] = load_config().get("version", {})
     if not file:
         file: str = vs_conf.get("version", None) or (

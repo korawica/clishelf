@@ -8,16 +8,6 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-observe)](https://github.com/ddeutils/ddeutil-workflow/blob/main/LICENSE)
 
-**Table of Contents**:
-
-* [Installation](#installation)
-* [Pre-Commit Hook](#pre-commit-hook)
-* [Features](#features)
-  * [Extended Git](#extended-git)
-  * [Versioning](#versioning)
-  * [Emoji](#emoji)
-* [Configuration](#configuration)
-
 This is the **CLI on my shelf (Tools and Hooks) for any my Python packages**
 that help me to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Python
 packages (`more-itertools`, `pre-commit`, ...) on my any Python package
@@ -25,10 +15,9 @@ repositories.
 
 This project was created because I do not want to hard code set up all of them
 every time when I start create a new Python package :tired_face:. I provide some
-reusable CLIs that was implemented from the [`Click`](https://github.com/pallets/click/)
-package.
+reusable CLIs that was implemented from [`Click`](https://github.com/pallets/click/).
 
-## Installation
+## :round_pushpin: Installation
 
 ```shell
 pip install clishelf
@@ -40,12 +29,12 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                            |
-|------------------|-----------------------------------------|
-| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.5"` |
-| `>=3.9.13,<3.13` | `pip install -U clishelf`               |
+| Python Version   | Installation                            | Support Fixed Bug  |
+|------------------|-----------------------------------------|--------------------|
+| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.5"` | :x:                |
+| `>=3.9.13,<3.13` | `pip install -U clishelf`               | :heavy_check_mark: |
 
-## Pre-Commit Hook
+## :rocket: Pre-Commit Hook
 
 See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
@@ -57,7 +46,7 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
       stages: [commit-msg]
 ```
 
-## Features
+## :tada: Features
 
 This Utility Package provide some CLI tools for handler development process.
 
@@ -74,12 +63,6 @@ Commands:
   git    The Extended Git commands
   vs     The Versioning commands.
 ```
-
-**List of Feature Groups**:
-
-* [Extended Git](#extended-git)
-* [Versioning](#versioning)
-* [Emoji](#emoji)
 
 ### Extended Git
 
@@ -135,7 +118,7 @@ Commands:
   fetch  Refresh emoji metadata file on assets folder.
 ```
 
-## Configuration
+## :cookie: Configuration
 
 ### Basic Setting
 
@@ -171,7 +154,7 @@ git:
     - ["Features", ":tada:"]  # 🎉
 ```
 
-## Mini-Roadmap
+## :dart: Mini-Roadmap
 
 - I will implement use `rich` and `alive-progress` to this project for make
   interface terminal prettier.
@@ -181,7 +164,3 @@ git:
 > [!NOTE]
 > I will migrate this code from **Python** to **Rust** for performance of CLI
 > (But I will observe for this again because this package does not have any issue with perf as well.)
-
-## License
-
-This project was licensed under the terms of the [MIT license](LICENSE).
