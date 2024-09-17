@@ -2,6 +2,25 @@
 
 ## Latest Changes
 
+## 0.2.6
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme and add noted on version cli. (_2024-09-17_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: 📦 bump more-itertools from 10.4.0 to 10.5.0 (_2024-09-09_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: add option include-hidden-files on coverage workflow. (_2024-09-02_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: add test matrix for python version 3.13. (_2024-09-17_)
+- :toolbox: build: add debug command on coverage workflow. (_2024-09-02_)
+
 ## 0.2.5
 
 ### :book: Documents
