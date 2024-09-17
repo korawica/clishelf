@@ -36,6 +36,7 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -43,10 +44,12 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v5
+        id: setup_python
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
 
-      - name: Install Python Dependencies
+      - name: Install Python Dependencies without Cache
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           uv venv
@@ -76,11 +79,10 @@ jobs:
                   stages: [commit-msg]
           EOF
 
+      - name: Debug pre-commit file & List all files
+        run: |
           echo "cat .pre-commit-config.yaml"
           cat .pre-commit-config.yaml
-
-      - name: List all files
-        run: |
           ls -lA
 
       - name: Start testing Pre-commit hook
