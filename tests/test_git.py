@@ -149,15 +149,6 @@ class GitTestCase(unittest.TestCase):
         "clishelf.git.subprocess.check_output",
         side_effect=side_effect_bn_tg_func,
     )
-    def test_get_branch_name(self, mock):
-        result = git.get_branch_name()
-        self.assertTrue(mock.called)
-        self.assertEqual("0.1.2", result)
-
-    @patch(
-        "clishelf.git.subprocess.check_output",
-        side_effect=side_effect_bn_tg_func,
-    )
     def test_get_latest_tag(self, mock):
         result = git.get_latest_tag()
         self.assertTrue(mock.called)

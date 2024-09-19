@@ -302,15 +302,6 @@ def validate_commit_msg(lines: list[str]) -> tuple[list[str], Level]:
     return rs, Level.WARNING
 
 
-def get_branch_name() -> str:
-    """Return current branch name."""
-    return (
-        subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
-        .decode(sys.stdout.encoding)
-        .strip()
-    )
-
-
 def get_latest_tag(default: bool = True) -> str | None:
     """Return the latest tag if it exists, otherwise it will v0.0.0 tag."""
     try:
@@ -459,30 +450,6 @@ def get_latest_commit(
 def cli_git():
     """The Extended Git commands"""
     pass  # pragma: no cover.
-
-
-@cli_git.command()
-@click.option("-t", "--tag", type=click.STRING, default=None)
-@click.option("-a", "--all-logs", is_flag=True)
-@click.option("-d", "--datetime-mode", is_flag=True)
-def log(
-    tag: Optional[str],
-    all_logs: bool,
-    datetime_mode: bool,
-) -> None:  # pragma: no cover.
-    """Show the Commit Logs from the latest Tag to HEAD."""
-    click.echo(
-        "\n".join(
-            str(x)
-            for x in get_commit_logs(
-                tag=tag,
-                all_logs=all_logs,
-                is_dt=datetime_mode,
-            )
-        ),
-        file=sys.stdout,
-    )
-    sys.exit(0)
 
 
 @cli_git.command()
@@ -687,47 +654,6 @@ def tg_clear() -> None:  # pragma: no cover.
         ["git", "fetch", "--prune", "--prune-tags"],
         stdout=subprocess.DEVNULL,
     )
-    sys.exit(0)
-
-
-@cli_git.command()
-@click.option(
-    "--store",
-    is_flag=True,
-    help="If True, it will set store credential.",
-)
-@click.option(
-    "--prune-tag",
-    is_flag=True,
-    help="If True, it will set fetch handle prune tag.",
-)
-def init(store: bool, prune_tag: bool) -> None:  # pragma: no cover.
-    """Initialize GIT config on local"""
-    if not Path(".git").exists():
-        click.echo("Start initialize git on current path ...")
-        subprocess.run(["git", "init"], stdout=subprocess.DEVNULL)
-    profile: Profile = load_profile()
-    subprocess.run(
-        ["git", "config", "--local", "user.name", f'"{profile.name}"'],
-        stdout=subprocess.DEVNULL,
-    )
-    subprocess.run(
-        ["git", "config", "--local", "user.email", f'"{profile.email}"'],
-        stdout=subprocess.DEVNULL,
-    )
-    st = "store" if store else '""'
-    subprocess.run(
-        ["git", "config", "--local", "credential.helper", st],
-        stdout=subprocess.DEVNULL,
-    )
-    if prune_tag:
-        # If you only want to prune tags when fetching from a specific remote.
-        # ["git", "config", "remote.origin.pruneTags", "true"]
-        subprocess.run(
-            # Or, able to use ``git fetch -p -P``.
-            ["git", "config", "--local", "fetch.pruneTags", "true"],
-            stdout=subprocess.DEVNULL,
-        )
     sys.exit(0)
 
 

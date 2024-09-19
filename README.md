@@ -75,11 +75,9 @@ Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
 
 Commands:
   bn-clear     Clear Local Branches that sync from the Remote repository.
-  cm           Show the latest Commit message
+  cm           Prepare and show the latest commit message with the commit...
   cm-prev      Commit changes to the Previous Commit with same message.
   cm-revert    Revert the latest Commit on the Local repository.
-  init         Initialize GIT config on local
-  log          Show the Commit Logs from the latest Tag to HEAD.
   mg           Merge change from another branch with strategy, `theirs`...
   tg-clear     Clear Local Tags that sync from the Remote repository.
 ```

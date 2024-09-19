@@ -2,7 +2,7 @@ import datetime as dt
 import subprocess
 import sys
 import unittest
-from unittest.mock import DEFAULT, MagicMock, patch
+from unittest.mock import DEFAULT, patch
 
 import clishelf.git as git
 
@@ -42,43 +42,6 @@ class GitTestCase(unittest.TestCase):
             ":test_tube: test: test commit message",
             commit_log.msg.content,
         )
-
-    @patch("clishelf.git.subprocess.check_output")
-    def test_get_branch_name(self, mock):
-        mock_stdout = MagicMock()
-        mock_stdout.configure_mock(**{"decode.return_value": "0.0.1"})
-        mock.return_value = mock_stdout
-
-        # Start Test after mock subprocess.
-        result = git.get_branch_name()
-        self.assertEqual("0.0.1", result)
-
-    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_get_branch_name_with_side_effect(self, mock):
-        # Start Test after mock subprocess.
-        result = git.get_branch_name()
-        self.assertTrue(mock.called)
-        self.assertEqual("0.1.2", result)
-
-    @patch(
-        "clishelf.git.subprocess.check_output",
-        side_effect=subprocess.CalledProcessError(
-            1,
-            cmd="git",
-            stderr="Error message from command git.",
-        ),
-    )
-    def test_get_branch_name_raise(self, mock):
-        with self.assertRaises(subprocess.CalledProcessError) as exc:
-            git.get_branch_name()
-
-        # Start Test after mock subprocess.
-        self.assertTrue(mock.called)
-        self.assertEqual(
-            "Error message from command git.",
-            str(exc.exception.stderr),
-        )
-        self.assertEqual("1", str(exc.exception.returncode))
 
     @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
     def test_get_latest_tag(self, mock):
