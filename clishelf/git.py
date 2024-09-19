@@ -28,8 +28,6 @@ from .utils import (
 )
 
 cli_git: click.Command
-
-
 TupleStr = tuple[str, ...]
 
 
@@ -423,6 +421,7 @@ def get_latest_commit(
     edit: bool = False,
     output_file: bool = False,
 ) -> list[str]:  # pragma: no cover.
+    """Return a list of line that created on commit message file."""
     if file:
         with Path(file).open(encoding="utf-8") as f_msg:
             raw_msg = f_msg.read().splitlines()
@@ -501,7 +500,15 @@ def cm(
     output_file: bool,
     prepare: bool,
 ) -> None:  # pragma: no cover.
-    """Show the latest Commit message"""
+    """Prepare and show the latest commit message with the commit message
+    general rules.
+
+    \f
+    :param file:
+    :param edit:
+    :param output_file:
+    :param prepare:
+    """
     if not prepare:
         click.echo(
             make_color(
@@ -598,10 +605,10 @@ def mg(
     BRANCH is a name of branch that you want to merge with current branch.
 
     \f
-    :param branch:
-    :param theirs:
-    :param ours:
-    :param squash:
+    :param branch: A name of branch that you want to merge with current branch.
+    :param theirs: If True, it will use `their` strategy if it has conflict.
+    :param ours: If True, it will use `ours` strategy if it has conflict.
+    :param squash: If True, it will use `squash` merge option.
     """
     if theirs and ours:
         raise ValueError("The strategy flag should not True together.")

@@ -84,6 +84,7 @@ def write_group_log(
     group_logs: GroupCommitLog,
     tag_value: str,
 ) -> None:
+    """Write a group log."""
     from .git import get_commit_prefix_group
 
     linesep: str = os.linesep
@@ -417,11 +418,6 @@ def bump(
     :param dry_run: Dry run the bumpversion command if set be True.
     :type dry_run: boolean
     """
-    click.echo("Be noted that:")
-    click.echo("  * `major`:  means breaking changes and removed deprecations")
-    click.echo("  * `minor`:  new features, sometimes automatic migrations")
-    click.echo("  * `patch`:  bug fixes")
-
     vs_conf: dict[str, Any] = load_config().get("version", {})
     if not file:
         file: str = vs_conf.get("version", None) or (
@@ -431,11 +427,21 @@ def bump(
         changelog_file: str = vs_conf.get("changelog", None) or "CHANGELOG.md"
     if not mode:
         mode: str = vs_conf.get("mode", "normal")
+
     assert mode in (
         "datetime",
         "normal",
     ), "`mode` should be normal or datetime only"
 
+    if mode == "normal":
+        click.echo("Be noted that:")
+        click.echo(
+            "  * `major`:  means breaking changes and removed deprecations"
+        )
+        click.echo("  * `minor`:  new features, sometimes automatic migrations")
+        click.echo("  * `patch`:  bug fixes")
+
+    # NOTE: Start bumping version.
     bump2version(
         action,
         file,
