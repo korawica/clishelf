@@ -2,6 +2,30 @@
 
 ## Latest Changes
 
+## 0.2.7
+
+### :tada: Features
+
+- :dart: feat: add emojis args on the emoji module for dynamic passing emoji data. (_2024-09-19_)
+- :dart: feat: add get git local config function. (_2024-09-19_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update doc-string on cli command. (_2024-09-19_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: remove df and pf cli command. (_2024-09-19_)
+- :construction: refactored: remove bn and tg cli command. (_2024-09-19_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: update id on python setup step. (_2024-09-17_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: add python version 3.13 on pre-commit workflow. (_2024-09-17_)
+
 ## 0.2.6
 
 ### :book: Documents
