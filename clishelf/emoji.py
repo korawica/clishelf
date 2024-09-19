@@ -28,7 +28,7 @@ GH_EMOJI_URL: str = (
 )
 
 
-def get_emojis() -> Iterator[str]:
+def get_emojis() -> Iterator[dict[str, str]]:
     """Get the iterator of the emoji data that already loading to assets path.
     This function use iterator for returning step because I do not want to keep
     all emoji data in memory.
@@ -40,27 +40,44 @@ def get_emojis() -> Iterator[str]:
         yield from iter(json.load(f))
 
 
-def demojize(msg: str) -> str:
+def demojize(
+    msg: str,
+    *,
+    emojis: Iterator[dict[str, str]] | list[dict[str, str]] | None = None,
+) -> str:
     """Replace an unicode emoji to an emoji string in a message.
 
     :param msg: A message string that want to search emoji string.
+    :param emojis: A iterator or list of mapping of emoji values.
+
     :rtype: str
     """
-    for emojis in get_emojis():
-        if (emoji := emojis["emoji"]) in msg:
-            msg = msg.replace(emoji, f':{emojis["alias"]}:')
+    emojis: Iterator[dict[str, str]] = (
+        get_emojis() if emojis is None else emojis
+    )
+    for emoji in emojis:
+        if (e := emoji["emoji"]) in msg:
+            msg = msg.replace(e, f':{emoji["alias"]}:')
     return msg
 
 
-def emojize(msg: str) -> str:
+def emojize(
+    msg: str,
+    *,
+    emojis: Iterator[dict[str, str]] | list[dict[str, str]] | None = None,
+) -> str:
     """Replace an emoji string to an unicode emoji in a message.
 
     :param msg: A message string that want to search unicode emoji.
+    :param emojis: A iterator or list of mapping of emoji values.
     :rtype: str
     """
-    for emojis in get_emojis():
-        if (alias := f':{emojis["alias"]}:') in msg:
-            msg = msg.replace(alias, emojis["emoji"])
+    emojis: Iterator[dict[str, str]] = (
+        get_emojis() if emojis is None else emojis
+    )
+    for emoji in emojis:
+        if (alias := f':{emoji["alias"]}:') in msg:
+            msg = msg.replace(alias, emoji["emoji"])
     return msg
 
 

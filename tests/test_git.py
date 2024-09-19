@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import DEFAULT, patch
 
 import clishelf.git as git
+from clishelf.emoji import demojize
 
 
 def side_effect_func(*args, **kwargs):
@@ -142,7 +143,7 @@ class GitTestCase(unittest.TestCase):
     def test_git_demojize(self):
         self.assertEqual(
             "test :fire: :fire:",
-            git.git_demojize("test 🔥 :fire:"),
+            demojize("test 🔥 :fire:", emojis=git.get_git_emojis()),
         )
 
     def test_validate_commit_msg_warning(self):

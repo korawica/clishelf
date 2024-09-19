@@ -91,7 +91,10 @@ class CommitPrefixGroup:
 
 
 def get_commit_prefix() -> tuple[CommitPrefix, ...]:
-    """Return tuple of CommitPrefix"""
+    """Return tuple of CommitPrefix that setting on the clishelf configuration.
+
+    :rtype: tuple[CommitPrefix, ...]
+    """
     conf: list[str] = load_config().get("git", {}).get("commit_prefix", [])
     prefix_conf: tuple[str, ...] = tuple(_[0] for _ in conf)
     return tuple(
@@ -128,13 +131,6 @@ def get_git_emojis() -> list[str]:
     return [emojis for emojis in get_emojis() if emojis["alias"] in cm_prefix]
 
 
-def git_demojize(msg: str) -> str:
-    for emojis in get_git_emojis():
-        if (emoji := emojis["emoji"]) in msg:
-            msg = msg.replace(emoji, f':{emojis["alias"]}:')
-    return msg
-
-
 @dataclass
 class CommitMsg:
     """Commit Message dataclass that prepare un-emoji-prefix in that message."""
@@ -147,7 +143,14 @@ class CommitMsg:
         return f"{self.mtype}: {self.content}"
 
     def __post_init__(self, content: str, mtype: str | None = None) -> None:
-        self.content: str = self.__prepare_msg(git_demojize(content))
+        """Post initialize dunder method on this dataclass for preparing
+        the content and mtype fields.
+        """
+
+        self.content: str = self.__prepare_msg__(
+            demojize(content, emojis=get_git_emojis())
+        )
+
         if mtype is None:  # pragma: no cover.
             self.mtype: str = self.__gen_msg_type()
 
@@ -172,7 +175,7 @@ class CommitMsg:
         )  # pragma: no cover
 
     @staticmethod
-    def __prepare_msg(content: str) -> str:
+    def __prepare_msg__(content: str) -> str:
         """Prepare string content that receive on post initialize step.
 
         :param content: A string content that want to prepare.
