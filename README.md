@@ -13,9 +13,10 @@ that help me to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Pyth
 packages (`more-itertools`, `pre-commit`, ...) on my any Python package
 repositories.
 
-This project was created because I do not want to hard code set up all of them
-every time when I start create a new Python package :tired_face:. I provide some
-reusable CLIs that was implemented from [`Click`](https://github.com/pallets/click/).
+> [!NOTE]
+> This project was created because I do not want to hard code set up all of them
+> every time when I start create a new Python package :tired_face:. I provide some
+> reusable CLIs that was implemented from [`Click`](https://github.com/pallets/click/).
 
 ## :round_pushpin: Installation
 
@@ -92,8 +93,8 @@ Usage: shelf.exe vs [OPTIONS] COMMAND [ARGS]...
   The Versioning commands.
 
 Commands:
-  bump       Bump Version with specific action.
-  changelog  Make Changelogs file
+  bump       Bump package version with a next tag value with an input...
+  changelog  Make a changelog file that generate form previous commits.
   conf       Return the config data for bumping version.
   current    Return Current Version that read from ``__about__`` by default.
   tag        Create the Git tag by version from the ``__about__`` file.

@@ -299,7 +299,7 @@ def changelog(
     file: Optional[str],
     new: bool,
 ) -> NoReturn:  # pragma: no cover.
-    """Make Changelogs file"""
+    """Make a changelog file that generate form previous commits."""
     if not file:
         file: str = (
             load_config().get("version", {}).get("changelog", None)
@@ -401,7 +401,7 @@ def bump(
     ignore_changelog: bool = False,
     dry_run: bool = False,
 ) -> NoReturn:  # pragma: no cover.
-    """Bump Version with specific action.
+    """Bump package version with a next tag value with an input action.
 
     ACTION is the part of action that should be `major`, `minor`, or `patch`.
 
