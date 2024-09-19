@@ -74,7 +74,6 @@ Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
   The Extended Git commands
 
 Commands:
-  bn           Show the Current Branch name.
   bn-clear     Clear Local Branches that sync from the Remote repository.
   cm           Show the latest Commit message
   cm-prev      Commit changes to the Previous Commit with same message.
@@ -84,7 +83,6 @@ Commands:
   log          Show the Commit Logs from the latest Tag to HEAD.
   mg           Merge change from another branch with strategy, `theirs`...
   pf           Show Profile object that contain Name and Email of Author
-  tg           Show the Latest Tag if it exists, otherwise it will show...
   tg-clear     Clear Local Tags that sync from the Remote repository.
 ```
 

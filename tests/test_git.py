@@ -18,6 +18,17 @@ def side_effect_func(*args, **kwargs):
         return DEFAULT
 
 
+def side_effect_bn_tg_func(*args, **kwargs):
+    if any(["git", "rev-parse", "--abbrev-ref", "HEAD"] == a for a in args):
+        _ = kwargs
+        return "0.1.2".encode(encoding=sys.stdout.encoding)
+    elif any(["git", "describe", "--tags", "--abbrev=0"] == a for a in args):
+        _ = kwargs
+        return "v0.0.1".encode(encoding=sys.stdout.encoding)
+    else:
+        return DEFAULT
+
+
 class GitModelTestCase(unittest.TestCase):
     def test_commit_prefix_model(self):
         rs = git.CommitPrefix(
@@ -134,9 +145,23 @@ class GitTestCase(unittest.TestCase):
         ][0]
         self.assertEqual(":tada:", feat.emoji)
 
-    def test_get_branch_name(self): ...
+    @patch(
+        "clishelf.git.subprocess.check_output",
+        side_effect=side_effect_bn_tg_func,
+    )
+    def test_get_branch_name(self, mock):
+        result = git.get_branch_name()
+        self.assertTrue(mock.called)
+        self.assertEqual("0.1.2", result)
 
-    def test_get_latest_tag(self): ...
+    @patch(
+        "clishelf.git.subprocess.check_output",
+        side_effect=side_effect_bn_tg_func,
+    )
+    def test_get_latest_tag(self, mock):
+        result = git.get_latest_tag()
+        self.assertTrue(mock.called)
+        self.assertEqual("v0.0.1", result)
 
     def test_gen_commit_log(self): ...
 

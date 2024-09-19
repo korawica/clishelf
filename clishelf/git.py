@@ -96,7 +96,7 @@ def get_commit_prefix() -> tuple[CommitPrefix, ...]:
     :rtype: tuple[CommitPrefix, ...]
     """
     conf: list[str] = load_config().get("git", {}).get("commit_prefix", [])
-    prefix_conf: tuple[str, ...] = tuple(_[0] for _ in conf)
+    prefix_conf: TupleStr = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefix(name=n, group=g, emoji=e)
         for n, g, e in (
@@ -107,11 +107,14 @@ def get_commit_prefix() -> tuple[CommitPrefix, ...]:
 
 
 def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
-    """Return tuple of CommitPrefixGroup"""
+    """Return tuple of CommitPrefixGroup
+
+    :rtype: tuple[CommitPrefixGroup, ...]
+    """
     conf: list[str] = (
         load_config().get("git", {}).get("commit_prefix_group", [])
     )
-    prefix_conf: tuple[str, ...] = tuple(_[0] for _ in conf)
+    prefix_conf: TupleStr = tuple(_[0] for _ in conf)
     return tuple(
         CommitPrefixGroup(name=n, emoji=e)
         for n, e in (
@@ -155,6 +158,7 @@ class CommitMsg:
             self.mtype: str = self.__gen_msg_type()
 
     def __gen_msg_type(self) -> str:
+        """Return a message type that getting from the regex."""
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
@@ -456,22 +460,6 @@ def get_latest_commit(
 def cli_git():
     """The Extended Git commands"""
     pass  # pragma: no cover.
-
-
-@cli_git.command()
-def bn() -> None:
-    """Show the Current Branch name."""
-    click.echo(get_branch_name(), file=sys.stdout)
-    sys.exit(0)
-
-
-@cli_git.command()
-def tg() -> None:
-    """Show the Latest Tag if it exists, otherwise it will show version from
-    about file.
-    """
-    click.echo(get_latest_tag(), file=sys.stdout)
-    sys.exit(0)
 
 
 @cli_git.command()

@@ -4,8 +4,6 @@ import sys
 import unittest
 from unittest.mock import DEFAULT, MagicMock, patch
 
-from click.testing import CliRunner
-
 import clishelf.git as git
 
 
@@ -18,25 +16,6 @@ def side_effect_func(*args, **kwargs):
         return "v0.0.1".encode(encoding=sys.stdout.encoding)
     else:
         return DEFAULT
-
-
-class CLIGitTestCase(unittest.TestCase):
-    def setUp(self) -> None:
-        self.runner = CliRunner()
-
-    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_cli_branch_name(self, mock):
-        result = self.runner.invoke(git.bn)
-        self.assertTrue(mock.called)
-        self.assertEqual("0.1.2\n", result.output)
-        self.assertEqual(0, result.exit_code)
-
-    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_cli_latest_tag(self, mock):
-        result = self.runner.invoke(git.tg)
-        self.assertTrue(mock.called)
-        self.assertEqual("v0.0.1\n", result.output)
-        self.assertEqual(0, result.exit_code)
 
 
 class GitTestCase(unittest.TestCase):
