@@ -75,7 +75,7 @@ def make_color(message: str, level: Level) -> str:
     )
 
 
-@dataclass
+@dataclass(frozen=True)
 class Profile:
     name: str
     email: str

@@ -29,12 +29,23 @@ GH_EMOJI_URL: str = (
 
 
 def get_emojis() -> Iterator[str]:
+    """Get the iterator of the emoji data that already loading to assets path.
+    This function use iterator for returning step because I do not want to keep
+    all emoji data in memory.
+
+    :rtype: Iterator[str]
+    """
     file = Path(__file__).parent / "assets/emoji.json"
     with file.open(encoding="utf-8") as f:
         yield from iter(json.load(f))
 
 
 def demojize(msg: str) -> str:
+    """Replace an unicode emoji to an emoji string in a message.
+
+    :param msg: A message string that want to search emoji string.
+    :rtype: str
+    """
     for emojis in get_emojis():
         if (emoji := emojis["emoji"]) in msg:
             msg = msg.replace(emoji, f':{emojis["alias"]}:')
@@ -42,6 +53,11 @@ def demojize(msg: str) -> str:
 
 
 def emojize(msg: str) -> str:
+    """Replace an emoji string to an unicode emoji in a message.
+
+    :param msg: A message string that want to search unicode emoji.
+    :rtype: str
+    """
     for emojis in get_emojis():
         if (alias := f':{emojis["alias"]}:') in msg:
             msg = msg.replace(alias, emojis["emoji"])
@@ -56,16 +72,17 @@ def cli_emoji():
 
 @cli_emoji.command()
 @click.option("-b", "--backup", is_flag=True)
-def fetch(backup: bool):
+def fetch(backup: bool = False):
     """Refresh emoji metadata file on assets folder."""
     if requests is None:  # pragma: no cover.
         raise ImportError(
-            "fetch command want request package for getting the emoji metadata "
-            "from GitHub repository. Please use: pip install requests"
+            "fetch command want the request package for getting the emoji "
+            "metadata from GitHub repository. Please install with: "
+            "``pip install requests``"
         )
 
     file = Path(__file__).parent / "assets/emoji.json"
-    file.parent.mkdir(exist_ok=True)
+    file.parent.mkdir(parents=True, exist_ok=True)
     if file.exists() and backup:
         file.rename(file.parent / f"emoji.bk{datetime.now():%Y%m%d%H%M%S}.json")
     with file.open(mode="w", encoding="utf-8") as f:

@@ -33,37 +33,35 @@ cli_git: click.Command
 TupleStr = tuple[str, ...]
 
 
+def get_git_local_config(key: str) -> str | None:
+    """Get Git config on the local scope with an input key.
+
+    :rtype: str | None
+    """
+    try:
+        return (
+            subprocess.check_output(["git", "config", "--local", key])
+            .decode(sys.stdout.encoding)
+            .strip()
+        )
+    except subprocess.CalledProcessError:  # pragma: no cover
+        return None
+
+
 def load_profile() -> Profile:
-    """Load Profile function that return name and email."""
+    """Load profile data from pyproject file or getting from git local config
+    and return this values to Profile dataclass.
+
+    :rtype: Profile
+    """
     from .utils import load_pyproject
 
     _authors: dict[str, str] = (
         load_pyproject().get("project", {}).get("authors", {})
     )
     return Profile(
-        name=_authors.get(
-            "name",
-            (
-                subprocess.check_output(
-                    ["git", "config", "--local", "user.name"]
-                )
-                .decode(sys.stdout.encoding)
-                .strip()
-            ),
-        ),
-        email=_authors.get(
-            "email",
-            (
-                # FIXME: subprocess.CalledProcessError:
-                #   Command '['git', 'config', '--local', 'user.email']'
-                #   returned non-zero exit status 1.
-                subprocess.check_output(
-                    ["git", "config", "--local", "user.email"]
-                )
-                .decode(sys.stdout.encoding)
-                .strip()
-            ),
-        ),
+        name=_authors.get("name", get_git_local_config("user.name")),
+        email=_authors.get("email", get_git_local_config("user.email")),
     )
 
 
@@ -143,7 +141,7 @@ class CommitMsg:
 
     content: InitVar[str]
     mtype: InitVar[str] = field(default=None)
-    body: str = field(default=None)  # Mark new-line with |
+    body: str = field(default=None)  # NOTE: Mark new-line with ``|``
 
     def __str__(self) -> str:
         return f"{self.mtype}: {self.content}"
