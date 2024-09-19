@@ -724,20 +724,5 @@ def init(store: bool, prune_tag: bool) -> None:  # pragma: no cover.
     sys.exit(0)
 
 
-@cli_git.command()
-def pf() -> None:  # pragma: no cover.
-    """Show Profile object that contain Name and Email of Author"""
-    click.echo(load_profile(), file=sys.stdout)
-    sys.exit(0)
-
-
-@cli_git.command()
-def df() -> None:  # pragma: no cover.
-    """Show changed files from previous commit to HEAD"""
-    # NOTE: We can use `git show --name-only HEAD~1`, but it got commit message.
-    subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"])
-    sys.exit(0)
-
-
 if __name__ == "__main__":
     cli_git.main()
