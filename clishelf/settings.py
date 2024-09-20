@@ -66,6 +66,7 @@ class GitConf:
         ("init", "Features", ":tada:"),  # 🎉
         ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
         ("revert", "Code Changes", ":rewind:"),  # ⏪
+        ("merge", "Code Changes", ":fast_forward:"),  # ⏩
     )
 
     commit_prefix_group: tuple[tuple[str, str]] = (

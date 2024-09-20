@@ -186,7 +186,12 @@ class CommitMsg:
         :rtype: str
         :return: A prepared string content that has an emoji prefix.
         """
-        if re.match(r"^(?P<emoji>:\w+:)", content):
+        if content.startswith("Merge branch "):
+            return content.replace(
+                "Merge branch ", ":fast_forward: merge: branch "
+            )
+
+        if re.match(r"^(:\w+:)\s", content):
             return content
 
         prefix, content = (
