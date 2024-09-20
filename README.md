@@ -95,9 +95,7 @@ Usage: shelf.exe vs [OPTIONS] COMMAND [ARGS]...
 Commands:
   bump       Bump package version with a next tag value with an input...
   changelog  Make a changelog file that generate form previous commits.
-  conf       Return the config data for bumping version.
   current    Return Current Version that read from ``__about__`` by default.
-  tag        Create the Git tag by version from the ``__about__`` file.
 ```
 
 ### Emoji

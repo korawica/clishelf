@@ -20,11 +20,6 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual("\x1b[92m\x1b[1mOK: test\x1b[0m", result)
 
     @patch("clishelf.utils.Path", side_effect=side_effect_func)
-    def test_load_project(self, mock_path):
-        result = utils.load_project()
-        self.assertEqual("clishelf", result["name"])
-
-    @patch("clishelf.utils.Path", side_effect=side_effect_func)
     @patch("clishelf.utils.load_pyproject")
     def test_load_config(self, mock_load_pyproject, mock_path):
         mock_load_pyproject.return_value = {}

@@ -28,10 +28,6 @@ def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
         return tomllib.load(f)
 
 
-def load_project() -> dict[str, Any]:
-    return load_pyproject().get("project", {})
-
-
 def load_config() -> dict[str, Any]:
     """Return config of the shelf package that was set on pyproject.toml."""
 

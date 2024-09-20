@@ -17,7 +17,7 @@ import click
 
 from .git import CommitLog
 from .settings import BumpVerConf
-from .utils import load_config, load_project
+from .utils import load_config
 
 cli_vs: click.Command
 GroupCommitLog = dict[str, list[CommitLog]]
@@ -285,19 +285,11 @@ def cli_vs():
 
 
 @cli_vs.command()
-def conf() -> NoReturn:  # pragma: no cover.
-    """Return the config data for bumping version."""
-    for k, v in load_config().get("version", {}).items():
-        click.echo(f"{k}: {v!r}")
-    sys.exit(0)
-
-
-@cli_vs.command()
 @click.option("-f", "--file", type=click.Path(exists=True))
 @click.option("-n", "--new", is_flag=True)
 def changelog(
     file: Optional[str],
-    new: bool,
+    new: bool = False,
 ) -> NoReturn:  # pragma: no cover.
     """Make a changelog file that generate form previous commits."""
     if not file:
@@ -322,33 +314,12 @@ def changelog(
 def current(file: str) -> NoReturn:  # pragma: no cover.
     """Return Current Version that read from ``__about__`` by default."""
     if not file:
-        file = (
-            load_config().get("version", {}).get("version", None)
-            or f"./{load_project().get('name', 'unknown')}/__about__.py"
+        file: str = load_config().get("version", {}).get("version", None) or (
+            f"./{load_config().get('project', {}).get('name', 'unknown')}"
+            f"/__about__.py"
         )
     click.echo(current_version(file))
     sys.exit(0)
-
-
-@cli_vs.command()
-@click.option(
-    "-p",
-    "--push",
-    is_flag=True,
-    help="If True, it will push the tag to remote repository",
-)
-def tag(push: bool) -> NoReturn:  # pragma: no cover.
-    """Create the Git tag by version from the ``__about__`` file.
-
-    \f
-    :param push: A push flag that will push the tag to remote if it True.
-    :type push: boolean
-    """
-    from .__about__ import __version__
-
-    subprocess.run(["git", "tag", f"v{__version__}"])
-    if push:
-        subprocess.run(["git", "push", "--tags"])
 
 
 @cli_vs.command()
@@ -421,7 +392,8 @@ def bump(
     vs_conf: dict[str, Any] = load_config().get("version", {})
     if not file:
         file: str = vs_conf.get("version", None) or (
-            f"./{load_project().get('name', 'unknown')}/__about__.py"
+            f"./{load_config().get('project', {}).get('name', 'unknown')}"
+            f"/__about__.py"
         )
     if not changelog_file:
         changelog_file: str = vs_conf.get("changelog", None) or "CHANGELOG.md"
