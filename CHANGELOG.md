@@ -2,6 +2,25 @@
 
 ## Latest Changes
 
+## 0.2.8
+
+### :tada: Features
+
+- :dart: feat: commit message change add support for merge. (_2024-09-20_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme docs that sync cli docs from package. (_2024-09-19_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: remove unuse cli command in version. (_2024-09-20_)
+- :construction: refactored: remove log and init cli command. (_2024-09-19_)
+
+### :postbox: Dependencies
+
+- :pushpin: deps: remove tomli package from this project and use build-in instead. (_2024-09-20_)
+
 ## 0.2.7
 
 ### :tada: Features
