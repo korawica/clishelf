@@ -27,7 +27,6 @@ classifiers = [
 dependencies = [
     "more-itertools==10.5.0",
     "click==8.1.7,<9.0.0",
-    "tomli==2.0.1",
     "pre-commit",
     # TODO: able to change this package from `bump2version` to `bump-my-version`
     #   docs: https://github.com/callowayproject/bump-my-version

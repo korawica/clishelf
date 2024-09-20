@@ -10,7 +10,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
 
-import tomli
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import pip._vendor.tomli as tomllib
+
 import yaml
 
 
@@ -18,7 +22,10 @@ def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
     """Load Configuration from pyproject.toml file."""
     f: str = file or "pyproject.toml"
     pyproject: Path = Path(f)
-    return tomli.loads(pyproject.read_text()) if pyproject.exists() else {}
+    if not pyproject.exists():
+        return {}
+    with pyproject.open(mode="rb") as f:
+        return tomllib.load(f)
 
 
 def load_project() -> dict[str, Any]:
