@@ -18,7 +18,7 @@ repos:
     hooks:
     -   id: pyupgrade
         args: ["--py39-plus", "--keep-runtime-typing"]
-        stages: [commit]
+        stages: [Nonepre-commitNone]
 
 # Python package sorting
 # ---
@@ -47,10 +47,10 @@ repos:
 #     hooks:
 #         -   id: autopep8
 -   repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
     -   id: black
-        stages: [commit]
+        stages: [Nonepre-commitNone]
 
 # Python linter
 # ---
@@ -69,12 +69,12 @@ repos:
 #                 - --ignore=E203,E501,E722,B905,B028,B907
 #                 - --select=B,B9,ISC
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev:  v0.6.8
+    rev:  v0.6.9
     hooks:
     -   id: ruff
         args:
         - --fix
-        stages: [commit]
+        stages: [Nonepre-commitNone]
 
 # Python doc-string
 # ---
@@ -89,22 +89,22 @@ repos:
 # Pre-commit main hook repo
 # ---
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev:  v4.6.0
+    rev:  v5.0.0
     hooks:
     -   id: fix-byte-order-marker
-        stages: [commit]
+        stages: [Nonepre-commitNone]
     -   id: trailing-whitespace
-        stages: [commit]
+        stages: [Nonepre-commitNone]
         exclude: ".bumpversion.cfg"
     -   id: end-of-file-fixer
         exclude: "emoji\\.json"
-        stages: [commit]
+        stages: [Nonepre-commitNone]
     -   id: check-yaml
-        stages: [commit]
+        stages: [Nonepre-commitNone]
         args: ["--unsafe"]
 #         -   id: check-added-large-files
     -   id: check-toml
-        stages: [commit]
+        stages: [Nonepre-commitNone]
 
 # Pre-commit local
 # ---
@@ -122,8 +122,8 @@ repos:
     -   id: pytest-check
         name: pytest runner check
         stages:
-            - commit
-            - push
+            - Nonepre-commitNone
+            - Nonepre-pushNone
         # alternatively you could `core: [python]` so it only runs
         # when python files change.
         types: [python]
