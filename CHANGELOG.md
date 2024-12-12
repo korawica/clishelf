@@ -2,6 +2,23 @@
 
 ## Latest Changes
 
+## 0.2.9
+
+### :book: Documents
+
+- :page_facing_up: docs: update contribute topic in readme file. (_2024-12-12_)
+
+### :black_nib: Code Changes
+
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.11.0 to 1.12.2 (_2024-12-01_)
+- :construction: refactored: ⬆ bump codecov/codecov-action from 4 to 5 (_2024-12-01_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.10.2 to 1.11.0 (_2024-11-01_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.10.0 to 1.10.2 (_2024-10-01_)
+
+### :bug: Fix Bugs
+
+- :gear: fixed: fix pre-commit config syntax for version 4.0.0. (_2024-10-08_)
+
 ## 0.2.8
 
 ### :tada: Features
