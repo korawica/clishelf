@@ -157,3 +157,10 @@ git:
 > [!NOTE]
 > I will migrate this code from **Python** to **Rust** for performance of CLI
 > (But I will observe for this again because this package does not have any issue with perf as well.)
+
+## :speech_balloon: Contribute
+
+I do not think this project will go around the world because it has specific propose
+and you can create by your coding without this project dependency for long term
+solution. So, on this time, you can open [the GitHub issue on this project :raised_hands:](https://github.com/korawica/clishelf/issues)
+for fix bug or request new feature if you want it.
