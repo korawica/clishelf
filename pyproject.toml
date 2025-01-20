@@ -25,7 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "more-itertools==10.5.0",
+    "more-itertools==10.6.0",
     "click==8.1.8",
     "pre-commit",
     # TODO: able to change this package from `bump2version` to `bump-my-version`
