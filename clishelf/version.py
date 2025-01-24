@@ -10,8 +10,9 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, NoReturn, Optional
+from typing import Any, NoReturn, Optional, Union
 
 import click
 
@@ -20,6 +21,7 @@ from .settings import BumpVerConf
 from .utils import load_config
 
 cli_vs: click.Command
+
 GroupCommitLog = dict[str, list[CommitLog]]
 TagGroupCommitLog = dict[str, GroupCommitLog]
 
@@ -28,7 +30,7 @@ def gen_group_commit_log(
     all_tags: bool = False,
     *,
     is_dt: bool = False,
-) -> GroupCommitLog:
+) -> TagGroupCommitLog:
     """Generate Group of the Commit Logs
 
     :rtype: GroupCommitLog
@@ -45,6 +47,7 @@ def gen_group_commit_log(
         is_dt=is_dt,
     ):
         tag_group_logs[log.refs][log.msg.mtype].append(log)
+
     rs: TagGroupCommitLog = {}
     for ref_tag in tag_group_logs:
         rs[ref_tag] = {
@@ -58,13 +61,15 @@ def get_changelog(
     file: str,
     tags: Optional[list[str]] = None,
     refresh: bool = False,
-) -> list[str]:
+) -> Union[list[str], Iterator[str]]:
     """Return the list of content in the changelog file.
 
     :param file: A change log file path.
     :type file: str
     :param tags:
     :param refresh:
+
+    :rtype: Union[list[str], Iterator[str]]
     """
     changes: list[str]
     if refresh or not Path(file).exists():
@@ -365,9 +370,9 @@ def current(file: str) -> NoReturn:  # pragma: no cov
 )
 def bump(
     action: str,
-    file: str | None,
-    changelog_file: str | None,
-    mode: str | None,
+    file: Optional[str] = None,
+    changelog_file: Optional[str] = None,
+    mode: Optional[str] = None,
     version: int = 1,
     ignore_changelog: bool = False,
     dry_run: bool = False,
@@ -380,9 +385,9 @@ def bump(
     :param action: A action path for bump the next version.
     :type action: str
     :param file:
-    :type file: str | None
-    :param changelog_file: str | None
-    :param mode: str | None
+    :type file: Optional[str] (=None)
+    :param changelog_file: Optional[str] (=None)
+    :param mode: Optional[str] (=None)
     :param version: int
     :param ignore_changelog: Ignore the changelog file if set be True.
     :type ignore_changelog: boolean
