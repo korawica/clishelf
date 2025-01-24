@@ -8,10 +8,9 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-observe)](https://github.com/ddeutils/ddeutil-workflow/blob/main/LICENSE)
 
-This is the **CLI on my shelf (Tools and Hooks) for any my Python packages**
-that help me to make Versioning, run Abbreviate of Git CLI, and Wrapped Dev Python
-packages (`more-itertools`, `pre-commit`, ...) on my any Python package
-repositories.
+CLI tools and hooks on my shelf for my any Python packages.
+This project help me to make Versioning, run Abbreviate of Git CLI, and wrapped
+the development Python packages such as `more-itertools`, `pre-commit`, etc.
 
 > [!NOTE]
 > This project was created because I do not want to hard code set up all of them
@@ -21,7 +20,7 @@ repositories.
 ## :round_pushpin: Installation
 
 ```shell
-pip install clishelf
+pip install -U clishelf
 ```
 
 In the future, I will add more the CLI tools that able to dynamic with
@@ -30,10 +29,10 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                            | Support Fixed Bug  |
-|------------------|-----------------------------------------|--------------------|
-| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.9"` | :x:                |
-| `>=3.9.13,<3.13` | `pip install -U clishelf`               | :heavy_check_mark: |
+| Python Version    | Installation                             |  Support Fixed Bug   |
+|:------------------|:-----------------------------------------|:--------------------:|
+| `== 3.8`          | `pip install "clishelf>=0.1.10,<0.2.9"`  |         :x:          |
+| `>=3.9.13,<3.13`  | `pip install -U clishelf`                |  :heavy_check_mark:  |
 
 ## :rocket: Pre-Commit Hook
 

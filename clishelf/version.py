@@ -133,7 +133,7 @@ def writer_changelog(
                 skip_line = True
             elif m := re.match(rf"^##\s({BumpVerConf.get_regex(is_dt)})", line):
                 get_tag: str = m.group(1)
-                if get_tag in tags:  # pragma: no cover.
+                if get_tag in tags:  # pragma: no cov
                     write_group_log(
                         writer,
                         group_logs[get_tag],
@@ -179,7 +179,7 @@ def bump2version(
     version: int = 1,
     *,
     is_dt: bool = False,
-) -> None:  # pragma: no cover.
+) -> None:  # pragma: no cov
     """Bump version processes that include:
 
         - write the bump2version file config on the current path
@@ -281,7 +281,7 @@ def current_version(file: str, *, is_dt: bool = False) -> str:
 @click.group(name="vs")
 def cli_vs():
     """The Versioning commands."""
-    pass  # pragma: no cover.
+    pass  # pragma: no cov
 
 
 @cli_vs.command()
@@ -290,7 +290,7 @@ def cli_vs():
 def changelog(
     file: Optional[str],
     new: bool = False,
-) -> NoReturn:  # pragma: no cover.
+) -> NoReturn:  # pragma: no cov
     """Make a changelog file that generate form previous commits."""
     if not file:
         file: str = (
@@ -311,7 +311,7 @@ def changelog(
     type=click.Path(exists=True),
     help="The contain version file that able to search with regex.",
 )
-def current(file: str) -> NoReturn:  # pragma: no cover.
+def current(file: str) -> NoReturn:  # pragma: no cov
     """Return Current Version that read from ``__about__`` by default."""
     if not file:
         file: str = load_config().get("version", {}).get("version", None) or (
@@ -371,7 +371,7 @@ def bump(
     version: int = 1,
     ignore_changelog: bool = False,
     dry_run: bool = False,
-) -> NoReturn:  # pragma: no cover.
+) -> NoReturn:  # pragma: no cov
     """Bump package version with a next tag value with an input action.
 
     ACTION is the part of action that should be `major`, `minor`, or `patch`.

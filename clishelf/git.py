@@ -69,10 +69,10 @@ class CommitPrefix:
     group: str
     emoji: str
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__str__())
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -127,7 +127,11 @@ def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
 
 
 @lru_cache
-def get_git_emojis() -> list[str]:
+def get_git_emojis() -> list[dict[str, str]]:
+    """Return the list of mapping of Git emoji values.
+
+    :rtype: list[dict[str, str]]
+    """
     cm_prefix: TupleStr = tuple(p.emoji.strip(":") for p in get_commit_prefix())
     return [emojis for emojis in get_emojis() if emojis["alias"] in cm_prefix]
 
@@ -143,16 +147,19 @@ class CommitMsg:
     def __str__(self) -> str:
         return f"{self.mtype}: {self.content}"
 
-    def __post_init__(self, content: str, mtype: str | None = None) -> None:
+    def __post_init__(self, content: str, mtype: Optional[str] = None) -> None:
         """Post initialize dunder method on this dataclass for preparing
         the content and mtype fields.
+
+        :param content:
+        :param mtype:
         """
 
         self.content: str = self.__prepare_msg__(
             demojize(content, emojis=get_git_emojis())
         )
 
-        if mtype is None:  # pragma: no cover.
+        if mtype is None:  # pragma: no cov
             self.mtype: str = self.__gen_msg_type()
 
     def __gen_msg_type(self) -> str:
@@ -307,8 +314,11 @@ def validate_commit_msg(lines: list[str]) -> tuple[list[str], Level]:
     return rs, Level.WARNING
 
 
-def get_latest_tag(default: bool = True) -> str | None:
-    """Return the latest tag if it exists, otherwise it will v0.0.0 tag."""
+def get_latest_tag(default: bool = True) -> Optional[str]:
+    """Return the latest tag if it exists, otherwise it will v0.0.0 tag.
+
+    :rtype: Optional[str]
+    """
     try:
         return (
             subprocess.check_output(
@@ -324,7 +334,7 @@ def get_latest_tag(default: bool = True) -> str | None:
 
 def gen_commit_logs(
     tag2head: str,
-) -> Generator[list[str], None, None]:  # pragma: no cover.
+) -> Generator[list[str], None, None]:  # pragma: no cov
     """Prepare contents logs to List of commit log."""
     prepare: list[str] = []
     for line in (
@@ -349,20 +359,22 @@ def gen_commit_logs(
 
 
 def get_commit_logs(
-    tag: str | None = None,
+    tag: Optional[str] = None,
     *,
     all_logs: bool = False,
     excluded: Optional[list[str]] = None,
     is_dt: bool = False,
-) -> Iterator[CommitLog]:  # pragma: no cover.
+) -> Iterator[CommitLog]:  # pragma: no cov
     """Return a list of message that getting from commit log command.
 
     :param tag: A tag name that want to filter the commit log get to HEAD.
-    :type tag: str | None(=None)
+    :type tag: Optional[str] (=None)
     :param all_logs:
     :param excluded:
     :param is_dt: A datetime mode flag.
     :type is_dt: bool(=False)
+
+    :rtype: Iterator[CommitLog]
     """
     from .settings import BumpVerConf
 
@@ -405,7 +417,7 @@ def get_commit_logs(
         )
 
 
-def merge2latest_commit(no_verify: bool = False) -> None:  # pragma: no cover.
+def merge2latest_commit(no_verify: bool = False) -> None:  # pragma: no cov
     subprocess.run(
         ["git", "commit", "--amend", "--no-edit", "-a"]
         + (["--no-verify"] if no_verify else [])
@@ -416,7 +428,7 @@ def get_latest_commit(
     file: Optional[str] = None,
     edit: bool = False,
     output_file: bool = False,
-) -> list[str]:  # pragma: no cover.
+) -> list[str]:  # pragma: no cov
     """Return a list of line that created on commit message file."""
     if file:
         with Path(file).open(encoding="utf-8") as f_msg:
@@ -454,7 +466,7 @@ def get_latest_commit(
 @click.group(name="git")
 def cli_git():
     """The Extended Git commands"""
-    pass  # pragma: no cover.
+    pass  # pragma: no cov
 
 
 @cli_git.command()
@@ -471,7 +483,7 @@ def cm(
     edit: bool,
     output_file: bool,
     prepare: bool,
-) -> None:  # pragma: no cover.
+) -> None:  # pragma: no cov
     """Prepare and show the latest commit message with the commit message
     general rules.
 
@@ -509,7 +521,7 @@ def cm(
 
 @cli_git.command()
 @click.option("-g", "--group", is_flag=True)
-def cm_msg(group: bool = False) -> None:  # pragma: no cover.
+def cm_msg(group: bool = False) -> None:  # pragma: no cov
     """Return list of commit prefixes"""
     if group:
         for cm_prefix_g in get_commit_prefix_group():
@@ -524,7 +536,7 @@ def cm_msg(group: bool = False) -> None:  # pragma: no cover.
 
 @cli_git.command()
 @click.option("--verify", is_flag=True)
-def cm_prev(verify: bool) -> None:  # pragma: no cover.
+def cm_prev(verify: bool) -> None:  # pragma: no cov
     """Commit changes to the Previous Commit with same message."""
     merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
@@ -533,7 +545,7 @@ def cm_prev(verify: bool) -> None:  # pragma: no cover.
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 @click.option("-n", "--number", type=click.INT, default=1)
-def cm_revert(force: bool, number: int) -> None:  # pragma: no cover.
+def cm_revert(force: bool, number: int) -> None:  # pragma: no cov
     """Revert the latest Commit on the Local repository."""
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
@@ -571,7 +583,7 @@ def mg(
     theirs: bool = False,
     ours: bool = False,
     squash: bool = False,
-) -> None:  # pragma: no cover.
+) -> None:  # pragma: no cov
     """Merge change from another branch with strategy, `theirs` or `ours`.
 
     BRANCH is a name of branch that you want to merge with current branch.
@@ -603,7 +615,7 @@ def mg(
 
 
 @cli_git.command()
-def bn_clear() -> NoReturn:  # pragma: no cover.
+def bn_clear() -> NoReturn:  # pragma: no cov
     """Clear Local Branches that sync from the Remote repository."""
     subprocess.run(
         ["git", "checkout", "main"],
@@ -635,7 +647,7 @@ def bn_clear() -> NoReturn:  # pragma: no cover.
     is_flag=True,
     help="If True, it will auto push to remote",
 )
-def tg_bump(push: bool = False) -> None:  # pragma: no cover.
+def tg_bump(push: bool = False) -> None:  # pragma: no cov
     """Create Tag from current version after bumping"""
     latest_tag: str = get_latest_tag(default=False)
     subprocess.run(
@@ -653,7 +665,7 @@ def tg_bump(push: bool = False) -> None:  # pragma: no cover.
 
 
 @cli_git.command()
-def tg_clear() -> None:  # pragma: no cover.
+def tg_clear() -> None:  # pragma: no cov
     """Clear Local Tags that sync from the Remote repository."""
     subprocess.run(
         ["git", "fetch", "--prune", "--prune-tags"],

@@ -24,7 +24,7 @@ cli: click.Command
 @click.group()
 def cli():
     """The Main Shelf commands."""
-    pass  # pragma: no cover.
+    pass  # pragma: no cov
 
 
 @cli.command()

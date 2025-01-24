@@ -11,11 +11,11 @@ from textwrap import dedent
 
 
 class GitConf:
-    """Git Config."""
+    """Git config setting data that will use be the baseline data."""
 
     branch_types: list[str] = ["feature", "bug", "hot"]
 
-    # These branch names are not validated with this same rules
+    # NOTE: These branch names are not validated with this same rules
     # (permissions should be configured on the server if you want to prevent
     # pushing to any of these):
     branch_excepts: list[str] = [
@@ -23,7 +23,8 @@ class GitConf:
         "dev",
         "main",
         "stable",
-        # for quickly fixing critical issues, usually with a temporary solution.
+        # NOTE: For quickly fixing critical issues, usually with a temporary
+        #   solution.
         "hotfix",
         "bugfix",  # for fixing a bug
         "feature",  # for adding, removing or modifying a feature
@@ -196,8 +197,11 @@ class BumpVerConf:
         version: int,
         params: dict[str, str],
         is_dt: bool = False,
-    ):
-        """Generate the `bump2version` config from specific version"""
+    ) -> str:
+        """Generate the `bump2version` config from specific version
+
+        :rtype: str
+        """
         if not hasattr(cls, f"v{version}"):
             version = 1
         template: str = getattr(cls, f"v{version}")
@@ -232,12 +236,15 @@ class BumpVerConf:
         )
 
     @classmethod
-    def update_dt_pre(cls, version: str):
+    def update_dt_pre(cls, version: str) -> str:
         """Return new pre version of datetime mode.
+
         Examples:
             20240101        ->  20240101.1
             20240101.2      ->  20240101.3
             20240101.post   ->  20240101.1
+
+        :rtype: str
         """
         if search := re.search(BumpVerConf.regex_dt, version):
             search_dict: dict[str, str] = search.groupdict()
@@ -252,4 +259,8 @@ class BumpVerConf:
 
     @classmethod
     def get_regex(cls, is_dt: bool = False) -> str:
+        """Get the regular expression format string.
+
+        :rtype: str
+        """
         return cls.regex_dt if is_dt else cls.regex

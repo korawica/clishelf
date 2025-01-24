@@ -14,7 +14,7 @@ import click
 
 try:
     import requests
-except ImportError:  # pragma: no cover.
+except ImportError:  # pragma: no cov
     requests = None
 
 cli_emoji: click.Command
@@ -33,7 +33,7 @@ def get_emojis() -> Iterator[dict[str, str]]:
     This function use iterator for returning step because I do not want to keep
     all emoji data in memory.
 
-    :rtype: Iterator[str]
+    :rtype: Iterator[dict[str, str]]
     """
     file = Path(__file__).parent / "assets/emoji.json"
     with file.open(encoding="utf-8") as f:
@@ -48,7 +48,7 @@ def demojize(
     """Replace an unicode emoji to an emoji string in a message.
 
     :param msg: A message string that want to search emoji string.
-    :param emojis: A iterator or list of mapping of emoji values.
+    :param emojis: An iterator or list of mapping of emoji values.
 
     :rtype: str
     """
@@ -69,7 +69,8 @@ def emojize(
     """Replace an emoji string to an unicode emoji in a message.
 
     :param msg: A message string that want to search unicode emoji.
-    :param emojis: A iterator or list of mapping of emoji values.
+    :param emojis: An iterator or list of mapping of emoji values.
+
     :rtype: str
     """
     emojis: Iterator[dict[str, str]] = (
@@ -84,18 +85,22 @@ def emojize(
 @click.group(name="emoji")
 def cli_emoji():
     """The Emoji commands"""
-    pass  # pragma: no cover.
+    pass  # pragma: no cov
 
 
 @cli_emoji.command()
 @click.option("-b", "--backup", is_flag=True)
-def fetch(backup: bool = False):
-    """Refresh emoji metadata file on assets folder."""
-    if requests is None:  # pragma: no cover.
+def fetch(backup: bool = False) -> None:
+    """Refresh emoji metadata file on the assets folder, `./asserts`.
+
+    :param backup: A backup flag for rename the previous file with backup suffix
+        if this value set to True.
+    """
+    if requests is None:  # pragma: no cov
         raise ImportError(
             "fetch command want the request package for getting the emoji "
             "metadata from GitHub repository. Please install with: "
-            "``pip install requests``"
+            "``pip install -U requests``"
         )
 
     file = Path(__file__).parent / "assets/emoji.json"

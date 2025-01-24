@@ -12,7 +12,7 @@ from typing import Any, Optional
 
 try:
     import tomllib
-except ModuleNotFoundError:
+except ModuleNotFoundError:  # pragma: no cov
     import pip._vendor.tomli as tomllib
 
 import yaml
