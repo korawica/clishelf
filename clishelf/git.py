@@ -9,7 +9,7 @@ import os
 import re
 import subprocess
 import sys
-from collections.abc import Generator, Iterator
+from collections.abc import Iterator
 from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from functools import lru_cache
@@ -65,6 +65,8 @@ def load_profile() -> Profile:
 
 @dataclass(frozen=True)
 class CommitPrefix:
+    """Commit prefix dataclass object that extract from a commit message."""
+
     name: str
     group: str
     emoji: str
@@ -78,6 +80,10 @@ class CommitPrefix:
 
 @dataclass(frozen=True)
 class CommitPrefixGroup:
+    """Commit prefix group dataclass object that was created from mapping of
+    emoji group config.
+    """
+
     name: str
     emoji: str
 
@@ -332,10 +338,11 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
         return "v0.0.0" if default else None
 
 
-def gen_commit_logs(
-    tag2head: str,
-) -> Generator[list[str], None, None]:  # pragma: no cov
-    """Prepare contents logs to List of commit log."""
+def gen_commit_logs(tag2head: str) -> Iterator[list[str]]:  # pragma: no cov
+    """Prepare contents logs to List of commit log.
+
+    :rtype: Iterator[list[str]]
+    """
     prepare: list[str] = []
     for line in (
         subprocess.check_output(
@@ -418,6 +425,9 @@ def get_commit_logs(
 
 
 def merge2latest_commit(no_verify: bool = False) -> None:  # pragma: no cov
+    """Merge all stage changes to the previous commit with the same commit
+    message.
+    """
     subprocess.run(
         ["git", "commit", "--amend", "--no-edit", "-a"]
         + (["--no-verify"] if no_verify else [])

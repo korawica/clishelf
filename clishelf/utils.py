@@ -19,17 +19,27 @@ import yaml
 
 
 def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
-    """Load Configuration from pyproject.toml file."""
-    f: str = file or "pyproject.toml"
+    """Load Configuration from pyproject.toml file.
+
+    :param file: A file path or string path that keeping the pyproject.toml.
+
+    :rtype: dict[str, Any]
+    """
+    f: str = file or "./pyproject.toml"
     pyproject: Path = Path(f)
+
     if not pyproject.exists():
         return {}
+
     with pyproject.open(mode="rb") as f:
         return tomllib.load(f)
 
 
 def load_config() -> dict[str, Any]:
-    """Return config of the shelf package that was set on pyproject.toml."""
+    """Return config of the shelf package that was set on pyproject.toml.
+
+    :rtype: dict[str, Any]
+    """
 
     data: dict[str, Any] = {}
     conf_file = Path(".clishelf.yaml")
@@ -71,7 +81,13 @@ class Level(str, Enum):
 
 
 def make_color(message: str, level: Level) -> str:
-    """Print the message with a color for the corresponding level."""
+    """Print the message with a color for the corresponding level.
+
+    :param message: A message string that want to echo.
+    :param level: A level of color.
+
+    :rtype: str
+    """
     return (
         f"{Bcolors[level].value}{Bcolors.BOLD.value}{level.value}: "
         f"{message}{Bcolors.END.value}"
@@ -80,5 +96,7 @@ def make_color(message: str, level: Level) -> str:
 
 @dataclass(frozen=True)
 class Profile:
+    """Profile dataclass object for keeping a Git profile data."""
+
     name: str
     email: str
