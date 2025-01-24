@@ -14,10 +14,25 @@ def side_effect_func(*args, **kwargs):
     return DEFAULT
 
 
+def side_effect_func_pyproject(*args, **kwargs):
+    _ = kwargs
+
+    if "pyproject.toml" in args[0]:
+        return pathlib.Path(__file__).parent.parent / "not-exist-pyproject.toml"
+
+    return DEFAULT
+
+
 class UtilsTestCase(unittest.TestCase):
+
     def test_make_color(self):
         result = utils.make_color("test", utils.Level.OK)
         self.assertEqual("\x1b[92m\x1b[1mOK: test\x1b[0m", result)
+
+    @patch("clishelf.utils.Path", side_effect=side_effect_func_pyproject)
+    def test_load_pyproject(self, mock_path):
+        data = utils.load_pyproject()
+        assert data == {}
 
     @patch("clishelf.utils.Path", side_effect=side_effect_func)
     @patch("clishelf.utils.load_pyproject")

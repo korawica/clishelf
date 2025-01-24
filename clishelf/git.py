@@ -31,10 +31,10 @@ cli_git: click.Command
 TupleStr = tuple[str, ...]
 
 
-def get_git_local_config(key: str) -> str | None:
+def get_git_local_config(key: str) -> Optional[str]:
     """Get Git config on the local scope with an input key.
 
-    :rtype: str | None
+    :rtype: Optional[str]
     """
     try:
         return (
