@@ -41,22 +41,18 @@ build-backend = "pdm.backend"
 [project.scripts]
 shelf = "clishelf.__main__:main"
 
-# Note: This line is the config for `clishelf` package
+# NOTE: This line is the config for `clishelf` package
 [tool.shelf.version]
 version = "./clishelf/__about__.py"
 changelog = "CHANGELOG.md"
-files = [
-    "README.md"
-]
+files = ["README.md"]
 
 [tool.coverage.run]
 branch = true
 concurrency = ["thread", "multiprocessing"]
 parallel = true
 context = '${CONTEXT}'
-source = [
-    "clishelf",
-]
+source = ["clishelf"]
 omit = [
     "clishelf/__main__.py",
     "clishelf/__about__.py",
@@ -126,6 +122,7 @@ exclude = """
     | \\.mypy_cache
     | \\.pytest_cache
     | \\.venv
+    | \\venv
 )/
 """
 
@@ -149,6 +146,7 @@ lint.exclude = [
     ".git",
     ".mypy_cache",
     ".ruff_cache",
+    ".venv",
     "venv",
 ]
 

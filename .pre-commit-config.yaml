@@ -114,7 +114,7 @@ repos:
         name: prepare commit message
         stages: [commit-msg]
         types: [python]
-        entry: venv/Scripts/shelf.exe git cm
+        entry: venv/Scripts/python.exe ./clishelf/__main__.py git cm
         args: ["--edit", "--output-file"]
         language: system
         always_run: true

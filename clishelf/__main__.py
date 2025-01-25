@@ -3,6 +3,6 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
-from .cli import main
+from clishelf.cli import main
 
 main()
