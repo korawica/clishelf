@@ -2,6 +2,26 @@
 
 ## Latest Changes
 
+## 0.2.10
+
+### :tada: Features
+
+- :dart: feat: update setting on git pre-commit group. (_2025-01-25_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme file. (_2025-01-25_)
+- :page_facing_up: docs: update doc-string on git mod. (_2025-01-24_)
+- :page_facing_up: docs: update doc-string on version mod. (_2025-01-24_)
+- :page_facing_up: docs: update doc-string. (_2025-01-24_)
+
+### :black_nib: Code Changes
+
+- :test_tube: tests: add testcase on utils for make 100% coverage. (_2025-01-24_)
+- :construction: refactored: 📦 bump more-itertools from 10.5.0 to 10.6.0 (_2025-01-20_)
+- :construction: refactored: ⬆ bump pypa/gh-action-pypi-publish from 1.12.2 to 1.12.3 (_2025-01-01_)
+- :construction: refactored: 📦 update click requirement from <9.0.0,==8.1.7 to ==8.1.8 (_2024-12-23_)
+
 ## 0.2.9
 
 ### :book: Documents

@@ -31,7 +31,7 @@ custom message code.
 
 | Python Version    | Installation                             |  Support Fixed Bug   |
 |:------------------|:-----------------------------------------|:--------------------:|
-| `== 3.8`          | `pip install "clishelf>=0.1.10,<0.2.9"`  |         :x:          |
+| `== 3.8`          | `pip install "clishelf>=0.1.10,<0.2.10"`  |         :x:          |
 | `>=3.9.13,<3.13`  | `pip install -U clishelf`                |  :heavy_check_mark:  |
 
 ## :rocket: Pre-Commit Hook
@@ -40,7 +40,7 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
 ```yaml
 - repo: https://github.com/korawica/clishelf
-  rev: v0.2.9
+  rev: v0.2.10
   hooks:
     - id: shelf-commit-msg
       stages: [commit-msg]
