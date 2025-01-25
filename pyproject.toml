@@ -57,6 +57,7 @@ omit = [
     "clishelf/__main__.py",
     "clishelf/__about__.py",
     "clishelf/cli.py",
+    "scripts/cli.py",
 ]
 relative_files = true
 
@@ -69,6 +70,7 @@ excludes = [
     "/.github",
     "/.pre-commit-config.yaml",
     "/.pre-commit-hooks.yaml",
+    "/scripts"
 ]
 
 [tool.coverage.report]
