@@ -1,13 +1,10 @@
 [project]
 name = "clishelf"
-description = "CLI on my shelf (Tools and Hooks) for any my Python packages"
+description = "A CLI tools and hooks on my shelf"
 readme = "README.md"
 requires-python = ">=3.9.13"
 dynamic = ["version"]
-keywords = [
-    'utility',
-    'cli',
-]
+keywords = ['utility', 'cli']
 authors = [
     { name = "korawica", email = "korawich.anu@gmail.com" },
 ]

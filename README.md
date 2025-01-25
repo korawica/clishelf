@@ -8,7 +8,7 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-observe)](https://github.com/ddeutils/ddeutil-workflow/blob/main/LICENSE)
 
-CLI tools and hooks on my shelf for my any Python packages.
+A CLI tools and hooks on my shelf for my any Python packages.
 This project help me to make Versioning, run Abbreviate of Git CLI, and wrapped
 the development Python packages such as `more-itertools`, `pre-commit`, etc.
 
@@ -148,18 +148,18 @@ git:
 
 ## :dart: Mini-Roadmap
 
-- I will implement use `rich` and `alive-progress` to this project for make
+- (**Optional**) I will implement use `rich` and `alive-progress` to this project for make
   interface terminal prettier.
-- Dynamic emoji changing for support other platform such as GitLab.
-- (BIG) Remove `bump2version` package and implement the own bump function.
+- (**Optional**) Dynamic emoji changing for support other platform such as GitLab.
+- (**BIG**) Remove `bump2version` package and implement my bump function instead.
 
 > [!NOTE]
-> I will migrate this code from **Python** to **Rust** for performance of CLI
-> (But I will observe for this again because this package does not have any issue with perf as well.)
+> I will migrate this code from **Python** to **Rust** for performance of this CLI
+> (But I will observe for this again because this package does not have any issue with perf as well).
 
 ## :speech_balloon: Contribute
 
-I do not think this project will go around the world because it has specific propose
+I do not think this project will go around the world because it has specific propose,
 and you can create by your coding without this project dependency for long term
 solution. So, on this time, you can open [the GitHub issue on this project :raised_hands:](https://github.com/korawica/clishelf/issues)
 for fix bug or request new feature if you want it.
