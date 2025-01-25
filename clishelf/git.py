@@ -18,6 +18,7 @@ from typing import NoReturn, Optional
 
 import click
 
+from .__types import TupleStr
 from .emoji import demojize, get_emojis
 from .settings import GitConf
 from .utils import (
@@ -28,7 +29,6 @@ from .utils import (
 )
 
 cli_git: click.Command
-TupleStr = tuple[str, ...]
 
 
 def get_git_local_config(key: str) -> Optional[str]:
@@ -94,18 +94,20 @@ class CommitPrefixGroup:
         return self.name
 
 
-def get_commit_prefix() -> tuple[CommitPrefix, ...]:
+def get_commit_prefix() -> Iterator[CommitPrefix]:
     """Return tuple of CommitPrefix that setting on the clishelf configuration.
 
-    :rtype: tuple[CommitPrefix, ...]
+    :rtype: Iterator[CommitPrefix]
     """
+    # NOTE: Load config data that want to override.
     conf: list[str] = load_config().get("git", {}).get("commit_prefix", [])
-    prefix_conf: TupleStr = tuple(_[0] for _ in conf)
-    return tuple(
+    prefix_conf: TupleStr = tuple(c[0] for c in conf)
+
+    yield from (
         CommitPrefix(name=n, group=g, emoji=e)
         for n, g, e in (
-            *conf,
             *[p for p in GitConf.commit_prefix if p[0] not in prefix_conf],
+            *conf,
         )
     )
 
@@ -169,14 +171,17 @@ class CommitMsg:
             self.mtype: str = self.__gen_msg_type()
 
     def __gen_msg_type(self) -> str:
-        """Return a message type that getting from the regex."""
+        """Return a message type that getting from the regex.
+
+        :rtype: str
+        """
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
             return next(
                 (cp.group for cp in get_commit_prefix() if prefix == cp.name),
-                "Code Changes",
+                GitConf.commit_prefix_group_default,
             )
-        return "Code Changes"
+        return GitConf.commit_prefix_group_default
 
     @property
     def mtype_icon(self) -> str:
@@ -215,8 +220,9 @@ class CommitMsg:
         emoji: Optional[str] = None
         for cp in get_commit_prefix():
             if prefix == cp.name:
-                emoji = f"{cp.emoji} "
+                emoji: str = f"{cp.emoji} "
                 break
+
         if emoji is None:
             if (
                 load_config()
@@ -374,10 +380,12 @@ def get_commit_logs(
 ) -> Iterator[CommitLog]:  # pragma: no cov
     """Return a list of message that getting from commit log command.
 
-    :param tag: A tag name that want to filter the commit log get to HEAD.
+    :param tag: A tag name that want to filter the commit log get to the HEAD.
     :type tag: Optional[str] (=None)
-    :param all_logs:
-    :param excluded:
+    :param all_logs: A flag that make this function get all logs.
+    :type all_logs: bool (=False)
+    :param excluded: A list of excluded regular expression string.
+    :type excluded: Optional[list[str]] (=None)
     :param is_dt: A datetime mode flag.
     :type is_dt: bool(=False)
 
@@ -393,11 +401,12 @@ def get_commit_logs(
         tag2head = f"{tag}..HEAD"
     refs: str = "HEAD"
     for logs in gen_commit_logs(tag2head):
+
         if any(
-            (re.search(s, logs[1]) is not None)
-            for s in (excluded or [r"^Merge"])
+            re.search(s, logs[1]) is not None for s in (excluded or [r"^Merge"])
         ):
             continue
+
         header: list[str] = logs[0].split("|")
         if ref_tag := [
             ref.strip()
@@ -409,6 +418,7 @@ def get_commit_logs(
                 ref_tag[0],
             ):
                 refs = search.groupdict()["version"]
+
         yield CommitLog(
             hash=header[0],
             refs=refs,

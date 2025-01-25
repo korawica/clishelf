@@ -1,10 +1,10 @@
 import datetime as dt
 import subprocess
 import sys
-import unittest
 from unittest.mock import DEFAULT, patch
 
 import clishelf.git as git
+from clishelf.utils import Profile
 
 
 def side_effect_func(*args, **kwargs):
@@ -18,44 +18,36 @@ def side_effect_func(*args, **kwargs):
         return DEFAULT
 
 
-class GitTestCase(unittest.TestCase):
-    def test_commit_message(self):
-        msg = git.CommitMsg(content="test: test commit message", body="")
-        self.assertEqual(
-            ":test_tube: test: test commit message",
-            msg.content,
-        )
-        self.assertEqual(
-            "Code Changes",
-            msg.mtype,
-        )
+def test_commit_message():
+    msg = git.CommitMsg(content="test: test commit message", body="")
+    assert ":test_tube: test: test commit message" == msg.content
+    assert "Code Changes" == msg.mtype
 
-    def test_commit_log(self):
-        commit_log = git.CommitLog(
-            hash="",
-            refs="",
-            date=dt.datetime(2021, 1, 1),
-            msg=git.CommitMsg(content="test: test commit message", body="|"),
-            author="Demo Username",
-        )
-        self.assertEqual(
-            ":test_tube: test: test commit message",
-            commit_log.msg.content,
-        )
 
-    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    def test_get_latest_tag(self, mock):
-        # Start Test after mock subprocess.
-        result = git.get_latest_tag()
-        self.assertTrue(mock.called)
-        self.assertEqual("v0.0.1", result)
-
-    @patch(
-        "clishelf.git.subprocess.check_output",
-        side_effect=subprocess.CalledProcessError(1, "git"),
+def test_commit_log():
+    commit_log = git.CommitLog(
+        hash="",
+        refs="",
+        date=dt.datetime(2021, 1, 1),
+        msg=git.CommitMsg(content="test: test commit message", body="|"),
+        author=Profile(name="Demo Username", email="demo@mail.com"),
     )
-    def test_get_latest_tag_raise(self, mock):
-        # Start Test after mock subprocess.
-        result = git.get_latest_tag()
-        self.assertTrue(mock.called)
-        self.assertEqual("v0.0.0", result)
+    assert ":test_tube: test: test commit message" == commit_log.msg.content
+
+
+@patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
+def test_get_latest_tag(mock):
+    result = git.get_latest_tag()
+    assert mock.called
+    assert "v0.0.1" == result
+
+
+@patch(
+    "clishelf.git.subprocess.check_output",
+    side_effect=subprocess.CalledProcessError(1, "git"),
+)
+def test_get_latest_tag_raise(mock):
+    # Start Test after mock subprocess.
+    result = git.get_latest_tag()
+    assert mock.called
+    assert "v0.0.0" == result

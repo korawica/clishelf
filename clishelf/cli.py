@@ -29,7 +29,9 @@ def cli():
 
 @cli.command()
 def conf():
-    """Return config for clishelf commands"""
+    """Return a config data of clishelf engine that load from local yaml or toml
+    file.
+    """
     click.echo(json.dumps(load_config(), indent=4))
     sys.exit(0)
 
@@ -40,12 +42,13 @@ def conf():
     "--module",
     type=click.STRING,
     default="pytest",
+    help="A module engine that want to pass to coverage (default be `pytest`).",
 )
 @click.option(
     "-h",
     "--html",
     is_flag=True,
-    help="If True, it will generate coverage html file on `htmlcov/`.",
+    help="If True, it will generate coverage html file at `./htmlcov/`.",
 )
 def cove(module: str, html: bool):
     """Run the coverage command."""
@@ -53,7 +56,8 @@ def cove(module: str, html: bool):
         _ = __import__("coverage")
     except ImportError:
         raise ImportError(  # no cove
-            "Please install `coverage` before using the cove cmd"
+            "Please install `coverage` package before using the cove cmd by "
+            "`pip install -U coverage`."
         ) from None
 
     subprocess.run(["coverage", "run", "--m", module, "tests"])
@@ -62,8 +66,11 @@ def cove(module: str, html: bool):
         stdout=subprocess.DEVNULL,
     )
     subprocess.run(["coverage", "report", "--show-missing"])
+
+    # NOTE: Generate html if flag is passing.
     if html:
         subprocess.run(["coverage", "html"])
+
     sys.exit(0)
 
 

@@ -25,6 +25,8 @@ cli_vs: click.Command
 GroupCommitLog = dict[str, list[CommitLog]]
 TagGroupCommitLog = dict[str, GroupCommitLog]
 
+UTF8: str = "utf-8"
+
 
 def gen_group_commit_log(
     all_tags: bool = False,
@@ -61,7 +63,7 @@ def gen_group_commit_log(
 
 
 def get_changelog(
-    file: str,
+    file: Union[str, Path],
     tags: Optional[list[str]] = None,
     refresh: bool = False,
 ) -> Union[list[str], Iterator[str]]:
@@ -74,16 +76,16 @@ def get_changelog(
 
     :rtype: Union[list[str], Iterator[str]]
     """
-    changes: list[str]
     if refresh or not Path(file).exists():
         from more_itertools import roundrobin
 
-        _changes = ["# Changelogs", "## Latest Changes"]
+        _changes: list[str] = ["# Changelogs", "## Latest Changes"]
         if tags:
             _changes.extend(f"## {t}" for t in tags)
         return roundrobin(_changes, ([""] * (len(_changes) - 1)))
-    with Path(file).open(mode="r", encoding="utf-8") as f_changes:
-        changes = f_changes.read().splitlines()
+
+    with Path(file).open(mode="r", encoding=UTF8) as f_changes:
+        changes: list[str] = f_changes.read().splitlines()
     return changes
 
 
@@ -115,7 +117,7 @@ def write_group_log(
 
 
 def writer_changelog(
-    file: str,
+    file: Union[str, Path],
     all_tags: bool = False,
     refresh: bool = False,
     *,
@@ -135,7 +137,7 @@ def writer_changelog(
     tags: list[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
     prev_change: list[str] = get_changelog(file, tags=tags, refresh=refresh)
 
-    with Path(file).open(mode="w", encoding="utf-8", newline="") as writer:
+    with Path(file).open(mode="w", encoding=UTF8, newline="") as writer:
         skip_line: bool = False
         for line in prev_change:
             if line.startswith("## Latest Changes"):
@@ -171,7 +173,7 @@ def write_bump_file(
 ) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path."""
     files: list[str] = load_config().get("version", {}).get("files", [])
-    with Path(".bumpversion.cfg").open(mode="w", encoding="utf-8") as f_bump:
+    with Path(".bumpversion.cfg").open(mode="w", encoding=UTF8) as f_bump:
         f_bump.write(
             BumpVerConf.get_version(
                 version,
@@ -265,7 +267,7 @@ def bump2version(
     click.echo("Unlink '.bump2version.cfg' config file ...")
     Path(".bumpversion.cfg").unlink(missing_ok=False)
 
-    with Path(".git/COMMIT_EDITMSG").open(encoding="utf-8") as f_msg:
+    with Path(".git/COMMIT_EDITMSG").open(encoding=UTF8) as f_msg:
         raw_msg = f_msg.read().splitlines()
 
     subprocess.run(["git", "add", "-A"], stderr=subprocess.DEVNULL)
@@ -290,7 +292,7 @@ def current_version(file: str, *, is_dt: bool = False) -> str:
 
     :rtype: str
     """
-    with Path(file).open(encoding="utf-8") as f:
+    with Path(file).open(encoding=UTF8) as f:
         if is_dt and (search_dt := re.search(BumpVerConf.regex_dt, f.read())):
             return search_dt[0]
         elif search := re.search(BumpVerConf.regex, f.read()):

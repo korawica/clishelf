@@ -59,17 +59,17 @@ class Bcolors(str, Enum):
         - https://stackoverflow.com/questions/287871
     """
 
-    HEADER = "\033[95m"
-    OK_BLUE = "\033[94m"
-    OK_CYAN = "\033[96m"
-    OK_GREEN = "\033[92m"
-    WARNING = "\033[93m"
-    FAIL = "\033[91m"
-    END = "\033[0m"
-    BOLD = "\033[1m"
-    OK = "\033[92m"
-    INFO = "\033[94m"
-    ERROR = "\033[91m"
+    HEADER: str = "\033[95m"
+    OK_BLUE: str = "\033[94m"
+    OK_CYAN: str = "\033[96m"
+    OK_GREEN: str = "\033[92m"
+    WARNING: str = "\033[93m"
+    FAIL: str = "\033[91m"
+    END: str = "\033[0m"
+    BOLD: str = "\033[1m"
+    OK: str = "\033[92m"
+    INFO: str = "\033[94m"
+    ERROR: str = "\033[91m"
 
 
 class Level(str, Enum):

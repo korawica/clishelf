@@ -103,6 +103,8 @@ class GitConf:
         ("Enhancements", ":sparkles:"),  # ✨
     )
 
+    commit_prefix_group_default: str = "Code Changes"
+
 
 class BumpVerConf:
     """Bump Version Config."""

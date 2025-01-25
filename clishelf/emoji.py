@@ -9,6 +9,7 @@ import json
 from collections.abc import Iterator
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, Union
 
 import click
 
@@ -16,6 +17,8 @@ try:
     import requests
 except ImportError:  # pragma: no cov
     requests = None
+
+from .__types import DictStr
 
 cli_emoji: click.Command
 
@@ -28,12 +31,12 @@ GH_EMOJI_URL: str = (
 )
 
 
-def get_emojis() -> Iterator[dict[str, str]]:
+def get_emojis() -> Iterator[DictStr]:
     """Get the iterator of the emoji data that already loading to assets path.
     This function use iterator for returning step because I do not want to keep
     all emoji data in memory.
 
-    :rtype: Iterator[dict[str, str]]
+    :rtype: Iterator[DictStr]
     """
     file = Path(__file__).parent / "assets/emoji.json"
     with file.open(encoding="utf-8") as f:
@@ -43,18 +46,16 @@ def get_emojis() -> Iterator[dict[str, str]]:
 def demojize(
     msg: str,
     *,
-    emojis: Iterator[dict[str, str]] | list[dict[str, str]] | None = None,
+    emojis: Optional[Union[Iterator[DictStr], list[DictStr]]] = None,
 ) -> str:
-    """Replace an unicode emoji to an emoji string in a message.
+    """Replace a Unicode emoji to an emoji string in a message.
 
     :param msg: A message string that want to search emoji string.
     :param emojis: An iterator or list of mapping of emoji values.
 
     :rtype: str
     """
-    emojis: Iterator[dict[str, str]] = (
-        get_emojis() if emojis is None else emojis
-    )
+    emojis: Iterator[DictStr] = get_emojis() if emojis is None else emojis
     for emoji in emojis:
         if (e := emoji["emoji"]) in msg:
             msg = msg.replace(e, f':{emoji["alias"]}:')
@@ -64,18 +65,16 @@ def demojize(
 def emojize(
     msg: str,
     *,
-    emojis: Iterator[dict[str, str]] | list[dict[str, str]] | None = None,
+    emojis: Optional[Union[Iterator[DictStr], list[DictStr]]] = None,
 ) -> str:
-    """Replace an emoji string to an unicode emoji in a message.
+    """Replace an emoji string to a Unicode emoji in a message.
 
-    :param msg: A message string that want to search unicode emoji.
+    :param msg: A message string that want to search Unicode emoji.
     :param emojis: An iterator or list of mapping of emoji values.
 
     :rtype: str
     """
-    emojis: Iterator[dict[str, str]] = (
-        get_emojis() if emojis is None else emojis
-    )
+    emojis: Iterator[DictStr] = get_emojis() if emojis is None else emojis
     for emoji in emojis:
         if (alias := f':{emoji["alias"]}:') in msg:
             msg = msg.replace(alias, emoji["emoji"])
@@ -95,18 +94,21 @@ def fetch(backup: bool = False) -> None:
 
     :param backup: A backup flag for rename the previous file with backup suffix
         if this value set to True.
+    :type backup: bool (=False)
     """
     if requests is None:  # pragma: no cov
         raise ImportError(
             "fetch command want the request package for getting the emoji "
-            "metadata from GitHub repository. Please install with: "
-            "``pip install -U requests``"
+            "metadata from the GitHub repository. Please install with: "
+            "`pip install -U requests`"
         )
 
-    file = Path(__file__).parent / "assets/emoji.json"
+    file: Path = Path(__file__).parent / "assets/emoji.json"
     file.parent.mkdir(parents=True, exist_ok=True)
+
     if file.exists() and backup:
         file.rename(file.parent / f"emoji.bk{datetime.now():%Y%m%d%H%M%S}.json")
+
     with file.open(mode="w", encoding="utf-8") as f:
         json.dump(
             [

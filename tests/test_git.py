@@ -129,130 +129,109 @@ class GitModelTestCase(unittest.TestCase):
         )
 
 
-class GitTestCase(unittest.TestCase):
+@patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
+@patch("clishelf.utils.load_pyproject")
+def test_load_profile(mock_load_pyproject, mock):
+    mock_load_pyproject.return_value = {}
+    rs = git.load_profile()
 
-    @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
-    @patch("clishelf.utils.load_pyproject")
-    def test_load_profile(self, mock_load_pyproject, mock):
-        mock_load_pyproject.return_value = {}
-        rs = git.load_profile()
-        self.assertIsInstance(rs, git.Profile)
-        self.assertEqual("Test User", rs.name)
-        self.assertEqual("test@mail.com", rs.email)
-        self.assertTrue(mock.called)
+    assert mock.called
+    assert isinstance(rs, git.Profile)
+    assert "Test User" == rs.name
+    assert "test@mail.com" == rs.email
 
-    def test_get_commit_prefix(self):
-        data = git.get_commit_prefix()
 
-        # This assert will true if run on `pytest -v`
-        self.assertEqual(28, len(data))
+def test_get_commit_prefix():
+    assert 28 == len(list(git.get_commit_prefix()))
 
-    def test_get_commit_prefix_group(self):
-        data: tuple[git.CommitPrefixGroup, ...] = git.get_commit_prefix_group()
-        feat: git.CommitPrefixGroup = [
-            cm for cm in data if cm.name == "Features"
-        ][0]
-        self.assertEqual(":tada:", feat.emoji)
 
-    @patch(
-        "clishelf.git.subprocess.check_output",
-        side_effect=side_effect_bn_tg_func,
+def test_get_commit_prefix_group():
+    data: tuple[git.CommitPrefixGroup, ...] = git.get_commit_prefix_group()
+    feat: git.CommitPrefixGroup = [cm for cm in data if cm.name == "Features"][
+        0
+    ]
+    assert ":tada:" == feat.emoji
+
+
+@patch(
+    "clishelf.git.subprocess.check_output",
+    side_effect=side_effect_bn_tg_func,
+)
+def test_get_latest_tag(mock):
+    result = git.get_latest_tag()
+
+    assert mock.called
+    assert "v0.0.1" == result
+
+
+def test_git_demojize():
+    assert "test :fire: :fire:" == demojize(
+        "test 🔥 :fire:", emojis=git.get_git_emojis()
     )
-    def test_get_latest_tag(self, mock):
-        result = git.get_latest_tag()
-        self.assertTrue(mock.called)
-        self.assertEqual("v0.0.1", result)
 
-    def test_gen_commit_log(self): ...
 
-    def test_git_demojize(self):
-        self.assertEqual(
-            "test :fire: :fire:",
-            demojize("test 🔥 :fire:", emojis=git.get_git_emojis()),
-        )
+def test_validate_commit_msg_warning():
+    rs = git._validate_commit_msg_warning([":dart: feat: demo", ""])
+    assert rs == [
+        (
+            "There should be between 21 and 50 characters in the "
+            "commit title."
+        ),
+        "There should at least 3 lines in your commit message.",
+        "There should not has dot in the end of commit message.",
+    ]
 
-    def test_validate_commit_msg_warning(self):
-        rs = git._validate_commit_msg_warning([":dart: feat: demo", ""])
-        self.assertListEqual(
-            rs,
-            [
-                (
-                    "There should be between 21 and 50 characters in the "
-                    "commit title."
-                ),
-                "There should at least 3 lines in your commit message.",
-                "There should not has dot in the end of commit message.",
-            ],
-        )
+    rs = git._validate_commit_msg_warning(
+        [":dart: feat: demo test validate for warning.", "empty"]
+    )
+    assert rs == [
+        "There should at least 3 lines in your commit message.",
+        ("There should be an empty line between the commit title " "and body."),
+    ]
 
-        rs = git._validate_commit_msg_warning(
-            [":dart: feat: demo test validate for warning.", "empty"]
-        )
-        self.assertListEqual(
-            rs,
-            [
-                "There should at least 3 lines in your commit message.",
-                (
-                    "There should be an empty line between the commit title "
-                    "and body."
-                ),
-            ],
-        )
+    rs = git._validate_commit_msg_warning(
+        [
+            ":dart: feat: demo test validate for warning.",
+            "",
+            "body of commit log",
+            "",
+        ]
+    )
+    assert rs == []
 
-        rs = git._validate_commit_msg_warning(
-            [
-                ":dart: feat: demo test validate for warning.",
-                "",
-                "body of commit log",
-                "",
-            ]
-        )
-        self.assertListEqual(
-            rs,
-            [],
-        )
 
-    def test_validate_commit_msg(self):
-        rs = git.validate_commit_msg([])
-        self.assertTupleEqual(
-            rs,
+def test_validate_commit_msg():
+    rs = git.validate_commit_msg([])
+    assert rs == (
+        ["Please supply commit message without start with ``#``."],
+        git.Level.ERROR,
+    )
+
+    rs = git.validate_commit_msg(
+        [
+            ":dart: feat: demo test validate for warning.",
+            "",
+            "body of commit log",
+            "",
+        ]
+    )
+    assert rs == (
+        ["The commit message has the required pattern."],
+        git.Level.OK,
+    )
+
+    rs = git.validate_commit_msg(
+        [
+            ":dart: feat: demo test validate for warning.",
+            "",
             (
-                ["Please supply commit message without start with ``#``."],
-                git.Level.ERROR,
+                "body of commit log that has character more that 72 and "
+                "it will return some warning message from function"
             ),
-        )
-
-        rs = git.validate_commit_msg(
-            [
-                ":dart: feat: demo test validate for warning.",
-                "",
-                "body of commit log",
-                "",
-            ]
-        )
-        self.assertTupleEqual(
-            rs,
-            (
-                ["The commit message has the required pattern."],
-                git.Level.OK,
-            ),
-        )
-
-        rs = git.validate_commit_msg(
-            [
-                ":dart: feat: demo test validate for warning.",
-                "",
-                (
-                    "body of commit log that has character more that 72 and "
-                    "it will return some warning message from function"
-                ),
-                "",
-            ]
-        )
-        self.assertTupleEqual(
-            rs,
-            (
-                ["The commit body should wrap at 72 characters at line: 3."],
-                git.Level.WARNING,
-            ),
-        )
+            "",
+        ]
+    )
+    assert rs == (
+        ["The commit body should wrap at 72 characters at line: 3."],
+        git.Level.WARNING,
+    )
