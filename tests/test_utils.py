@@ -1,5 +1,4 @@
 import pathlib
-import unittest
 from unittest.mock import DEFAULT, patch
 
 import clishelf.utils as utils
@@ -23,36 +22,35 @@ def side_effect_func_pyproject(*args, **kwargs):
     return DEFAULT
 
 
-class UtilsTestCase(unittest.TestCase):
+def test_make_color():
+    result = utils.make_color("test", utils.Level.OK)
+    assert result == "\x1b[92m\x1b[1mOK: test\x1b[0m"
 
-    def test_make_color(self):
-        result = utils.make_color("test", utils.Level.OK)
-        self.assertEqual("\x1b[92m\x1b[1mOK: test\x1b[0m", result)
 
-    @patch("clishelf.utils.Path", side_effect=side_effect_func_pyproject)
-    def test_load_pyproject(self, mock_path):
-        data = utils.load_pyproject()
-        assert data == {}
+@patch("clishelf.utils.Path", side_effect=side_effect_func_pyproject)
+def test_load_pyproject(mock_path):
+    data = utils.load_pyproject()
+    assert data == {}
 
-    @patch("clishelf.utils.Path", side_effect=side_effect_func)
-    @patch("clishelf.utils.load_pyproject")
-    def test_load_config(self, mock_load_pyproject, mock_path):
-        mock_load_pyproject.return_value = {}
-        data = utils.load_config()
-        self.assertDictEqual({}, data)
 
-        main_file = pathlib.Path(__file__).parent / ".clishelf.yaml"
-        with main_file.open(mode="w") as f:
-            f.writelines(
-                [
-                    "git:\n",
-                    "  commit_prefix:\n",
-                    '    - ["comment", "Documents", ":bulb:"]\n',
-                ]
-            )
-        data = utils.load_config()
-        self.assertDictEqual(
-            {"git": {"commit_prefix": [["comment", "Documents", ":bulb:"]]}},
-            data,
+@patch("clishelf.utils.Path", side_effect=side_effect_func)
+@patch("clishelf.utils.load_pyproject")
+def test_load_config(mock_load_pyproject, mock_path):
+    mock_load_pyproject.return_value = {}
+    data = utils.load_config()
+    assert {} == data
+
+    main_file = pathlib.Path(__file__).parent / ".clishelf.yaml"
+    with main_file.open(mode="w") as f:
+        f.writelines(
+            [
+                "git:\n",
+                "  commit_prefix:\n",
+                '    - ["comment", "Documents", ":bulb:"]\n',
+            ]
         )
-        main_file.unlink()
+    data = utils.load_config()
+    assert {
+        "git": {"commit_prefix": [["comment", "Documents", ":bulb:"]]}
+    } == data
+    main_file.unlink()

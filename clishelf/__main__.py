@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
-from clishelf.cli import main
+from cli import main
 
-main()
+if __name__ == "__main__":
+    main()
