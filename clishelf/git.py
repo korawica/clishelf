@@ -147,7 +147,7 @@ class CommitMsg:
     """Commit Message dataclass that prepare un-emoji-prefix in that message."""
 
     content: InitVar[str]
-    mtype: InitVar[str] = field(default=None)
+    mtype: InitVar[Optional[str]] = field(default=None)
     body: str = field(default=None)  # NOTE: Mark new-line with ``|``
 
     def __str__(self) -> str:
@@ -439,7 +439,14 @@ def get_latest_commit(
     edit: bool = False,
     output_file: bool = False,
 ) -> list[str]:  # pragma: no cov
-    """Return a list of line that created on commit message file."""
+    """Return a list of line that created on commit message file.
+
+    :param file:
+    :param edit:
+    :param output_file:
+
+    :rtype: list[str]
+    """
     if file:
         with Path(file).open(encoding="utf-8") as f_msg:
             raw_msg = f_msg.read().splitlines()
@@ -546,8 +553,12 @@ def cm_msg(group: bool = False) -> None:  # pragma: no cov
 
 @cli_git.command()
 @click.option("--verify", is_flag=True)
-def cm_prev(verify: bool) -> None:  # pragma: no cov
-    """Commit changes to the Previous Commit with same message."""
+def cm_prev(verify: bool = False) -> None:  # pragma: no cov
+    """Commit changes to the Previous Commit with same message.
+
+    \f
+    :param verify: A verify flag before commit.
+    """
     merge2latest_commit(no_verify=(not verify))
     sys.exit(0)
 
@@ -555,8 +566,13 @@ def cm_prev(verify: bool) -> None:  # pragma: no cov
 @cli_git.command()
 @click.option("-f", "--force", is_flag=True)
 @click.option("-n", "--number", type=click.INT, default=1)
-def cm_revert(force: bool, number: int) -> None:  # pragma: no cov
-    """Revert the latest Commit on the Local repository."""
+def cm_revert(force: bool, number: int = 1) -> None:  # pragma: no cov
+    """Revert the latest Commit on the Local repository.
+
+    \f
+    :param force: A force flag that restore and clean all stage after reset.
+    :param number: A number of commit that want to revert from the HEAD.
+    """
     subprocess.run(["git", "reset", f"HEAD~{number}"])
     if force:
         subprocess.run(["git", "restore", "."])
@@ -658,7 +674,11 @@ def bn_clear() -> NoReturn:  # pragma: no cov
     help="If True, it will auto push to remote",
 )
 def tg_bump(push: bool = False) -> None:  # pragma: no cov
-    """Create Tag from current version after bumping"""
+    """Create Tag from current version after bumping
+
+    \f
+    :param push: A push flag that will push a tag to remote if it set to True.
+    """
     latest_tag: str = get_latest_tag(default=False)
     subprocess.run(
         ["git", "tag", "-d", f"{latest_tag}"],

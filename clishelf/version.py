@@ -33,6 +33,9 @@ def gen_group_commit_log(
 ) -> TagGroupCommitLog:
     """Generate Group of the Commit Logs
 
+    :param all_tags:
+    :param is_dt:
+
     :rtype: GroupCommitLog
     """
     from .git import get_commit_logs
@@ -118,7 +121,13 @@ def writer_changelog(
     *,
     is_dt: bool = False,
 ) -> None:
-    """Writer Changelog that generate from Git Log command."""
+    """Writer Changelog that generate from Git Log command.
+
+    :param file:
+    :param all_tags:
+    :param refresh:
+    :param is_dt:
+    """
     group_logs: TagGroupCommitLog = gen_group_commit_log(
         all_tags=all_tags,
         is_dt=is_dt,
@@ -195,12 +204,12 @@ def bump2version(
         - remove the bump2version file config
         - commit all change to the latest commit the running from bump2version
 
-    :param action
-    :param file
-    :param changelog_file
-    :param changelog_ignore
-    :param dry_run
-    :param version
+    :param action:
+    :param file:
+    :param changelog_file:
+    :param changelog_ignore:
+    :param dry_run:
+    :param version:
     :param is_dt: A datetime mode flag
     """
     # Start writing ``.bump2version.cfg`` file on current path.
@@ -274,7 +283,13 @@ def bump2version(
 
 
 def current_version(file: str, *, is_dt: bool = False) -> str:
-    """Return the current version."""
+    """Return the current version.
+
+    :param file:
+    :param is_dt:
+
+    :rtype: str
+    """
     with Path(file).open(encoding="utf-8") as f:
         if is_dt and (search_dt := re.search(BumpVerConf.regex_dt, f.read())):
             return search_dt[0]

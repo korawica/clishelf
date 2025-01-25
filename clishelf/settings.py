@@ -20,6 +20,7 @@ class GitConf:
     # pushing to any of these):
     branch_excepts: list[str] = [
         "feature",
+        "feat",
         "dev",
         "main",
         "stable",
@@ -42,21 +43,37 @@ class GitConf:
     #   All emojis, https://github.com/ikatyang/emoji-cheat-sheet
     #   GitHub API: https://api.github.com/emojis
     commit_prefix: tuple[tuple[str, str, str]] = (
+        # NOTE: Features
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
-        ("hotfix", "Fix Bugs", ":fire:"),  # 🔥, 🚑 :ambulance:
-        ("fixed", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
-        ("fix", "Fix Bugs", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
-        ("bug", "Fix Bugs", ":bug:"),  # 🐛
+        # NOTE: Fixed
+        ("hotfix", "Bug fixes", ":fire:"),  # 🔥, 🚑 :ambulance:
+        ("fixed", "Bug fixes", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
+        ("fix", "Bug fixes", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
+        ("bug", "Bug fixes", ":bug:"),  # 🐛
+        ("bugfix", "Bug fixes", ":bug:"),  # 🐛
+        # NOTE: Documents
         ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
+        # NOTE: Code Styled
         ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
         ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
-        ("refactored", "Code Changes", ":construction:"),
-        # 🚧, 💬 :speech_balloon:
-        ("refactor", "Code Changes", ":construction:"),
-        # 🚧, 💬 :speech_balloon:
-        ("perf", "Code Changes", ":zap:"),
-        # ⚡, 📈 :chart_with_upwards_trend:, ⌛ :hourglass:
+        (
+            "refactored",
+            "Code Changes",
+            ":construction:",
+        ),  # 🚧, 💬 :speech_balloon:
+        (
+            "refactor",
+            "Code Changes",
+            ":construction:",
+        ),  # 🚧, 💬 :speech_balloon:
+        # NOTE: Performance
+        (
+            "perf",
+            "Performance improvements",
+            ":zap:",
+        ),  # ⚡, 📈 :chart_with_upwards_trend:, ⌛ :hourglass:
+        # NOTE: Tests
         ("tests", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
         ("test", "Code Changes", ":test_tube:"),  # 🧪, ⚗️ :alembic:
         ("build", "Build & Workflow", ":toolbox:"),  # 🧰, 📦 :package:
@@ -64,7 +81,9 @@ class GitConf:
         ("deps", "Dependencies", ":pushpin:"),  # 📌, 🔍 :mag:
         ("dependency", "Dependencies", ":pushpin:"),  # 📌, 🔍 :mag:
         ("secure", "Security", ":lock:"),  # 🔒
+        ("security", "Security", ":lock:"),  # 🔒
         ("init", "Features", ":tada:"),  # 🎉
+        ("initial", "Features", ":tada:"),  # 🎉
         ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
         ("revert", "Code Changes", ":rewind:"),  # ⏪
         ("merge", "Code Changes", ":fast_forward:"),  # ⏩
@@ -73,11 +92,15 @@ class GitConf:
     commit_prefix_group: tuple[tuple[str, str]] = (
         ("Features", ":sparkles:"),  # ✨
         ("Code Changes", ":black_nib:"),  # ✒️
-        ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
-        ("Fix Bugs", ":bug:"),  # 🐛
+        # ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
+        ("Documentations", ":book:"),  # 📖
+        ("Bug fixes", ":bug:"),  # 🐛, 🐞:beetle:
         ("Build & Workflow", ":package:"),  # 📦
         ("Dependencies", ":postbox:"),  # 📮
         ("Security", ":closed_lock_with_key:"),  # 🔐
+        ("Performance improvements", ":rocket:"),  # 🚀, ⚡️ :zap:
+        ("Other improvements", ":hammer_and_wrench:"),  # 🛠️
+        ("Enhancements", ":sparkles:"),  # ✨
     )
 
 

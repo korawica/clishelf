@@ -40,11 +40,12 @@ def load_config() -> dict[str, Any]:
 
     :rtype: dict[str, Any]
     """
-
     data: dict[str, Any] = {}
-    conf_file = Path(".clishelf.yaml")
+
+    conf_file: Path = Path(".clishelf.yaml")
     if conf_file.exists():
         data = yaml.safe_load(conf_file.read_text(encoding="utf-8"))
+
     return {
         **data,
         **load_pyproject().get("tool", {}).get("shelf", {}),
@@ -74,10 +75,10 @@ class Bcolors(str, Enum):
 class Level(str, Enum):
     """An Enum for notification levels that relate with Bcolors enum object."""
 
-    OK = "OK"
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
+    OK: str = "OK"
+    INFO: str = "INFO"
+    WARNING: str = "WARNING"
+    ERROR: str = "ERROR"
 
 
 def make_color(message: str, level: Level) -> str:

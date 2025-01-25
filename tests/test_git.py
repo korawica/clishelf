@@ -87,7 +87,7 @@ class GitModelTestCase(unittest.TestCase):
             mtype=None,
         )
         self.assertEqual(
-            ("Code Changes: :fast_forward: merge: branch 'main' into dev"),
+            "Code Changes: :fast_forward: merge: branch 'main' into dev",
             str(msg),
         )
 
@@ -145,10 +145,10 @@ class GitTestCase(unittest.TestCase):
         data = git.get_commit_prefix()
 
         # This assert will true if run on `pytest -v`
-        self.assertEqual(25, len(data))
+        self.assertEqual(28, len(data))
 
     def test_get_commit_prefix_group(self):
-        data: tuple[git.CommitPrefixGroup] = git.get_commit_prefix_group()
+        data: tuple[git.CommitPrefixGroup, ...] = git.get_commit_prefix_group()
         feat: git.CommitPrefixGroup = [
             cm for cm in data if cm.name == "Features"
         ][0]
