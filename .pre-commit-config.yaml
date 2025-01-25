@@ -5,11 +5,11 @@ default_language_version:
 ci:
     skip: [pytest-check, commit-msg-hook]
     autofix_commit_msg: |
-        🚧 [pre-commit.ci] auto fixes from pre-commit.com hooks
+        :construction: [pre-commit.ci] auto fixes from pre-commit.com hooks
     autofix_prs: true
     autoupdate_schedule: weekly
     autoupdate_commit_msg: |
-        🚧 [pre-commit.ci] pre-commit autoupdate
+        :construction: [pre-commit.ci] pre-commit autoupdate
     submodules: false
 
 repos:
@@ -86,8 +86,6 @@ repos:
 #                 - --ignore=D100
 #                 - --convention=pep257
 
-# Pre-commit main hook repo
-# ---
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev:  v5.0.0
     hooks:
@@ -102,12 +100,10 @@ repos:
     -   id: check-yaml
         stages: [pre-commit]
         args: ["--unsafe"]
-#         -   id: check-added-large-files
+    -   id: check-added-large-files
     -   id: check-toml
         stages: [pre-commit]
 
-# Pre-commit local
-# ---
 -   repo: local
     hooks:
     -   id: commit-msg-hook
@@ -124,8 +120,8 @@ repos:
         stages:
             - pre-commit
             - pre-push
-        # alternatively you could `core: [python]` so it only runs
-        # when python files change.
+        # NOTE: alternatively you could `core: [python]` so it only runs
+        #   when python files change.
         types: [python]
         entry: venv/Scripts/pytest.exe -v
         language: system
