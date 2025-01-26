@@ -9,13 +9,12 @@
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-observe)](https://github.com/ddeutils/ddeutil-workflow/blob/main/LICENSE)
 
 A CLI tools and hooks on my shelf for my any Python packages.
-This project help me to make Versioning, run Abbreviate of Git CLI, and wrapped
-the development Python packages such as `more-itertools`, `pre-commit`, etc.
+This project help me to make Versioning, run Abbreviate of Git CLI.
 
 > [!NOTE]
 > This project was created because I do not want to hard code set up all of them
 > every time when I start create a new Python package :tired_face:. I provide some
-> reusable CLIs that was implemented from [`Click`](https://github.com/pallets/click/).
+> reusable CLIs that was implemented by [`Click`](https://github.com/pallets/click/).
 
 ## :round_pushpin: Installation
 
@@ -33,6 +32,9 @@ custom message code.
 |:-----------------|:------------------------------------------|:--------------------:|
 | `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.10"`  |         :x:          |
 | `>=3.9.13,<3.14` | `pip install -U clishelf`                 |  :heavy_check_mark:  |
+
+> [!WARNING]
+> This package already install `pre-commit` with the latest version.
 
 ## :rocket: Pre-Commit Hook
 

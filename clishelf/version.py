@@ -81,14 +81,12 @@ def get_changelog(
     :rtype: Iterator[str]
     """
     if refresh or not Path(file).exists():
-        from more_itertools import roundrobin
-
         headers: list[str] = [CHANGELOG_HEADER, CHANGELOG_LATEST]
         if tags:
             headers.extend(f"## {t}" for t in tags)
 
         # NOTE: Add `""` to all spaces between rows.
-        return roundrobin(headers, ([""] * (len(headers) - 1)))
+        return iter(("|SEP||SEP|".join(headers)).split("|SEP|"))
 
     with Path(file).open(mode="r", encoding=UTF8) as f_changes:
         changes: list[str] = f_changes.read().splitlines()
