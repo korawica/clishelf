@@ -77,7 +77,7 @@ jobs:
 
       - name: Test with Pytest
         run: |
-          pytest -v
+          pytest -vv
 
       - name: Test Shelf commands
         run: |
