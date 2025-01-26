@@ -2,6 +2,25 @@
 
 ## Latest Changes
 
+## 0.2.11
+
+### :black_nib: Code Changes
+
+- :test_tube: tests: update conftest for test path. (_2025-01-26_)
+- :art: styled: change code style and code format. (_2025-01-25_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: fix import cli command. (_2025-01-26_)
+- :toolbox: build: add excluded for scripts files. (_2025-01-25_)
+- :toolbox: build: change icon prefix on pre-commit ci. (_2025-01-25_)
+- :toolbox: build: add script path for run cli on local. (_2025-01-25_)
+- :toolbox: build: update pyproject file. (_2025-01-25_)
+
+### :postbox: Dependencies
+
+- :pushpin: deps: remove more_itertools package from dependencies. (_2025-01-26_)
+
 ## 0.2.10
 
 ### :tada: Features
