@@ -31,8 +31,11 @@ from .utils import (
 cli_git: click.Command
 
 
-def get_git_local_config(key: str) -> Optional[str]:
-    """Get Git config on the local scope with an input key.
+def get_git_local_conf(key: str) -> Optional[str]:
+    """Get Git config on the local scope with an input specific key.
+
+    :param key: A key of config that want to get.
+    :type key: str
 
     :rtype: Optional[str]
     """
@@ -58,8 +61,8 @@ def load_profile() -> Profile:
         load_pyproject().get("project", {}).get("authors", {})
     )
     return Profile(
-        name=_authors.get("name", get_git_local_config("user.name")),
-        email=_authors.get("email", get_git_local_config("user.email")),
+        name=_authors.get("name", get_git_local_conf("user.name")),
+        email=_authors.get("email", get_git_local_conf("user.email")),
     )
 
 

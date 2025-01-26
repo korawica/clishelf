@@ -12,7 +12,7 @@ import sys
 from collections import defaultdict
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn, Optional, TextIO, Union
 
 import click
 
@@ -26,14 +26,17 @@ GroupCommitLog = dict[str, list[CommitLog]]
 TagGroupCommitLog = dict[str, GroupCommitLog]
 
 UTF8: str = "utf-8"
+HEAD: str = "HEAD"
+CHANGELOG_HEADER: str = "# Changelogs"
+CHANGELOG_LATEST: str = "## Latest Changes"
 
 
-def gen_group_commit_log(
-    all_tags: bool = False,
+def map_group_commit_logs(
     *,
+    all_tags: bool = False,
     is_dt: bool = False,
 ) -> TagGroupCommitLog:
-    """Generate Group of the Commit Logs
+    """Mapping Group to the getting commit logs function.
 
     :param all_tags:
     :param is_dt:
@@ -64,37 +67,46 @@ def gen_group_commit_log(
 
 def get_changelog(
     file: Union[str, Path],
+    *,
     tags: Optional[list[str]] = None,
     refresh: bool = False,
-) -> Union[list[str], Iterator[str]]:
+) -> Iterator[str]:
     """Return the list of content in the changelog file.
 
     :param file: A change log file path.
     :type file: str
     :param tags:
-    :param refresh:
+    :param refresh: A refresh flag
 
-    :rtype: Union[list[str], Iterator[str]]
+    :rtype: Iterator[str]
     """
     if refresh or not Path(file).exists():
         from more_itertools import roundrobin
 
-        _changes: list[str] = ["# Changelogs", "## Latest Changes"]
+        headers: list[str] = [CHANGELOG_HEADER, CHANGELOG_LATEST]
         if tags:
-            _changes.extend(f"## {t}" for t in tags)
-        return roundrobin(_changes, ([""] * (len(_changes) - 1)))
+            headers.extend(f"## {t}" for t in tags)
+
+        # NOTE: Add `""` to all spaces between rows.
+        return roundrobin(headers, ([""] * (len(headers) - 1)))
 
     with Path(file).open(mode="r", encoding=UTF8) as f_changes:
         changes: list[str] = f_changes.read().splitlines()
-    return changes
+
+    return iter(changes)
 
 
 def write_group_log(
-    writer,
+    writer: TextIO,
     group_logs: GroupCommitLog,
     tag_value: str,
 ) -> None:
-    """Write a group log."""
+    """Write a group log.
+
+    :param writer:
+    :param group_logs:
+    :param tag_value:
+    """
     from .git import get_commit_prefix_group
 
     linesep: str = os.linesep
@@ -116,37 +128,40 @@ def write_group_log(
         writer.write(os.linesep)
 
 
-def writer_changelog(
+def create_changelog(
     file: Union[str, Path],
+    *,
     all_tags: bool = False,
     refresh: bool = False,
-    *,
     is_dt: bool = False,
 ) -> None:
-    """Writer Changelog that generate from Git Log command.
+    """Create Changelog file that generate from Git Log command.
 
     :param file:
     :param all_tags:
     :param refresh:
     :param is_dt:
     """
-    group_logs: TagGroupCommitLog = gen_group_commit_log(
+    group_logs: TagGroupCommitLog = map_group_commit_logs(
         all_tags=all_tags,
         is_dt=is_dt,
     )
-    tags: list[str] = list(filter(lambda t: t != "HEAD", group_logs.keys()))
-    prev_change: list[str] = get_changelog(file, tags=tags, refresh=refresh)
+    tags: list[str] = list(filter(lambda t: t != HEAD, group_logs.keys()))
+    prev_change: Iterator[str] = get_changelog(file, tags=tags, refresh=refresh)
 
     with Path(file).open(mode="w", encoding=UTF8, newline="") as writer:
         skip_line: bool = False
         for line in prev_change:
-            if line.startswith("## Latest Changes"):
+            if line.startswith(CHANGELOG_LATEST):
+
+                # NOTE: Start write group log for the HEAD refs.
                 write_group_log(
                     writer,
-                    group_logs.get("HEAD", {}),
+                    group_logs.get(HEAD, {}),
                     tag_value="Latest Changes",
                 )
-                skip_line = True
+                skip_line: bool = True
+
             elif m := re.match(rf"^##\s({BumpVerConf.get_regex(is_dt)})", line):
                 get_tag: str = m.group(1)
                 if get_tag in tags:  # pragma: no cov
@@ -228,7 +243,7 @@ def bump2version(
     )
 
     if not changelog_ignore:
-        writer_changelog(file=changelog_file)
+        create_changelog(file=changelog_file)
 
     # COMMIT: commit add config and edit changelog file.
     subprocess.run(["git", "add", "-A"])
@@ -320,9 +335,9 @@ def changelog(
             or "CHANGELOG.md"
         )
     if new:
-        writer_changelog(file, all_tags=True, refresh=new)
+        create_changelog(file, all_tags=True, refresh=new)
         sys.exit(0)
-    writer_changelog(file, refresh=new)
+    create_changelog(file, refresh=new)
     sys.exit(0)
 
 

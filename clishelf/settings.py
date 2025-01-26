@@ -159,23 +159,6 @@ class BumpVerConf:
     [bumpversion:file:{file}]
     """
     )
-    # main_dt: str = dedent(
-    #     r"""
-    # [bumpversion]
-    # current_version = {version}
-    # new_version = {new_version}
-    # commit = True
-    # tag = False
-    # parse = ^
-    #     {regex}
-    # serialize =
-    #     {{date}}.{{pre}}
-    #     {{date}}
-    # message = {msg}
-    #
-    # [bumpversion:file:{file}]
-    # """
-    # )
 
     msg: str = (
         # 🔖 :bookmark:
@@ -263,6 +246,8 @@ class BumpVerConf:
     @classmethod
     def update_dt_pre(cls, version: str) -> str:
         """Return new pre version of datetime mode.
+
+        :param version: A string version that want to update.
 
         Examples:
             20240101        ->  20240101.1

@@ -1,24 +1,36 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
+from collections.abc import Iterator
 from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import DEFAULT, patch
 
-import clishelf.version as version
 from clishelf.git import CommitLog, CommitMsg, Profile
+from clishelf.version import (
+    create_changelog,
+    current_version,
+    get_changelog,
+    map_group_commit_logs,
+    write_bump_file,
+    write_group_log,
+)
 
 
 def side_effect_func(*args, **kwargs):
+    _ = kwargs
     if ".bumpversion.cfg" in args[0]:
-        _ = kwargs
         return Path(__file__).parent / ".bumpversion.cfg"
     elif "__version__.py" in args[0]:
-        _ = kwargs
         return Path(__file__).parent / "__version__.py"
     return DEFAULT
 
 
 @patch("clishelf.git.get_commit_logs")
-def test_gen_group_commit_log(mock_get_commit_logs):
+def test_map_group_commit_logs(mock_get_commit_logs):
     commit_log = CommitLog(
         hash="f477e87",
         refs="HEAD",
@@ -27,13 +39,14 @@ def test_gen_group_commit_log(mock_get_commit_logs):
         author=Profile(name="test", email="test@mail.com"),
     )
     mock_get_commit_logs.return_value = iter([commit_log])
-    assert version.gen_group_commit_log() == {
+
+    assert map_group_commit_logs() == {
         "HEAD": {"Build & Workflow": [commit_log]}
     }
 
 
-def test_get_changelog():
-    changelog_file = Path(__file__).parent / "test_changelog.md"
+def test_get_changelog(test_path: Path):
+    changelog_file: Path = test_path / "test_changelog.md"
     with changelog_file.open(mode="w") as f:
         f.writelines(
             [
@@ -47,8 +60,8 @@ def test_get_changelog():
                 "- :dart: feat: first initial (_2024-01-01_)\n",
             ]
         )
-    rs = version.get_changelog(changelog_file)
-    assert rs == [
+    rs: Iterator[str] = get_changelog(changelog_file)
+    assert list(rs) == [
         "# Changelogs",
         "",
         "## Latest Changes",
@@ -66,18 +79,18 @@ def test_get_changelog():
         "- :dart: feat: first initial (_2024-01-01_)",
     ]
 
-    rs = version.get_changelog(changelog_file, refresh=True)
+    rs = get_changelog(changelog_file, refresh=True)
     assert list(rs) == ["# Changelogs", "", "## Latest Changes"]
 
-    rs = version.get_changelog(changelog_file, tags=["0.0.2"], refresh=True)
+    rs = get_changelog(changelog_file, tags=["0.0.2"], refresh=True)
     assert list(rs) == ["# Changelogs", "", "## Latest Changes", "", "## 0.0.2"]
 
     changelog_file.unlink()
 
 
-@patch("clishelf.version.gen_group_commit_log")
-def test_writer_changelog(mock_gen_group_commit_log):
-    commit_logs = [
+@patch("clishelf.version.map_group_commit_logs")
+def test_create_changelog(mock_map_group_commit_logs):
+    commit_logs: list[CommitLog] = [
         CommitLog(
             hash="f477e87",
             refs="HEAD",
@@ -93,7 +106,7 @@ def test_writer_changelog(mock_gen_group_commit_log):
             author=Profile(name="test", email="test@mail.com"),
         ),
     ]
-    mock_gen_group_commit_log.return_value = {
+    mock_map_group_commit_logs.return_value = {
         "HEAD": {
             "Build & Workflow": [commit_logs[0]],
             "Code Changes": [commit_logs[1]],
@@ -113,7 +126,8 @@ def test_writer_changelog(mock_gen_group_commit_log):
             ]
         )
 
-    version.writer_changelog(write_changelog_file, all_tags=True)
+    create_changelog(write_changelog_file, all_tags=True)
+
     assert write_changelog_file.exists()
     assert write_changelog_file.read_text().replace(" ", "") == dedent(
         """# Changelogs
@@ -146,7 +160,7 @@ def test_writer_changelog(mock_gen_group_commit_log):
 
 
 def test_write_group_log():
-    write_group_log = Path(__file__).parent / "test_write_group_log.md"
+    test_file_path: Path = Path(__file__).parent / "test_write_group_log.md"
     group_log = {
         "Build & Workflow": [
             CommitLog(
@@ -158,11 +172,11 @@ def test_write_group_log():
             )
         ]
     }
-    with write_group_log.open(mode="w", newline="") as f:
-        version.write_group_log(f, group_log, "HEAD")
+    with test_file_path.open(mode="w", newline="") as f:
+        write_group_log(f, group_log, "HEAD")
 
-    assert write_group_log.exists()
-    assert write_group_log.read_text().replace(" ", "") == dedent(
+    assert test_file_path.exists()
+    assert test_file_path.read_text().replace(" ", "") == dedent(
         """## HEAD
 
         ### :package: Build & Workflow
@@ -173,7 +187,8 @@ def test_write_group_log():
             " ", ""
         )
     )
-    write_group_log.unlink()
+
+    test_file_path.unlink()
 
     group_log = {
         "Build & Workflows": [
@@ -186,38 +201,42 @@ def test_write_group_log():
             )
         ]
     }
-    with write_group_log.open(mode="w", newline="") as f:
-        version.write_group_log(f, group_log, "HEAD")
-    assert write_group_log.exists()
-    assert write_group_log.read_text().replace(" ", "") == dedent(
+    with test_file_path.open(mode="w", newline="") as f:
+        write_group_log(f, group_log, "HEAD")
+
+    assert test_file_path.exists()
+    assert test_file_path.read_text().replace(" ", "") == dedent(
         """## HEAD\n""".replace(" ", "")
     )
 
-    write_group_log.unlink()
+    test_file_path.unlink()
 
 
 @patch("clishelf.version.Path", side_effect=side_effect_func)
 def test_write_bump_file(mock_path):
-    bump_file = Path(__file__).parent / ".bumpversion.cfg"
-    version.write_bump_file(
+    bump_file_path: Path = Path(__file__).parent / ".bumpversion.cfg"
+
+    write_bump_file(
         param={
             "version": "",
             "changelog": "",
             "file": "__about__.py",
         },
     )
-    assert bump_file.exists()
 
-    bump_file.unlink()
+    assert bump_file_path.exists()
+
+    bump_file_path.unlink()
 
 
 @patch("clishelf.version.Path", side_effect=side_effect_func)
 def test_current_version(mock_path):
-    version_file = Path(__file__).parent / "__version__.py"
-    with version_file.open(mode="w") as f:
+    version_file_path: Path = Path(__file__).parent / "__version__.py"
+
+    with version_file_path.open(mode="w") as f:
         f.writelines(["__version__ = 0.0.1\n", "__version_dt__ = 20240101\n"])
 
-    assert version.current_version("__version__.py") == "0.0.1"
-    assert version.current_version("__version__.py", is_dt=True) == "20240101"
+    assert current_version("__version__.py") == "0.0.1"
+    assert current_version("__version__.py", is_dt=True) == "20240101"
 
-    version_file.unlink()
+    version_file_path.unlink()
