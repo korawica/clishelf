@@ -30,6 +30,8 @@ from .utils import (
 
 cli_git: click.Command
 
+GIT_LOG_FORMAT: str = "%h|%D|%ci|%cn|%ce%n%s%n%b%-C()%n(END)"
+
 
 def get_git_local_conf(key: str) -> Optional[str]:
     """Get Git config on the local scope with an input specific key.
@@ -244,7 +246,7 @@ class CommitMsg:
 
 @dataclass(frozen=True)
 class CommitLog:
-    """Commit Log dataclass"""
+    """Commit Log dataclass that use to keep commit log data from `git log` cli."""
 
     hash: str
     refs: str
@@ -359,7 +361,7 @@ def gen_commit_logs(tag2head: str) -> Iterator[list[str]]:  # pragma: no cov
                 "git",
                 "log",
                 tag2head,
-                "--pretty=format:%h|%D|%ad|%an|%ae%n%s%n%b%-C()%n(END)",
+                f"--pretty=format:{GIT_LOG_FORMAT}",
                 "--date=short",
             ]
         )
@@ -396,12 +398,14 @@ def get_commit_logs(
     """
     from .settings import BumpVerConf
 
+    # NOTE: Prepare tag to head value for getting Git logs.
     if tag:
         tag2head: str = f"{tag}..HEAD"
     elif all_logs or not (tag := get_latest_tag(default=False)):
         tag2head = "HEAD"
     else:
         tag2head = f"{tag}..HEAD"
+
     refs: str = "HEAD"
     for logs in gen_commit_logs(tag2head):
 
@@ -412,12 +416,10 @@ def get_commit_logs(
 
         header: list[str] = logs[0].split("|")
         if ref_tag := [
-            ref.strip()
-            for ref in header[1].strip().split(",")
-            if "tag: " in ref
+            ref.strip() for ref in header[1].strip().split(",") if "tag:" in ref
         ]:
             if search := re.search(
-                rf"tag:\sv(?P<version>{BumpVerConf.get_regex(is_dt)})",
+                rf"tag:\sv?(?P<version>{BumpVerConf.get_regex(is_dt)})",
                 ref_tag[0],
             ):
                 refs = search.groupdict()["version"]
@@ -425,7 +427,7 @@ def get_commit_logs(
         yield CommitLog(
             hash=header[0],
             refs=refs,
-            date=datetime.strptime(header[2], "%Y-%m-%d"),
+            date=datetime.fromisoformat(header[2]),
             msg=CommitMsg(
                 content=logs[1],
                 body="|".join(logs[2:]),

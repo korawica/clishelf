@@ -105,6 +105,20 @@ class GitConf:
 
     commit_prefix_group_default: str = "Code Changes"
 
+    log_formats: dict[str, str] = {
+        "author_name": "%an",
+        "author_email": "%ae",
+        "author_date": "%ai",
+        "hash_full": "%H",
+        "hash": "%h",
+        "commit_name": "%cn",
+        "commit_email": "%ce",
+        "commit_date": "%ci",
+        "commit_subject": "%s",
+        "commit_body": "%b",
+        "refs": "%D",
+    }
+
 
 class BumpVerConf:
     """Bump Version Config."""
