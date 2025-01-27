@@ -26,6 +26,7 @@ from .utils import (
     Profile,
     load_config,
     make_color,
+    prepare_str,
 )
 
 cli_git: click.Command
@@ -151,6 +152,80 @@ def get_git_emojis() -> list[dict[str, str]]:
 
 
 @dataclass
+class CommitSub:
+    """Commit Subject dataclass."""
+
+    emoji: str
+    prefix: str
+    subject: str
+
+
+def extract_subject(content: str) -> CommitSub:
+    """Extract string subject that receive from content string.
+
+    :param content: A string content that want to extract.
+    :type content: str
+
+    :rtype: CommitSub
+    """
+    content: str = prepare_str(content)
+
+    if content.startswith("Merge branch "):
+        return CommitSub(
+            emoji=":fast_forward:",
+            prefix="merge",
+            subject=content.replace("Merge branch ", "branch "),
+        )
+
+    if rs := re.search(
+        r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):\s?(?P<subject>.+)$",
+        content,
+    ):
+        return CommitSub(**rs.groupdict())
+    elif rs := re.search(
+        r"^(?P<emoji>:\w+:)\s(?P<subject>.+)$",
+        content,
+    ):
+        return CommitSub(prefix="refactored", **rs.groupdict())
+
+    prefix, content = (
+        content.split(":", maxsplit=1)
+        if ":" in content
+        else ("refactored", content)
+    )
+
+    prefix: str = prepare_str(prefix)
+    content: str = prepare_str(content)
+
+    emoji: Optional[str] = None
+    for cp in get_commit_prefix():
+        if prefix == cp.name:
+            emoji: str = cp.emoji
+            break
+
+    if emoji is None:
+
+        if load_config().get("git", {}).get("commit_prefix_force_fix", False):
+            p: str = demojize(prefix)
+            if rs := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+)?", p):
+                rs_dict: dict[str, str] = {
+                    "prefix": "refactored"
+                } | rs.groupdict()
+                return CommitSub(subject=content, **rs_dict)
+
+        raise ValueError(
+            f"The prefix of this commit message does not support, "
+            f"{prefix!r}."
+        )
+
+    return CommitSub(
+        emoji=emoji or ":construction:",
+        prefix=prefix,
+        subject=content,
+    )
+
+
+@dataclass
 class CommitMsg:
     """Commit Message dataclass that prepare un-emoji-prefix in that message."""
 
@@ -210,41 +285,8 @@ class CommitMsg:
         :rtype: str
         :return: A prepared string content that has an emoji prefix.
         """
-        if content.startswith("Merge branch "):
-            return content.replace(
-                "Merge branch ", ":fast_forward: merge: branch "
-            )
-
-        if re.match(r"^(:\w+:)\s", content):
-            return content
-
-        prefix, content = (
-            content.split(":", maxsplit=1)
-            if ":" in content
-            else ("refactored", content)
-        )
-        emoji: Optional[str] = None
-        for cp in get_commit_prefix():
-            if prefix == cp.name:
-                emoji: str = f"{cp.emoji} "
-                break
-
-        if emoji is None:
-
-            if (
-                load_config()
-                .get("git", {})
-                .get("commit_prefix_force_fix", False)
-            ):
-                _prefix: str = demojize(prefix)
-                if re.match(r"^(?P<emoji>:\w+:)", _prefix):
-                    return f"{_prefix}: {content}"
-
-            raise ValueError(
-                f"The prefix of this commit message does not support, "
-                f"{prefix!r}."
-            )
-        return f"{emoji or ''}{prefix}: {content.strip()}"
+        commit_sub: CommitSub = extract_subject(content)
+        return f"{commit_sub.emoji} {commit_sub.prefix}: {commit_sub.subject}"
 
 
 @dataclass(frozen=True)

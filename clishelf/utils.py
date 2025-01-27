@@ -101,3 +101,7 @@ class Profile:
 
     name: str
     email: str
+
+
+def prepare_str(context: str) -> str:
+    return context.strip().strip("\n").strip("\r")

@@ -68,7 +68,9 @@ class GitModelTestCase(unittest.TestCase):
             content=":dart: start initial testing",
             mtype=None,
         )
-        self.assertEqual("Code Changes: :dart: start initial testing", str(msg))
+        self.assertEqual(
+            "Code Changes: :dart: refactored: start initial testing", str(msg)
+        )
 
         msg = git.CommitMsg(
             content="⬆️ deps: upgrade dependencies from main branch (#63)",
@@ -76,7 +78,7 @@ class GitModelTestCase(unittest.TestCase):
         )
         self.assertEqual(
             (
-                "Dependencies: :arrow_up: deps:  upgrade dependencies from "
+                "Dependencies: :arrow_up: deps: upgrade dependencies from "
                 "main branch (#63)"
             ),
             str(msg),
