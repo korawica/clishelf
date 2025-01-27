@@ -2,6 +2,29 @@
 
 ## Latest Changes
 
+## 0.2.12
+
+### :tada: Features
+
+- :dart: feat: add commit subject data class. (_2025-01-27_)
+- :dart: feat: add log format on git setting. (_2025-01-27_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update contributor docs. (_2025-01-27_)
+
+### :black_nib: Code Changes
+
+- :art: styled: change code format. (_2025-01-27_)
+
+### :bug: Bug fixes
+
+- :gear: fixed: date format on git log should iso8601. (_2025-01-27_)
+
+### :package: Build & Workflow
+
+- :toolbox: build: change prefix syntax from ascii to emoji char. (_2025-01-27_)
+
 ## 0.2.11
 
 ### :black_nib: Code Changes
