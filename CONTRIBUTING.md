@@ -108,14 +108,14 @@ the code to the main branch.
 Bump the next patch version from `0.0.2` to `0.0.3`.
 
 ```shell
-(venv) $ shelf vs bump patch --ignore-changelog
+(venv) $ python .\script\cli.py vs bump patch --ignore-changelog
 ```
 
 Finally, you create the changelog information and edit if it has some detail that
 you want to add.
 
 ```shell
-(venv) $ shelf vs changelog ; shelf git cm-prev
+(venv) $ python .\script\cli.py vs changelog ; python .\script\cli.py git cm-prev
 (venv) $ git push origin
 (venv) $ git tag v0.0.3
 (venv) $ git push --tags
@@ -124,7 +124,7 @@ you want to add.
 > [!IMPORTANT]
 > If it has some accident, you can restore all the change:
 > ```shell
-> (env) $ shelf cm-revert
+> (env) $ python .\script\cli.py cm-revert
 > ```
 
 ### Test PyPI Installation
