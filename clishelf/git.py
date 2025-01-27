@@ -31,7 +31,7 @@ from .utils import (
 
 cli_git: click.Command
 
-GIT_LOG_FORMAT: str = "%h|%D|%ci|%cn|%ce%n%s%n%b%-C()%n(END)"
+GIT_LOG_FORMAT: str = "%h|%D|%cI|%cn|%ce%n%s%n%b%-C()%n(END)"
 DEFAULT_TAG: str = "v0.0.0"
 
 
@@ -413,7 +413,7 @@ def gen_commit_logs(tag2head: str) -> Iterator[list[str]]:  # pragma: no cov
                 "log",
                 tag2head,
                 f"--pretty=format:{GIT_LOG_FORMAT}",
-                "--date=short",
+                "--date=iso8601-strict",
             ]
         )
         .decode(sys.stdout.encoding)
