@@ -31,6 +31,7 @@ from .utils import (
 cli_git: click.Command
 
 GIT_LOG_FORMAT: str = "%h|%D|%ci|%cn|%ce%n%s%n%b%-C()%n(END)"
+DEFAULT_TAG: str = "v0.0.0"
 
 
 def get_git_local_conf(key: str) -> Optional[str]:
@@ -168,7 +169,7 @@ class CommitMsg:
         :param mtype:
         """
 
-        self.content: str = self.__prepare_msg__(
+        self.content: str = self.__prepare_content__(
             demojize(content, emojis=get_git_emojis())
         )
 
@@ -196,11 +197,11 @@ class CommitMsg:
                 for cpt in get_commit_prefix_group()
                 if cpt.name == self.mtype
             ),
-            ":black_nib:",  # ✒️
+            GitConf.commit_prefix_group_emoji_default,
         )  # pragma: no cover
 
     @staticmethod
-    def __prepare_msg__(content: str) -> str:
+    def __prepare_content__(content: str) -> str:
         """Prepare string content that receive on post initialize step.
 
         :param content: A string content that want to prepare.
@@ -229,6 +230,7 @@ class CommitMsg:
                 break
 
         if emoji is None:
+
             if (
                 load_config()
                 .get("git", {})
@@ -237,6 +239,7 @@ class CommitMsg:
                 _prefix: str = demojize(prefix)
                 if re.match(r"^(?P<emoji>:\w+:)", _prefix):
                     return f"{_prefix}: {content}"
+
             raise ValueError(
                 f"The prefix of this commit message does not support, "
                 f"{prefix!r}."
@@ -334,6 +337,9 @@ def validate_commit_msg(lines: list[str]) -> tuple[list[str], Level]:
 def get_latest_tag(default: bool = True) -> Optional[str]:
     """Return the latest tag if it exists, otherwise it will v0.0.0 tag.
 
+    :param default: A default flag that use DEFAULT_TAG value instead if it
+        raises any error from subprocess process.
+
     :rtype: Optional[str]
     """
     try:
@@ -346,11 +352,14 @@ def get_latest_tag(default: bool = True) -> Optional[str]:
             .strip()
         )
     except subprocess.CalledProcessError:
-        return "v0.0.0" if default else None
+        return DEFAULT_TAG if default else None
 
 
 def gen_commit_logs(tag2head: str) -> Iterator[list[str]]:  # pragma: no cov
     """Prepare contents logs to List of commit log.
+
+    :param tag2head: A length of log format string that want to get log from git
+        log cli.
 
     :rtype: Iterator[list[str]]
     """
@@ -369,10 +378,12 @@ def gen_commit_logs(tag2head: str) -> Iterator[list[str]]:  # pragma: no cov
         .strip()
         .splitlines()
     ):
+        # NOTE: Release log data if it found end line marking.
         if line == "(END)":
             yield prepare
             prepare = []
             continue
+
         prepare.append(line)
 
 

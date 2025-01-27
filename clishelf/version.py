@@ -29,6 +29,7 @@ UTF8: str = "utf-8"
 HEAD: str = "HEAD"
 CHANGELOG_HEADER: str = "# Changelogs"
 CHANGELOG_LATEST: str = "## Latest Changes"
+LINESEP: str = os.linesep
 
 
 def map_group_commit_logs(
@@ -38,7 +39,7 @@ def map_group_commit_logs(
 ) -> TagGroupCommitLog:
     """Mapping Group to the getting commit logs function.
 
-    :param all_tags:
+    :param all_tags: All tags flag.
     :param is_dt:
 
     :rtype: GroupCommitLog
@@ -107,23 +108,26 @@ def write_group_log(
     """
     from .git import get_commit_prefix_group
 
-    linesep: str = os.linesep
+    linesep: str = LINESEP
     if not group_logs or any(
         cpt.name in group_logs for cpt in get_commit_prefix_group()
     ):
-        linesep = f"{os.linesep}{os.linesep}"
+        linesep: str = f"{LINESEP}{LINESEP}"
 
     writer.write(f"## {tag_value}{linesep}")
 
     for group in (
         cpt for cpt in get_commit_prefix_group() if cpt.name in group_logs
     ):
-        writer.write(f"### {group.emoji} {group.name}{os.linesep}{os.linesep}")
+        writer.write(f"### {group.emoji} {group.name}{LINESEP}{LINESEP}")
         for log in group_logs[group.name]:
+
+            # NOTE: Write commit message to its refs.
             writer.write(
-                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){os.linesep}"
+                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){LINESEP}"
             )
-        writer.write(os.linesep)
+
+        writer.write(LINESEP)
 
 
 def create_changelog(
@@ -175,7 +179,7 @@ def create_changelog(
                 skip_line = False
 
             if not skip_line:
-                writer.write(line + os.linesep)
+                writer.write(line + LINESEP)
 
 
 def write_bump_file(
@@ -184,19 +188,25 @@ def write_bump_file(
     version: int = 1,
     is_dt: bool = False,
 ) -> None:
-    """Writing the ``.bump2version.cfg`` config file at current path."""
+    """Writing the ``.bump2version.cfg`` config file at current path.
+
+    :param param:
+    :param version:
+    :param is_dt:
+    """
     files: list[str] = load_config().get("version", {}).get("files", [])
-    with Path(".bumpversion.cfg").open(mode="w", encoding=UTF8) as f_bump:
-        f_bump.write(
+    with Path(".bumpversion.cfg").open(mode="w", encoding=UTF8) as f:
+        f.write(
             BumpVerConf.get_version(
                 version,
                 params=param,
                 is_dt=is_dt,
             )
         )
-        f_bump.write("\n")
+
+        f.write("\n")
         for file in files:
-            f_bump.write(f"\n[bumpversion:file:{file}]\n")
+            f.write(f"\n[bumpversion:file:{file}]\n")
 
 
 def bump2version(

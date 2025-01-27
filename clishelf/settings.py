@@ -104,6 +104,7 @@ class GitConf:
     )
 
     commit_prefix_group_default: str = "Code Changes"
+    commit_prefix_group_emoji_default: str = ":black_nib:"  # ✒️
 
     log_formats: dict[str, str] = {
         "author_name": "%an",
