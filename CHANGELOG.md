@@ -2,6 +2,13 @@
 
 ## Latest Changes
 
+## 0.2.13
+
+### :black_nib: Code Changes
+
+- :test_tube: tests: update make config file if it run in tests path. (_2025-01-28_)
+- :arrow_up: refactored: bump pypa/gh-action-pypi-publish from 1.12.3 to 1.12.4 (#117) (_2025-01-27_)
+
 ## 0.2.12
 
 ### :tada: Features
