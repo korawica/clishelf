@@ -2,6 +2,18 @@
 
 ## Latest Changes
 
+## 0.2.14
+
+### :tada: Features
+
+- :dart: feat: add commit_msg_format config on git mod. (_2025-01-28_)
+
+### :book: Documents
+
+- :page_facing_up: docs: update description on config topic. (_2025-01-28_)
+- :page_facing_up: docs: change default value on config. (_2025-01-28_)
+- :page_facing_up: docs: update readme file. (_2025-01-28_)
+
 ## 0.2.13
 
 ### :black_nib: Code Changes
