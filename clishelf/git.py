@@ -33,6 +33,7 @@ cli_git: click.Command
 
 GIT_LOG_FORMAT: str = "%h|%D|%cI|%cn|%ce%n%s%n%b%-C()%n(END)"
 DEFAULT_TAG: str = "v0.0.0"
+ALL_CHAR: str = r"[\u0000-\uFFFF]"
 
 
 def get_git_local_conf(key: str) -> Optional[str]:
@@ -169,7 +170,12 @@ def extract_subject(content: str) -> CommitSub:
     :rtype: CommitSub
     """
     content: str = prepare_str(content)
+    git_config: dict[str, bool] = load_config().get("git", {})
 
+    if git_config.get("commit_prefix_pre_demojize", True):
+        content: str = demojize(content)
+
+    # NOTE: Fix case for the merge message that auto gen from git.
     if content.startswith("Merge branch "):
         return CommitSub(
             emoji=":fast_forward:",
@@ -178,24 +184,33 @@ def extract_subject(content: str) -> CommitSub:
         )
 
     if rs := re.search(
-        r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):\s?(?P<subject>.+)$",
+        rf"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):\s?(?P<subject>{ALL_CHAR}+)$",
         content,
     ):
         return CommitSub(**rs.groupdict())
+
     elif rs := re.search(
-        r"^(?P<emoji>:\w+:)\s(?P<subject>.+)$",
+        rf"^(?P<emoji>:\w+:)\s(?P<subject>{ALL_CHAR}+)$",
         content,
     ):
         return CommitSub(prefix="refactored", **rs.groupdict())
 
-    prefix, content = (
-        content.split(":", maxsplit=1)
-        if ":" in content
-        else ("refactored", content)
-    )
+    elif not (
+        rs := re.search(
+            rf"^(?P<prefix>{ALL_CHAR}+):\s?(?P<subject>{ALL_CHAR}+)$",
+            content,
+        )
+    ):
+        return CommitSub(
+            emoji=":construction:",
+            prefix="refactored",
+            subject=content,
+        )
 
-    prefix: str = prepare_str(prefix)
-    content: str = prepare_str(content)
+    rs_dict: dict[str, str] = rs.groupdict()
+
+    prefix: str = prepare_str(rs_dict["prefix"])
+    content: str = prepare_str(rs_dict["subject"])
 
     emoji: Optional[str] = None
     for cp in get_commit_prefix():
@@ -203,16 +218,7 @@ def extract_subject(content: str) -> CommitSub:
             emoji: str = cp.emoji
             break
 
-    if emoji is None:
-
-        if load_config().get("git", {}).get("commit_prefix_force_fix", False):
-            p: str = demojize(prefix)
-            if rs := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+)?", p):
-                rs_dict: dict[str, str] = {
-                    "prefix": "refactored"
-                } | rs.groupdict()
-                return CommitSub(subject=content, **rs_dict)
-
+    if emoji is None and not git_config.get("commit_prefix_force_fix", False):
         raise ValueError(
             f"The prefix of this commit message does not support, "
             f"{prefix!r}."
@@ -248,20 +254,23 @@ class CommitMsg:
             demojize(content, emojis=get_git_emojis())
         )
 
-        if mtype is None:  # pragma: no cov
+        if mtype is None:
             self.mtype: str = self.__gen_msg_type()
+        else:
+            self.mtype: str = mtype
 
-    def __gen_msg_type(self) -> str:
+    def __gen_msg_type(self) -> str:  # pragma: no cover
         """Return a message type that getting from the regex.
 
         :rtype: str
         """
         if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
             prefix: str = s.groupdict()["prefix"]
-            return next(
-                (cp.group for cp in get_commit_prefix() if prefix == cp.name),
-                GitConf.commit_prefix_group_default,
-            )
+
+            for cp in get_commit_prefix():
+                if prefix == cp.name:
+                    return cp.group
+
         return GitConf.commit_prefix_group_default
 
     @property

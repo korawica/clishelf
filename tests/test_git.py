@@ -1,7 +1,8 @@
 import datetime
 import sys
-import unittest
 from unittest.mock import DEFAULT, patch
+
+import pytest
 
 import clishelf.git as git
 from clishelf.emoji import demojize
@@ -29,106 +30,128 @@ def side_effect_bn_tg_func(*args, **kwargs):
         return DEFAULT
 
 
-class GitModelTestCase(unittest.TestCase):
-    def test_commit_prefix_model(self):
-        rs = git.CommitPrefix(
+def test_commit_prefix_model():
+    rs = git.CommitPrefix(
+        name="test",
+        group="A",
+        emoji=":dart:",
+    )
+    assert hash(rs) == hash(rs.name)
+    assert "test" == str(rs)
+
+
+def test_commit_prefix_group_model():
+    rs = git.CommitPrefixGroup(
+        name="test",
+        emoji=":dart:",
+    )
+    assert hash(rs) == hash(rs.name)
+    assert "test" == str(rs)
+
+
+def test_commit_message_model(make_yaml_conf):
+    msg = git.CommitMsg(
+        content=":dart: feat: start initial testing",
+        mtype=None,
+    )
+    assert "Features: :dart: feat: start initial testing" == str(msg)
+
+    msg = git.CommitMsg(
+        content=":dart: demo: start initial testing",
+        mtype=None,
+    )
+    assert "Code Changes: :dart: demo: start initial testing" == str(msg)
+
+    msg = git.CommitMsg(
+        content=":dart: start initial testing",
+        mtype=None,
+    )
+    assert "Code Changes: :dart: refactored: start initial testing" == str(msg)
+
+    msg = git.CommitMsg(
+        content="⬆️ deps: upgrade dependencies from main branch (#63)",
+        mtype=None,
+    )
+    assert (
+        "Dependencies: :arrow_up: deps: upgrade dependencies from "
+        "main branch (#63)"
+    ) == str(msg)
+
+    msg = git.CommitMsg(
+        content="Merge branch 'main' into dev",
+        mtype=None,
+    )
+    assert "Code Changes: :fast_forward: merge: branch 'main' into dev" == str(
+        msg
+    )
+
+    msg = git.CommitMsg(content="commit message that not pass prefix")
+    assert (
+        "Code Changes: :construction: refactored: commit message that not "
+        "pass prefix"
+    ) == str(msg)
+
+    msg = git.CommitMsg(
+        content="commit message that not pass prefix", mtype="Dependencies"
+    )
+    assert (
+        "Dependencies: :construction: refactored: commit message that not "
+        "pass prefix"
+    ) == str(msg)
+
+    msg = git.CommitMsg(
+        content="not_exists: commit message that not pass prefix"
+    )
+    assert (
+        "Code Changes: :construction: not_exists: commit message that not "
+        "pass prefix"
+    ) == str(msg)
+
+
+@patch("clishelf.utils.load_pyproject")
+def test_commit_message_model_raise(mock_load_pyproject):
+    mock_load_pyproject.return_value = {
+        "tool": {
+            "shelf": {
+                "git": {
+                    "commit_prefix_force_fix": False,
+                    "commit_prefix_pre_demojize": False,
+                },
+            },
+        },
+    }
+
+    with pytest.raises(ValueError):
+        git.CommitMsg(
+            content="⬆️ demo: start initial testing",
+            mtype=None,
+        )
+
+    with pytest.raises(ValueError):
+        git.CommitMsg(
+            content="demo: start initial testing",
+            mtype=None,
+        )
+
+    with pytest.raises(ValueError):
+        git.CommitMsg(content="not_exists: some content")
+
+
+def test_commit_log_model():
+    log = git.CommitLog(
+        hash="test",
+        refs="HEAD",
+        date=datetime.date(2023, 1, 1),
+        msg=git.CommitMsg(":dart: feat: start initial testing"),
+        author=git.Profile(
             name="test",
-            group="A",
-            emoji=":dart:",
-        )
-        self.assertEqual(hash(rs), hash(rs.name))
-        self.assertEqual("test", str(rs))
-
-    def test_commit_prefix_group_model(self):
-        rs = git.CommitPrefixGroup(
-            name="test",
-            emoji=":dart:",
-        )
-        self.assertEqual(hash(rs), hash(rs.name))
-        self.assertEqual("test", str(rs))
-
-    def test_commit_message_model(self):
-        msg = git.CommitMsg(
-            content=":dart: feat: start initial testing",
-            mtype=None,
-        )
-        self.assertEqual(
-            "Features: :dart: feat: start initial testing", str(msg)
-        )
-
-        msg = git.CommitMsg(
-            content=":dart: demo: start initial testing",
-            mtype=None,
-        )
-        self.assertEqual(
-            "Code Changes: :dart: demo: start initial testing", str(msg)
-        )
-
-        msg = git.CommitMsg(
-            content=":dart: start initial testing",
-            mtype=None,
-        )
-        self.assertEqual(
-            "Code Changes: :dart: refactored: start initial testing", str(msg)
-        )
-
-        msg = git.CommitMsg(
-            content="⬆️ deps: upgrade dependencies from main branch (#63)",
-            mtype=None,
-        )
-        self.assertEqual(
-            (
-                "Dependencies: :arrow_up: deps: upgrade dependencies from "
-                "main branch (#63)"
-            ),
-            str(msg),
-        )
-
-        msg = git.CommitMsg(
-            content="Merge branch 'main' into dev",
-            mtype=None,
-        )
-        self.assertEqual(
-            "Code Changes: :fast_forward: merge: branch 'main' into dev",
-            str(msg),
-        )
-
-    def test_commit_message_model_raise(self):
-        with self.assertRaises(ValueError):
-            git.CommitMsg(
-                content="demo: start initial testing",
-                mtype=None,
-            )
-
-    @patch("clishelf.utils.load_pyproject")
-    def test_commit_message_model_raise_without_conf(self, mock_load_pyproject):
-        with self.assertRaises(ValueError):
-            mock_load_pyproject.return_value = {
-                "tool": {"shelf": {"git": {"commit_prefix_force_fix": False}}},
-            }
-            git.CommitMsg(
-                content="⬆️ demo: start initial testing",
-                mtype=None,
-            )
-
-    def test_commit_log_model(self):
-        log = git.CommitLog(
-            hash="test",
-            refs="HEAD",
-            date=datetime.date(2023, 1, 1),
-            msg=git.CommitMsg(":dart: feat: start initial testing"),
-            author=git.Profile(
-                name="test",
-                email="test@mail.com",
-            ),
-        )
-        self.assertEqual(
-            (
-                "test|2023-01-01|:dart: feat: start initial testing|"
-                "test|test@mail.com|HEAD"
-            ),
-            str(log),
-        )
+            email="test@mail.com",
+        ),
+    )
+    assert (
+        "test|2023-01-01|:dart: feat: start initial testing|"
+        "test|test@mail.com|HEAD"
+    ) == str(log)
 
 
 @patch("clishelf.git.subprocess.check_output", side_effect=side_effect_func)
@@ -188,7 +211,7 @@ def test_validate_commit_msg_warning():
     )
     assert rs == [
         "There should at least 3 lines in your commit message.",
-        ("There should be an empty line between the commit title " "and body."),
+        "There should be an empty line between the commit title " "and body.",
     ]
 
     rs = git._validate_commit_msg_warning(
