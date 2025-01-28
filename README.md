@@ -148,6 +148,15 @@ git:
     - ["Features", ":tada:"]  # 🎉
 ```
 
+| Module   | Key                  | Default                          | Description             |
+|:---------|:---------------------|:---------------------------------|:------------------------|
+| git      | commit_prefix        | None                             |                         |
+|          | commit_prefix_group  | None                             |                         |
+|          | commit_msg_format    | "{emoji} {prefix}: {subject}"    |                         |
+| version  | version              | "./{PROJECT-NAME}/__about__.py"  |                         |
+|          | changelog            | "CHANGELOG.md"                   |                         |
+|          | mode                 | "normal"                         | "normal" or "datetime"  |
+
 ## :dart: Mini-Roadmap
 
 - (**Optional**) I will implement use `rich` and `alive-progress` to this project for make
