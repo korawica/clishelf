@@ -120,6 +120,8 @@ class GitConf:
         "refs": "%D",
     }
 
+    commit_msg_format: str = "{emoji} {prefix}: {subject}"
+
 
 class BumpVerConf:
     """Bump Version Config."""

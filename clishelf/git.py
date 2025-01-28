@@ -249,27 +249,25 @@ class CommitMsg:
         :param content:
         :param mtype:
         """
-
-        self.content: str = self.__prepare_content__(
+        _subject: CommitSub = extract_subject(
             demojize(content, emojis=get_git_emojis())
         )
 
+        self.content: str = self.__prepare_content__(_subject)
         if mtype is None:
-            self.mtype: str = self.__gen_msg_type()
+            self.mtype: str = self.__prepare_mtype(_subject.prefix)
         else:
             self.mtype: str = mtype
 
-    def __gen_msg_type(self) -> str:  # pragma: no cover
+    @staticmethod
+    def __prepare_mtype(prefix: str) -> str:
         """Return a message type that getting from the regex.
 
         :rtype: str
         """
-        if s := re.search(r"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):", self.content):
-            prefix: str = s.groupdict()["prefix"]
-
-            for cp in get_commit_prefix():
-                if prefix == cp.name:
-                    return cp.group
+        for cp in get_commit_prefix():
+            if prefix == cp.name:
+                return cp.group
 
         return GitConf.commit_prefix_group_default
 
@@ -285,17 +283,25 @@ class CommitMsg:
         )  # pragma: no cover
 
     @staticmethod
-    def __prepare_content__(content: str) -> str:
+    def __prepare_content__(subject: CommitSub) -> str:
         """Prepare string content that receive on post initialize step.
 
-        :param content: A string content that want to prepare.
-        :type content: str
+        :param subject: A CommitSub dataclass object.
+        :type subject: CommitSub
 
         :rtype: str
         :return: A prepared string content that has an emoji prefix.
         """
-        commit_sub: CommitSub = extract_subject(content)
-        return f"{commit_sub.emoji} {commit_sub.prefix}: {commit_sub.subject}"
+        fmt: str = (
+            load_config()
+            .get("git", {})
+            .get("commit_msg_format", GitConf.commit_msg_format)
+        )
+        return fmt.format(
+            emoji=subject.emoji,
+            prefix=subject.prefix,
+            subject=subject.subject,
+        )
 
 
 @dataclass(frozen=True)

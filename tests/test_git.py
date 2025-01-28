@@ -109,6 +109,17 @@ def test_commit_message_model(make_yaml_conf):
 
 
 @patch("clishelf.utils.load_pyproject")
+def test_commit_message_model_change_format(mock_load_pyproject):
+    mock_load_pyproject.return_value = {
+        "tool": {
+            "shelf": {"git": {"commit_msg_format": "{prefix}: {subject}"}},
+        },
+    }
+    msg = git.CommitMsg(content=":dart: demo: start initial testing")
+    assert "Code Changes: demo: start initial testing" == str(msg)
+
+
+@patch("clishelf.utils.load_pyproject")
 def test_commit_message_model_raise(mock_load_pyproject):
     mock_load_pyproject.return_value = {
         "tool": {
