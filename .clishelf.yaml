@@ -6,5 +6,3 @@ git:
     - ["Features", ":tada:"]  # 🎉
     - ["Documents", ":book:"]  # 📖
   commit_prefix_force_fix: true
-version:
-  commit_msg_format: "- {subject}"

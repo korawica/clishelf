@@ -9,7 +9,7 @@ def test_path() -> Path:
     return Path(__file__).parent
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def make_yaml_conf(test_path):
     conf_file_mock: Path = test_path / ".clishelf.yaml"
 
