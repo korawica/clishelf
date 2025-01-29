@@ -2,6 +2,13 @@
 
 ## Latest Changes
 
+## 0.2.16
+
+### :package: Build & Workflow
+
+- :toolbox: build: update config of clishelf. (_2025-01-30_)
+- :toolbox: build: remove token on publish workflow. (_2025-01-30_)
+
 ## 0.2.15.post1
 
 ### :package: Build & Workflow
