@@ -103,6 +103,7 @@ class GitConf:
         ("Enhancements", ":sparkles:"),  # ✨
     )
 
+    commit_prefix_emoji_default: str = ":construction:"  # 🚧
     commit_prefix_group_default: str = "Code Changes"
     commit_prefix_group_emoji_default: str = ":black_nib:"  # ✒️
 
@@ -215,6 +216,9 @@ class BumpVerConf:
         Released: {{utcnow:%Y-%m-%d}}
     """
     ).strip()
+
+    commit_subject_format: str = "{emoji} {prefix}: {subject}"
+    commit_msg_format: str = "- {subject} (_{datetime:%Y-%m-%d}_)"
 
     @classmethod
     def get_version(

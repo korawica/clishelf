@@ -148,16 +148,18 @@ git:
     - ["Features", ":tada:"]  # 🎉
 ```
 
-| Module   | Key                        | Default                           | Description                                                                                         |
-|:---------|:---------------------------|:----------------------------------|:----------------------------------------------------------------------------------------------------|
-| git      | commit_prefix              | `None`                            | Commit prefix that want to override/append                                                          |
-|          | commit_prefix_group        | `None`                            | Commit prefix group that want to override/append                                                    |
-|          | commit_msg_format          | `"{emoji} {prefix}: {subject}"`   | Commit message format that use to writing a changelog file                                          |
-|          | commit_prefix_pre_demojize | `True`                            | Auto de-emoji on a commit log subject                                                               |
-|          | commit_prefix_force_fix    | `False`                           | Force fix if commit message does not match with normal form                                         |
-| version  | version                    | `"./{PROJECT-NAME}/__about__.py"` | Version tracking file location path (with `.py` format)                                             |
-|          | changelog                  | `"CHANGELOG.md"`                  | Changelog file location path                                                                        |
-|          | mode                       | `"normal"`                        | `"normal"` for normal version<br>`"datetime"` for datetime time mode (format `%Y%m%d.%pre-release`) |
+| Module   | Key                        | Default                                 | Description                                                                                         |
+|:---------|:---------------------------|:----------------------------------------|:----------------------------------------------------------------------------------------------------|
+| git      | commit_prefix              | `None`                                  | Commit prefix that want to override/append                                                          |
+|          | commit_prefix_group        | `None`                                  | Commit prefix group that want to override/append                                                    |
+|          | commit_msg_format          | `"{emoji} {prefix}: {subject}"`         | Commit message format that use to prepare                                                           |
+|          | commit_prefix_pre_demojize | `True`                                  | Auto de-emoji on a commit log subject                                                               |
+|          | commit_prefix_force_fix    | `False`                                 | Force fix if commit message does not match with normal form                                         |
+| version  | version                    | `"./{PROJECT-NAME}/__about__.py"`       | Version tracking file location path (with `.py` format)                                             |
+|          | changelog                  | `"CHANGELOG.md"`                        | Changelog file location path                                                                        |
+|          | mode                       | `"normal"`                              | `"normal"` for normal version<br>`"datetime"` for datetime time mode (format `%Y%m%d.%pre-release`) |
+|          | commit_subject_format      | `"{emoji} {prefix}: {subject}"`         | Commit subject format that use to writing a changelog file with `commit_msg_format`                 |
+|          | commit_msg_format          | `"- {subject} (_{datetime:%Y-%m-%d}_)"` | Commit message format that use to writing a changelog file                                          |
 
 ## :dart: Mini-Roadmap
 

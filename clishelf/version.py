@@ -122,10 +122,26 @@ def write_group_log(
         writer.write(f"### {group.emoji} {group.name}{LINESEP}{LINESEP}")
         for log in group_logs[group.name]:
 
-            # NOTE: Write commit message to its refs.
-            writer.write(
-                f"- {log.msg.content} (_{log.date:%Y-%m-%d}_){LINESEP}"
+            subject_fmt: str = (
+                load_config()
+                .get("version", {})
+                .get("commit_subject_format", BumpVerConf.commit_subject_format)
             )
+            subject: str = log.msg.subject.format(subject_fmt)
+
+            msg_fmt: str = (
+                load_config()
+                .get("version", {})
+                .get("commit_msg_format", BumpVerConf.commit_msg_format)
+            )
+
+            message: str = msg_fmt.format(
+                subject=subject,
+                datetime=log.date,
+            )
+
+            # NOTE: Write commit message to its refs.
+            writer.write(f"{message}{LINESEP}")
 
         writer.write(LINESEP)
 

@@ -160,6 +160,21 @@ class CommitSub:
     prefix: str
     subject: str
 
+    @classmethod
+    def default(cls) -> CommitSub:
+        return CommitSub(
+            emoji=GitConf.commit_prefix_emoji_default,
+            prefix="refactored",
+            subject="default commit subject",
+        )
+
+    def format(self, fmt: str) -> str:
+        return fmt.format(
+            emoji=self.emoji,
+            prefix=self.prefix,
+            subject=self.subject,
+        )
+
 
 def extract_subject(content: str) -> CommitSub:
     """Extract string subject that receive from content string.
@@ -238,6 +253,7 @@ class CommitMsg:
     content: InitVar[str]
     mtype: InitVar[Optional[str]] = field(default=None)
     body: str = field(default=None)  # NOTE: Mark new-line with ``|``
+    subject: CommitSub = field(default_factory=CommitSub.default)
 
     def __str__(self) -> str:
         return f"{self.mtype}: {self.content}"
@@ -249,13 +265,12 @@ class CommitMsg:
         :param content:
         :param mtype:
         """
-        _subject: CommitSub = extract_subject(
+        self.subject: CommitSub = extract_subject(
             demojize(content, emojis=get_git_emojis())
         )
-
-        self.content: str = self.__prepare_content__(_subject)
+        self.content: str = self.__prepare_content__(self.subject)
         if mtype is None:
-            self.mtype: str = self.__prepare_mtype(_subject.prefix)
+            self.mtype: str = self.__prepare_mtype(self.subject.prefix)
         else:
             self.mtype: str = mtype
 
@@ -297,11 +312,7 @@ class CommitMsg:
             .get("git", {})
             .get("commit_msg_format", GitConf.commit_msg_format)
         )
-        return fmt.format(
-            emoji=subject.emoji,
-            prefix=subject.prefix,
-            subject=subject.subject,
-        )
+        return subject.format(fmt)
 
 
 @dataclass(frozen=True)
