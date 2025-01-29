@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### :black_nib: Code Changes
+
+- :test_tube: tests: add auto use flag on make conf fixture.
+
 ## 0.2.16
 
 ### :package: Build & Workflow

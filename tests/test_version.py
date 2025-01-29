@@ -136,11 +136,11 @@ def test_create_changelog(mock_map_group_commit_logs):
 
         ### :black_nib: Code Changes
 
-        - :construction: refactored: add new features (_2024-01-01_)
+        - :construction: refactored: add new features
 
         ### :package: Build & Workflow
 
-        - :toolbox: build: add coverage workflow (_2024-01-02_)
+        - :toolbox: build: add coverage workflow
 
         ## 0.0.1
 
@@ -181,7 +181,7 @@ def test_write_group_log():
 
         ### :package: Build & Workflow
 
-        - :toolbox: build: add coverage workflow (_2024-01-02_)
+        - :toolbox: build: add coverage workflow
 
         """.replace(
             " ", ""

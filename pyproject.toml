@@ -45,6 +45,7 @@ shelf = "clishelf.__main__:main"
 version = "./clishelf/__about__.py"
 changelog = "CHANGELOG.md"
 files = ["README.md"]
+commit_msg_format = "- {subject}"
 
 [tool.coverage.run]
 branch = true
