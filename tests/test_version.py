@@ -212,6 +212,51 @@ def test_write_group_log():
     test_file_path.unlink()
 
 
+@patch("clishelf.utils.load_pyproject")
+def test_write_group_log_with_change_format(mock_load_pyproject):
+    mock_load_pyproject.return_value = {
+        "tool": {
+            "shelf": {
+                "version": {
+                    "commit_subject_format": "{emoji} {subject}",
+                    "commit_msg_format": "- {subject} (_{datetime:%Y%m%d}_)",
+                },
+            },
+        },
+    }
+    test_file_path: Path = (
+        Path(__file__).parent / "test_write_group_log_with_fmt.md"
+    )
+    group_log = {
+        "Build & Workflow": [
+            CommitLog(
+                hash="f477e87",
+                refs="HEAD",
+                date=datetime(2024, 1, 2),
+                msg=CommitMsg(":toolbox: build: add coverage workflow"),
+                author=Profile(name="test", email="test@mail.com"),
+            )
+        ]
+    }
+    with test_file_path.open(mode="w", newline="") as f:
+        write_group_log(f, group_log, "HEAD")
+
+    assert test_file_path.exists()
+    assert test_file_path.read_text().replace(" ", "") == dedent(
+        """## HEAD
+
+        ### :package: Build & Workflow
+
+        - :toolbox: add coverage workflow (_20240102_)
+
+        """.replace(
+            " ", ""
+        )
+    )
+
+    test_file_path.unlink()
+
+
 @patch("clishelf.version.Path", side_effect=side_effect_func)
 def test_write_bump_file(mock_path):
     bump_file_path: Path = Path(__file__).parent / ".bumpversion.cfg"
