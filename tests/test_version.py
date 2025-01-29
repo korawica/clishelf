@@ -191,7 +191,7 @@ def test_write_group_log():
     test_file_path.unlink()
 
     group_log = {
-        "Build & Workflows": [
+        "Build & Workflow Not Exist": [
             CommitLog(
                 hash="f477e87",
                 refs="HEAD",
