@@ -1,4 +1,4 @@
-# _CLI Shelf_
+# CLI on the Shelf
 
 [![test](https://github.com/korawica/clishelf/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/korawica/clishelf/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/korawica/clishelf/graph/badge.svg?token=7PF8JN2EIG)](https://codecov.io/gh/korawica/clishelf)
@@ -28,10 +28,10 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                              |  Support Fixed Bug   |
-|:-----------------|:------------------------------------------|:--------------------:|
-| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.15.post1"`  |         :x:          |
-| `>=3.9.13,<3.14` | `pip install -U clishelf`                 |  :heavy_check_mark:  |
+| Python Version   | Installation                                   |  Support Fixed Bug   |
+|:-----------------|:-----------------------------------------------|:--------------------:|
+| `== 3.8`         | `pip install "clishelf>=0.1.10,<0.2.15.post1"` |         :x:          |
+| `>=3.9.13,<3.14` | `pip install -U clishelf`                      |  :heavy_check_mark:  |
 
 > [!WARNING]
 > This package already install `pre-commit` with the latest version.

@@ -52,8 +52,10 @@ jobs:
       name: pypi
       url: https://pypi.org/p/clishelf
     needs: [release-build]
+
     permissions:
       id-token: write
+
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
@@ -68,8 +70,6 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.12.4
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
 
   testpypi-publish:
     runs-on: ubuntu-latest
