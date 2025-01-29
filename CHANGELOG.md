@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.2.15.post0
+
+### :package: Build & Workflow
+
+- :toolbox: build: move using secrets to open id auth. (_2025-01-29_)
+
 ## 0.2.15
 
 ### :bug: Bug fixes
