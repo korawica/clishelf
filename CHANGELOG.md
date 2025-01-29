@@ -2,6 +2,16 @@
 
 ## Latest Changes
 
+## 0.2.15
+
+### :bug: Bug fixes
+
+- :bug: hotfix: commit msg format force change on pre commit message process (#121) (_2025-01-29_)
+
+### :postbox: Dependencies
+
+- :toolbox: deps: update prefix on dependabot. (#119) (_2025-01-28_)
+
 ## 0.2.14
 
 ### :tada: Features
