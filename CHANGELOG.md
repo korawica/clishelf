@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.2.15.post1
+
+### :package: Build & Workflow
+
+- :toolbox: build: add repo url for testpypi registry. (_2025-01-29_)
+
 ## 0.2.15.post0
 
 ### :package: Build & Workflow
