@@ -2,9 +2,20 @@
 
 ## Latest Changes
 
+## 0.2.17
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme file.
+
 ### :black_nib: Code Changes
 
 - :test_tube: tests: add auto use flag on make conf fixture.
+
+### :bug: Bug fixes
+
+- :bug: fixed: bug merge prefix does not support for generate changelog process (#125)
+- :gear: fixed: move version config from yaml file to pyproject.
 
 ## 0.2.16
 
