@@ -212,10 +212,14 @@ def extract_subject(content: str) -> CommitSub:
 
     elif not (
         rs := re.search(
-            rf"^(?P<prefix>{ALL_CHAR}+):\s?(?P<subject>{ALL_CHAR}+)$",
+            rf"^(?P<prefix>\w+):\s?(?P<subject>{ALL_CHAR}+)$",
             content,
         )
     ):
+        if not git_config.get("commit_prefix_force_fix", False):
+            raise ValueError(
+                f"The commit message does not support, {content!r}."
+            )
         return CommitSub(
             emoji=":construction:",
             prefix="refactored",

@@ -107,6 +107,14 @@ def test_commit_message_model(make_yaml_conf):
         "pass prefix"
     ) == str(msg)
 
+    msg = git.CommitMsg(
+        content="merge: branch 'main' of https://github.com/korawica"
+    )
+    assert (
+        "Code Changes: :fast_forward: merge: branch 'main' of "
+        "https://github.com/korawica"
+    ) == str(msg)
+
 
 @patch("clishelf.utils.load_pyproject")
 def test_commit_message_model_change_format(mock_load_pyproject):
