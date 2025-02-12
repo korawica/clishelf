@@ -94,6 +94,7 @@ class CommitPrefixGroup:
 
     name: str
     emoji: str
+    priority: int = field(default=0)
 
     def __hash__(self) -> int:
         return hash(self.__str__())
@@ -130,14 +131,23 @@ def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
     )
     prefix_conf: TupleStr = tuple(_[0] for _ in conf)
     return tuple(
-        CommitPrefixGroup(name=n, emoji=e)
-        for n, e in (
-            *conf,
-            *[
-                p
-                for p in GitConf.commit_prefix_group
-                if p[0] not in prefix_conf
-            ],
+        sorted(
+            (
+                CommitPrefixGroup(
+                    name=n,
+                    emoji=e,
+                    priority=(int(p) if isinstance(p, str) else p),
+                )
+                for n, e, p in (
+                    *conf,
+                    *[
+                        p
+                        for p in GitConf.commit_prefix_group
+                        if p[0] not in prefix_conf
+                    ],
+                )
+            ),
+            key=lambda group: (group.priority, group.name),
         )
     )
 

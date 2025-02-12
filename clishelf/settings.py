@@ -91,20 +91,20 @@ class GitConf:
         ("merge", "Code Changes", ":fast_forward:"),  # ⏩
     )
 
-    commit_prefix_group: tuple[tuple[str, str]] = (
-        ("Highlight Features", ":stars:"),  # 🌠
-        ("Features", ":sparkles:"),  # ✨
-        ("Code Changes", ":black_nib:"),  # ✒️
+    commit_prefix_group: tuple[tuple[str, str, int]] = (
+        ("Highlight Features", ":stars:", 0),  # 🌠
+        ("Features", ":sparkles:", 10),  # ✨
+        ("Code Changes", ":black_nib:", 30),  # ✒️
         # ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
-        ("Documentations", ":book:"),  # 📖
-        ("Bug fixes", ":bug:"),  # 🐛, 🐞:beetle:
-        ("Build & Workflow", ":package:"),  # 📦
-        ("Dependencies", ":postbox:"),  # 📮
-        ("Security", ":closed_lock_with_key:"),  # 🔐
-        ("Performance improvements", ":rocket:"),  # 🚀, ⚡️ :zap:
-        ("Other improvements", ":hammer_and_wrench:"),  # 🛠️
-        ("Enhancements", ":sparkles:"),  # ✨
-        ("Deprecate & Clean", ":no_entry:"),  # ⛔
+        ("Documentations", ":book:", 90),  # 📖
+        ("Bug fixes", ":bug:", 20),  # 🐛, 🐞:beetle:
+        ("Build & Workflow", ":package:", 80),  # 📦
+        ("Dependencies", ":postbox:", 80),  # 📮
+        ("Security", ":closed_lock_with_key:", 70),  # 🔐
+        ("Performance improvements", ":rocket:", 30),  # 🚀, ⚡️ :zap:
+        ("Other improvements", ":hammer_and_wrench:", 40),  # 🛠️
+        ("Enhancements", ":sparkles:", 40),  # ✨
+        ("Deprecate & Clean", ":no_entry:", 40),  # ⛔
     )
 
     commit_prefix_emoji_default: str = ":construction:"  # 🚧

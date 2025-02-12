@@ -3,6 +3,6 @@ git:
     - ["comment", "Documents", ":bulb:"]  # 💡
     - ["typos", "Documents", ":pencil2:"]  # ✏️
   commit_prefix_group:
-    - ["Features", ":tada:"]  # 🎉
-    - ["Documents", ":book:"]  # 📖
+    - ["Features", ":tada:", '10']  # 🎉
+    - ["Documents", ":book:", '90']  # 📖
   commit_prefix_force_fix: true
