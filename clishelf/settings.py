@@ -46,6 +46,7 @@ class GitConf:
         # NOTE: Features
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
+        ("highlight", "Highlight Features", ":star:"),  # ⭐
         # NOTE: Fixed
         ("hotfix", "Bug fixes", ":fire:"),  # 🔥, 🚑 :ambulance:
         ("fixed", "Bug fixes", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
@@ -84,12 +85,14 @@ class GitConf:
         ("security", "Security", ":lock:"),  # 🔒
         ("init", "Features", ":tada:"),  # 🎉
         ("initial", "Features", ":tada:"),  # 🎉
-        ("deprecate", "Code Changes", ":wastebasket:"),  # 🗑️
+        ("deprecate", "Deprecate & Clean", ":wastebasket:"),  # 🗑️
+        ("clean", "Deprecate & Clean", ":recycle:"),  # ♻️️
         ("revert", "Code Changes", ":rewind:"),  # ⏪
         ("merge", "Code Changes", ":fast_forward:"),  # ⏩
     )
 
     commit_prefix_group: tuple[tuple[str, str]] = (
+        ("Highlight Features", ":stars:"),  # 🌠
         ("Features", ":sparkles:"),  # ✨
         ("Code Changes", ":black_nib:"),  # ✒️
         # ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
@@ -101,6 +104,7 @@ class GitConf:
         ("Performance improvements", ":rocket:"),  # 🚀, ⚡️ :zap:
         ("Other improvements", ":hammer_and_wrench:"),  # 🛠️
         ("Enhancements", ":sparkles:"),  # ✨
+        ("Deprecate & Clean", ":no_entry:"),  # ⛔
     )
 
     commit_prefix_emoji_default: str = ":construction:"  # 🚧
