@@ -481,10 +481,18 @@ def bump(
     if mode == "normal":
         click.echo(make_color("Be noted that:", Level.INFO))
         click.echo(
-            "  * `major`:  means breaking changes and removed deprecations"
+            make_color(
+                "  * `major`:  means breaking changes and removed deprecations",
+                Level.INFO,
+            )
         )
-        click.echo("  * `minor`:  new features, sometimes automatic migrations")
-        click.echo("  * `patch`:  bug fixes")
+        click.echo(
+            make_color(
+                "  * `minor`:  new features, sometimes automatic migrations",
+                Level.INFO,
+            )
+        )
+        click.echo(make_color("  * `patch`:  bug fixes", Level.INFO))
 
     # NOTE: Start bumping version.
     bump2version(
