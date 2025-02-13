@@ -196,6 +196,12 @@ def test_get_commit_prefix_group():
     ]
     assert ":tada:" == feat.emoji
 
+    # NOTE: The first group should be the 0 priority
+    assert data[0].priority == 0
+
+    # NOTE: The last group should be the 0 priority
+    assert data[-1].priority == 90
+
 
 @patch(
     "clishelf.git.subprocess.check_output",

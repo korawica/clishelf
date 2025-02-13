@@ -139,7 +139,7 @@ def get_commit_prefix_group() -> tuple[CommitPrefixGroup, ...]:
                     priority=(int(p) if isinstance(p, str) else p),
                 )
                 for n, e, p in (
-                    *[[*c, 80] if len(c) == 2 else c for c in conf],
+                    *[[*c, 60] if len(c) == 2 else c for c in conf],
                     *[
                         p
                         for p in GitConf.commit_prefix_group
