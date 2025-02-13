@@ -29,6 +29,9 @@ dependencies = [
     "bump2version==1.0.1",
 ]
 
+[project.optional-dependencies]
+test = [ "pytest" ]
+
 [project.urls]
 Homepage = "https://github.com/korawica/clishelf/"
 "Source Code" = "https://github.com/korawica/clishelf/"

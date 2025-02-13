@@ -6,9 +6,9 @@
 from __future__ import annotations
 
 import json
-import pathlib
 import subprocess
 import sys
+from pathlib import Path
 from typing import NoReturn, Optional
 
 import click
@@ -76,14 +76,13 @@ def cove(module: str, html: bool):
 
 @cli.command()
 @click.option(
-    "-f",
-    "--output-file",
+    "-o",
+    "--output",
     type=click.STRING,
     default=None,
     help="An output file that want to export the dependencies.",
 )
 @click.option(
-    "-o",
     "--optional",
     type=click.STRING,
     default=None,
@@ -104,7 +103,7 @@ def dep(
     optional_deps: list[str] = []
     if optional:
         optional_deps = [
-            f"./{output_file}" if (x == project and output_file) else x
+            f"-r ./{output_file}" if (x == project and output_file) else x
             for x in (
                 load_pyproject()
                 .get("project", {})
@@ -113,29 +112,31 @@ def dep(
             )
         ]
 
+    # NOTE: Echo the project dependencies.
     for d in deps:
         click.echo(d)
 
     for d in optional_deps:
-        if output_file and d == f"./{output_file}":
+        if output_file and d == f"-r ./{output_file}":
             continue
         click.echo(d)
 
+    # NOTE: Start writing file.
     if output_file:
-        with pathlib.Path(f"./{output_file}").open(
-            mode="wt", encoding="utf-8"
-        ) as f:
+        with Path(f"./{output_file}").open(mode="wt", encoding="utf-8") as f:
             f.write("\n".join(deps))
 
         if optional:
+            # NOTE: Split stem and filename.
             fn, ext = output_file.split(".", maxsplit=1)
-            with pathlib.Path(f"./{fn}.{optional}.{ext}").open(
-                mode="wt", encoding="utf-8"
-            ) as f:
+
+            file_optional: str = f"./{fn}.{optional}.{ext}"
+            with Path(file_optional).open(mode="wt", encoding="utf-8") as f:
                 f.write("\n".join(optional_deps))
 
 
 def main() -> NoReturn:
+    """Make cli main object."""
     cli.add_command(cli_git)
     cli.add_command(cli_vs)
     cli.add_command(cli_emoji)

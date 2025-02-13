@@ -18,7 +18,7 @@ import click
 
 from .git import CommitLog
 from .settings import BumpVerConf
-from .utils import load_config
+from .utils import Level, load_config, make_color
 
 cli_vs: click.Command
 
@@ -404,8 +404,9 @@ def current(file: str) -> NoReturn:  # pragma: no cov
 @click.option(
     "-m",
     "--mode",
-    type=click.STRING,
-    help="A bump version mode that should be normal or datetime.",
+    type=click.Choice(["normal", "datetime"]),
+    help="A bump version mode that should be normal nor datetime.",
+    default=None,
 )
 @click.option(
     "-v",
@@ -467,7 +468,7 @@ def bump(
     ), "`mode` should be normal or datetime only"
 
     if mode == "normal":
-        click.echo("Be noted that:")
+        click.echo(make_color("Be noted that:", Level.INFO))
         click.echo(
             "  * `major`:  means breaking changes and removed deprecations"
         )
