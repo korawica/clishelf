@@ -13,6 +13,7 @@ classifiers = [
     "Natural Language :: English",
     "Development Status :: 4 - Beta",
     "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
@@ -43,7 +44,7 @@ Homepage = "https://github.com/korawica/clishelf/"
 "Source Code" = "https://github.com/korawica/clishelf/"
 
 [build-system]
-requires = ["pdm-backend"]
+requires = [ "pdm-backend" ]
 build-backend = "pdm.backend"
 
 [project.scripts]
