@@ -2,6 +2,17 @@
 
 ## Latest Changes
 
+## 0.2.18
+
+### :postbox: Dependencies
+
+- :pushpin: deps: move unnecessary deps to optional.
+
+### :tada: Features
+
+- :dart: feat: add more commit prefix.
+- :dart: feat: priority commit group before writing the changelog file (#127)
+
 ## 0.2.17
 
 ### :book: Documents

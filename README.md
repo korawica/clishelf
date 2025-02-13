@@ -42,7 +42,7 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 
 ```yaml
 - repo: https://github.com/korawica/clishelf
-  rev: v0.2.17
+  rev: v0.2.18
   hooks:
     - id: shelf-commit-msg
       stages: [commit-msg]
