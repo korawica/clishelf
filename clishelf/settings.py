@@ -47,6 +47,7 @@ class GitConf:
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("feat", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
         ("highlight", "Highlight Features", ":star:"),  # ⭐
+        ("hl", "Highlight Features", ":star:"),  # ⭐
         # NOTE: Fixed
         ("hotfix", "Bug fixes", ":fire:"),  # 🔥, 🚑 :ambulance:
         ("fixed", "Bug fixes", ":gear:"),  # ⚙️, 🛠️ :hammer_and_wrench:
@@ -87,8 +88,12 @@ class GitConf:
         ("initial", "Features", ":tada:"),  # 🎉
         ("deprecate", "Deprecate & Clean", ":wastebasket:"),  # 🗑️
         ("clean", "Deprecate & Clean", ":recycle:"),  # ♻️️
+        ("drop", "Deprecate & Clean", ":coffin:"),  # ⚰️
         ("revert", "Code Changes", ":rewind:"),  # ⏪
         ("merge", "Code Changes", ":fast_forward:"),  # ⏩
+        ("merged", "Code Changes", ":fast_forward:"),  # ⏩
+        # NOTE: GitHub custom emoji
+        ("dependabot", "Dependencies", ":dependabot:"),
     )
 
     commit_prefix_group: tuple[tuple[str, str, int]] = (
@@ -104,7 +109,7 @@ class GitConf:
         ("Performance improvements", ":rocket:", 30),  # 🚀, ⚡️ :zap:
         ("Other improvements", ":hammer_and_wrench:", 40),  # 🛠️
         ("Enhancements", ":sparkles:", 40),  # ✨
-        ("Deprecate & Clean", ":no_entry:", 40),  # ⛔
+        ("Deprecate & Clean", ":broom:", 40),  # 🧹, ⛔ :no_entry:
     )
 
     commit_prefix_emoji_default: str = ":construction:"  # 🚧
@@ -183,8 +188,8 @@ class BumpVerConf:
     )
 
     msg: str = (
-        # 🔖 :bookmark:
-        ":bookmark: Bump up to version {current_version} -> {new_version}."
+        # 🏷️ :label:, 🔖 :bookmark:
+        ":label: Bump up to version {current_version} -> {new_version}."
     )
 
     regex: str = (
