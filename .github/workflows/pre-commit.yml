@@ -1,6 +1,12 @@
 name: pre-commit
 
 on:
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: Ref of the pre-commit
+        required: false
+        default: 'main'
   push:
     tags:
       - 'v*.*.*'
@@ -9,13 +15,6 @@ on:
       - 'tests/**'
       - '*.md'
       - '.pre-commit-config.yaml'
-
-  workflow_dispatch:
-    inputs:
-      ref_name:
-        description: Ref of the pre-commit
-        required: false
-        default: 'default'
 
 permissions:
   contents: read
