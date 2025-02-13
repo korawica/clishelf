@@ -281,7 +281,18 @@ def bump2version(
         ],
         stdout=subprocess.DEVNULL,
     )
+
     click.echo("Running the `bump2version` cli with that config file ...")
+    try:  # pragma: no cov
+        import bumpversion
+    except ImportError:
+        subprocess.run(
+            ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
+        )
+        raise ImportError(
+            "The bump function need `bump2version` package. You should install "
+            "it by `pip install -U bump2version`"
+        ) from None
     subprocess.run(
         [
             "bump2version",

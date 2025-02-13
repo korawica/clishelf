@@ -21,16 +21,19 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = [
-    "click==8.1.8",
+dependencies = [ "click==8.1.8" ]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "clishelf[all]",
+]
+all = [
     "pre-commit",
     # TODO: able to change this package from `bump2version` to `bump-my-version`
     #   docs: https://github.com/callowayproject/bump-my-version
     "bump2version==1.0.1",
 ]
-
-[project.optional-dependencies]
-test = [ "pytest" ]
 
 [project.urls]
 Homepage = "https://github.com/korawica/clishelf/"
@@ -157,3 +160,4 @@ lint.exclude = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"clishelf/version.py" = ["F401"]
