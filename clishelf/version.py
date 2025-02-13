@@ -404,8 +404,9 @@ def current(file: str) -> NoReturn:  # pragma: no cov
 @click.option(
     "-m",
     "--mode",
-    type=click.STRING,
-    help="A bump version mode that should be normal or datetime.",
+    type=click.Choice(["normal", "datetime"]),
+    help="A bump version mode that should be normal nor datetime.",
+    default=None,
 )
 @click.option(
     "-v",
