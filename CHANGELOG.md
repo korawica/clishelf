@@ -2,6 +2,28 @@
 
 ## Latest Changes
 
+## 0.2.19
+
+### :bug: Bug fixes
+
+- :gear: fixed: change default priority commit prefix group from 80 to 60.
+
+### :black_nib: Code Changes
+
+- :art: styled: add info level on bump command.
+
+### :book: Documents
+
+- :page_facing_up: docs: update license on pyproject.
+
+### :package: Build & Workflow
+
+- :toolbox: build: add workflow dispatch trigger.
+
+### :postbox: Dependencies
+
+- :pushpin: deps: add PyYAML==6.0.2 on require deps.
+
 ## 0.2.18
 
 ### :postbox: Dependencies
