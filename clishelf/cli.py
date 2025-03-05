@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -51,7 +52,12 @@ def conf():
     help="If True, it will generate coverage html file at `./htmlcov/`.",
 )
 def cove(module: str, html: bool):
-    """Run the coverage command."""
+    """Run the coverage command.
+
+    \f
+    :param module:
+    :param html:
+    """
     try:
         _ = __import__("coverage")
     except ImportError:
@@ -74,6 +80,39 @@ def cove(module: str, html: bool):
     sys.exit(0)
 
 
+def get_dep_optional(
+    project: str,
+    optional: str,
+    project_deps_optional: dict[str, list],
+) -> list[str]:  # pragma: no cov
+    rs: list[str] = []
+    rs_clear: list[str] = []
+    if optional not in project_deps_optional:
+        raise ValueError(f"Optional dependency {optional!r} does not exists.")
+
+    for x in project_deps_optional.get(optional, []):
+        if x.startswith(project):
+            op: Optional[re.Match[str]] = re.search(
+                rf"{project}(?:\[(?P<optionals>[\w,]+)])?", x
+            )
+            if op is None:
+                raise ValueError(
+                    f"The format of nested dependency {x!r} does not valid."
+                )
+
+            for o in op.groupdict()["optionals"].split(","):
+                rs.extend(get_dep_optional(project, o, project_deps_optional))
+        else:
+            rs.append(x)
+
+    # NOTE: Clear duplicate with order packages.
+    for i in rs:
+        if i not in rs_clear:
+            rs_clear.append(i)
+
+    return rs_clear
+
+
 @cli.command()
 @click.option(
     "-o",
@@ -89,50 +128,48 @@ def cove(module: str, html: bool):
     help="An optional dependencies string if this project was set.",
 )
 def dep(
-    output_file: Optional[str] = None,
+    output: Optional[str] = None,
     optional: Optional[str] = None,
 ) -> NoReturn:
-    """List of Dependencies that was set in pyproject.toml file."""
+    """List of Dependencies that was set in pyproject.toml file.
+
+    \f
+    :param output:
+    :param optional:
+    """
     from .utils import load_pyproject
 
     project: str = load_pyproject().get("project", {}).get("name", "unknown")
-    deps: list[str] = (
+    project_deps: list[str] = (
         load_pyproject().get("project", {}).get("dependencies", [])
     )
 
     optional_deps: list[str] = []
     if optional:
-        optional_deps = [
-            f"-r ./{output_file}" if (x == project and output_file) else x
-            for x in (
+        optional_deps = get_dep_optional(
+            project,
+            optional=optional,
+            project_deps_optional=(
                 load_pyproject()
                 .get("project", {})
                 .get("optional-dependencies", {})
-                .get(optional, [])
-            )
-        ]
+            ),
+        )
 
     # NOTE: Echo the project dependencies.
-    for d in deps:
-        click.echo(d)
-
-    for d in optional_deps:
-        if output_file and d == f"-r ./{output_file}":
-            continue
+    for d in project_deps + optional_deps:
         click.echo(d)
 
     # NOTE: Start writing file.
-    if output_file:
-        with Path(f"./{output_file}").open(mode="wt", encoding="utf-8") as f:
-            f.write("\n".join(deps))
+    if output:
+        with Path(f"./{output}").open(mode="wt", encoding="utf-8") as f:
+            f.write("\n".join(project_deps))
+            f.write("\n")
 
-        if optional:
-            # NOTE: Split stem and filename.
-            fn, ext = output_file.split(".", maxsplit=1)
-
-            file_optional: str = f"./{fn}.{optional}.{ext}"
-            with Path(file_optional).open(mode="wt", encoding="utf-8") as f:
+            if optional:
+                f.write("# Optional deps\n")
                 f.write("\n".join(optional_deps))
+                f.write("\n")
 
 
 def main() -> NoReturn:
