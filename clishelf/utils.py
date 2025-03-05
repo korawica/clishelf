@@ -81,16 +81,18 @@ class Level(str, Enum):
     ERROR: str = "ERROR"
 
 
-def make_color(message: str, level: Level) -> str:
+def make_color(message: str, level: Level, prefix: bool = False) -> str:
     """Print the message with a color for the corresponding level.
 
     :param message: A message string that want to echo.
     :param level: A level of color.
+    :param prefix: A prefix flag for adding level value in message.
 
     :rtype: str
     """
     return (
-        f"{Bcolors[level].value}{Bcolors.BOLD.value}{level.value}: "
+        f"{Bcolors[level].value}{Bcolors.BOLD.value}"
+        f"{f'{level.value}: ' if prefix else ''}"
         f"{message}{Bcolors.END.value}"
     )
 

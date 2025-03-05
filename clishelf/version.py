@@ -16,6 +16,7 @@ from typing import Any, NoReturn, Optional, TextIO, Union
 
 import click
 
+from .emoji import emojize
 from .git import CommitLog
 from .settings import BumpVerConf
 from .utils import Level, load_config, make_color
@@ -479,20 +480,13 @@ def bump(
     ), "`mode` should be normal or datetime only"
 
     if mode == "normal":
-        click.echo(make_color("Be noted that:", Level.INFO))
-        click.echo(
-            make_color(
-                "  * `major`:  means breaking changes and removed deprecations",
-                Level.INFO,
-            )
-        )
-        click.echo(
-            make_color(
-                "  * `minor`:  new features, sometimes automatic migrations",
-                Level.INFO,
-            )
-        )
-        click.echo(make_color("  * `patch`:  bug fixes", Level.INFO))
+        for msg in [
+            ":warning: Be noted that:",
+            "  * `major`:  means breaking changes and removed deprecations",
+            "  * `minor`:  new features, sometimes automatic migrations",
+            "  * `patch`:  bug fixes",
+        ]:
+            click.echo(make_color(emojize(msg), Level.INFO))
 
     # NOTE: Start bumping version.
     bump2version(

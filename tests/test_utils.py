@@ -23,8 +23,11 @@ def side_effect_func_pyproject(*args, **kwargs):
 
 
 def test_make_color():
-    result = utils.make_color("test", utils.Level.OK)
+    result = utils.make_color("test", utils.Level.OK, prefix=True)
     assert result == "\x1b[92m\x1b[1mOK: test\x1b[0m"
+
+    result = utils.make_color("test", utils.Level.OK, prefix=False)
+    assert result == "\x1b[92m\x1b[1mtest\x1b[0m"
 
 
 @patch("clishelf.utils.Path", side_effect=side_effect_func_pyproject)

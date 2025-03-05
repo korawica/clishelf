@@ -16,7 +16,7 @@ This project help me to make Versioning, run Abbreviate of Git CLI.
 > every time when I start create a new Python package :tired_face:. I provide some
 > reusable CLIs that was implemented by [`Click`](https://github.com/pallets/click/).
 
-## :round_pushpin: Installation
+## :package: Installation
 
 ```shell
 pip install -U clishelf
@@ -28,13 +28,13 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                       |  Support Fixed Bug   |
-|:-----------------|:-----------------------------------|:--------------------:|
-| `== 3.8`         | `pip install "clishelf<=0.1.10"`   |         :x:          |
-| `>=3.9.13,<3.14` | `pip install -U clishelf`          |  :heavy_check_mark:  |
+| Python Version   | Installation                       |     Supported      |
+|:-----------------|:-----------------------------------|:------------------:|
+| `== 3.8`         | `pip install "clishelf<=0.1.10"`   |        :x:         |
+| `>=3.9.13,<3.14` | `pip install -U clishelf`          | :heavy_check_mark: |
 
 > [!WARNING]
-> This package already install `pre-commit` with the latest version.
+> This package already installed `pre-commit` with the latest version.
 
 ## :rocket: Pre-Commit Hook
 
