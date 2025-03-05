@@ -2,6 +2,20 @@
 
 ## Latest Changes
 
+## 0.2.20
+
+### :bug: Bug fixes
+
+- :gear: fixed: revise get dep command logic. (#131)
+
+### :black_nib: Code Changes
+
+- :art: styled: add emoji on bump version message.
+
+### :book: Documents
+
+- :page_facing_up: docs: update readme file.
+
 ## 0.2.19
 
 ### :bug: Bug fixes
