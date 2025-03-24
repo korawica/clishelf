@@ -42,6 +42,7 @@ class GitConf:
     # TODO: reference emoji from https://gitmoji.dev/
     #   All emojis, https://github.com/ikatyang/emoji-cheat-sheet
     #   GitHub API: https://api.github.com/emojis
+    #   GitMoji: https://gitmoji.dev/
     commit_prefix: tuple[tuple[str, str, str]] = (
         # NOTE: Features
         ("feature", "Features", ":dart:"),  # 🎯, 📋 :clipboard:, ✨ :sparkles:
@@ -57,8 +58,13 @@ class GitConf:
         # NOTE: Documents
         ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
         # NOTE: Code Styled
-        ("styled", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
-        ("style", "Code Changes", ":art:"),  # 🎨, 📝 :memo:, ✒️ :black_nib:
+        (
+            "styled",
+            "Code Changes",
+            ":lipstick:",
+        ),  # 💄, 📝 :memo:, ✒️ :black_nib:
+        ("style", "Code Changes", ":lipstick:"),  # 💄, 📝 :memo:, ✒️ :black_nib:
+        ("format", "Code Changes", ":art:"),  # 🎨
         (
             "refactored",
             "Code Changes",
@@ -90,10 +96,15 @@ class GitConf:
         ("clean", "Deprecate & Clean", ":recycle:"),  # ♻️️
         ("drop", "Deprecate & Clean", ":coffin:"),  # ⚰️
         ("revert", "Code Changes", ":rewind:"),  # ⏪
-        ("merge", "Code Changes", ":fast_forward:"),  # ⏩
-        ("merged", "Code Changes", ":fast_forward:"),  # ⏩
+        ("merge", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
+        ("merged", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
         # NOTE: GitHub custom emoji
         ("dependabot", "Dependencies", ":dependabot:"),
+        ("seo", "Enhancements", ":mag:"),  # 🔍️
+        ("snapshots", "Build & Workflow", ":camera_flash:"),  # 📸
+        ("typos", "Code Changes", ":pencil2:"),  # ✏️
+        ("typo", "Code Changes", ":pencil2:"),  # ✏️
+        ("ignore", "Deprecate & Clean", ":see_no_evil:"),  # "🙈
     )
 
     commit_prefix_group: tuple[tuple[str, str, int]] = (
