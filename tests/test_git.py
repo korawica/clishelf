@@ -111,7 +111,7 @@ def test_commit_message_model(make_yaml_conf):
         content="merge: branch 'main' of https://github.com/korawica"
     )
     assert (
-        "Code Changes: :fast_forward: merge: branch 'main' of "
+        "Code Changes: :twisted_rightwards_arrows: merge: branch 'main' of "
         "https://github.com/korawica"
     ) == str(msg)
 
@@ -186,7 +186,7 @@ def test_load_profile(mock_load_pyproject, mock):
 
 
 def test_get_commit_prefix():
-    assert 34 == len(list(git.get_commit_prefix()))
+    assert 39 == len(list(git.get_commit_prefix()))
 
 
 def test_get_commit_prefix_group():
