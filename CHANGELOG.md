@@ -2,6 +2,12 @@
 
 ## Latest Changes
 
+## 0.2.21
+
+### :tada: Features
+
+- :dart: feat: add gitmoji style. (#135)
+
 ## 0.2.20
 
 ### :bug: Bug fixes
