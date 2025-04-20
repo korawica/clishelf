@@ -1,8 +1,8 @@
 git:
   commit_prefix:
-    - ["comment", "Documents", ":bulb:"]  # 💡
-    - ["typos", "Documents", ":pencil2:"]  # ✏️
+    - ["comment", "Documentations", ":bulb:"]  # 💡
+    - ["typos", "Documentations", ":pencil2:"]  # ✏️
   commit_prefix_group:
     - ["Features", ":tada:"]  # 🎉
-    - ["Documents", ":book:"]  # 📖
+    - ["Documentations", ":book:"]  # 📖
   commit_prefix_force_fix: true

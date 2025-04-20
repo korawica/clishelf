@@ -76,12 +76,15 @@ Usage: shelf.exe git [OPTIONS] COMMAND [ARGS]...
   The Extended Git commands
 
 Commands:
-  bn-clear     Clear Local Branches that sync from the Remote repository.
-  cm           Prepare and show the latest commit message with the commit...
-  cm-prev      Commit changes to the Previous Commit with same message.
-  cm-revert    Revert the latest Commit on the Local repository.
-  mg           Merge change from another branch with strategy, `theirs`...
-  tg-clear     Clear Local Tags that sync from the Remote repository.
+  bn-clear   Clear Local Branches that sync from the Remote repository.
+  cm         Prepare and show the latest commit message with the commit...
+  cm-msg     Return list of commit prefixes
+  cm-prefix  Show the commit prefix that setting in current config.
+  cm-prev    Commit changes to the Previous Commit with same message.
+  cm-revert  Revert the latest Commit on the Local repository.
+  mg         Merge change from another branch with strategy, `theirs` or...
+  tg-bump    Create Tag from current version after bumping
+  tg-clear   Clear Local Tags that sync from the Remote repository.
 ```
 
 ### Versioning

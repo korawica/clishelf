@@ -56,7 +56,11 @@ class GitConf:
         ("bug", "Bug fixes", ":bug:"),  # 🐛
         ("bugfix", "Bug fixes", ":bug:"),  # 🐛
         # NOTE: Documents
-        ("docs", "Documents", ":page_facing_up:"),  # 📄, 📑 :bookmark_tabs:
+        (
+            "docs",
+            "Documentations",
+            ":page_facing_up:",
+        ),  # 📄, 📑 :bookmark_tabs:
         # NOTE: Code Styled
         (
             "styled",
@@ -99,7 +103,7 @@ class GitConf:
         ("merge", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
         ("merged", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
         # NOTE: GitHub custom emoji
-        ("dependabot", "Dependencies", ":dependabot:"),
+        ("dependabot", "Dependencies", ":robot:"),  # 🤖, ? :dependabot:
         ("seo", "Enhancements", ":mag:"),  # 🔍️
         ("snapshots", "Build & Workflow", ":camera_flash:"),  # 📸
         ("typos", "Code Changes", ":pencil2:"),  # ✏️
