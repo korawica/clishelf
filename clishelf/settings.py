@@ -99,7 +99,7 @@ class GitConf:
         ("merge", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
         ("merged", "Code Changes", ":twisted_rightwards_arrows:"),  # 🔀
         # NOTE: GitHub custom emoji
-        ("dependabot", "Dependencies", ":dependabot:"),
+        ("dependabot", "Dependencies", ":robot:"),  # 🤖, ? :dependabot:
         ("seo", "Enhancements", ":mag:"),  # 🔍️
         ("snapshots", "Build & Workflow", ":camera_flash:"),  # 📸
         ("typos", "Code Changes", ":pencil2:"),  # ✏️

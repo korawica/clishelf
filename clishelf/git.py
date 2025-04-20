@@ -14,7 +14,7 @@ from dataclasses import InitVar, dataclass, field
 from datetime import date, datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import NoReturn, Optional
+from typing import NoReturn, Optional, Union
 
 import click
 
@@ -158,8 +158,8 @@ def get_git_emojis() -> list[dict[str, str]]:
 
     :rtype: list[dict[str, str]]
     """
-    cm_prefix: TupleStr = tuple(p.emoji.strip(":") for p in get_commit_prefix())
-    return [emojis for emojis in get_emojis() if emojis["alias"] in cm_prefix]
+    prefix: TupleStr = tuple(p.emoji.strip(":") for p in get_commit_prefix())
+    return [emojis for emojis in get_emojis() if emojis["alias"] in prefix]
 
 
 @dataclass
@@ -652,10 +652,8 @@ def cm_msg(group: bool = False) -> None:  # pragma: no cov
         for cm_prefix_g in get_commit_prefix_group():
             click.echo(f"{cm_prefix_g.emoji} {cm_prefix_g.name}")
     else:
-        for cm_prefix in get_commit_prefix():
-            click.echo(
-                f"{cm_prefix.emoji} {cm_prefix.name} -> {cm_prefix.group}"
-            )
+        for prefix in get_commit_prefix():
+            click.echo(f"{prefix.emoji} {prefix.name} -> {prefix.group}")
     sys.exit(0)
 
 
@@ -813,13 +811,30 @@ def tg_clear() -> None:  # pragma: no cov
 
 
 @cli_git.command()
-def cm_prefix() -> None:
+def cm_prefix() -> None:  # pragma: no cov
     """Show the commit prefix that setting in current config."""
     emojis = {e["alias"]: e["emoji"] for e in get_emojis()}
+    rs: dict[str, dict[str, Union[list[str], str]]] = {}
+    rs_not_found = []
     for cp in get_commit_prefix():
-        click.echo(
-            f"- {emojis.get(cp.emoji.strip(':'), 'x')} {cp.name} ({cp.group})"
-        )
+        emoji = emojis.get(cp.emoji.strip(":"), "x")
+        if emoji == "x":
+            rs_not_found.append({"prefix": cp.name, "group": cp.group})
+
+        if emoji in rs:
+            rs[emoji]["prefix"].append(cp.name)
+        else:
+            rs[emoji] = {}
+            rs[emoji]["group"] = cp.group
+            rs[emoji]["prefix"] = [cp.name]
+
+    click.echo(make_color("Prefix & Emoji:", Level.INFO))
+    for r in rs:
+        click.echo(f"- {r}\t{rs[r]['prefix']} ({rs[r]['group']})")
+    if rs_not_found:
+        click.echo(make_color("Not exist on emoji list:", Level.WARNING))
+        for r in rs_not_found:
+            click.echo(f"- {r['prefix']} ({r['group']})")
     sys.exit(0)
 
 
