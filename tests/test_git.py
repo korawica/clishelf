@@ -123,6 +123,9 @@ def test_commit_message_model(make_yaml_conf):
         "Schedule model"
     ) == str(msg)
 
+    msg = git.CommitMsg(content="Initial commit")
+    assert ("Features: :loudspeaker: init: initial commit") == str(msg)
+
 
 @patch("clishelf.utils.load_pyproject")
 def test_commit_message_model_change_format(mock_load_pyproject):

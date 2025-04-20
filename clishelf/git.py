@@ -207,6 +207,11 @@ def extract_subject(content: str) -> CommitSub:
             prefix="merge",
             subject=content.replace("Merge branch ", "branch "),
         )
+    # PR: (#139) Support Initial commit message from GH
+    elif content.lower() == "initial commit":
+        return CommitSub(
+            emoji=":loudspeaker:", prefix="init", subject="initial commit"
+        )
 
     if rs := re.search(
         rf"^(?P<emoji>:\w+:)\s(?P<prefix>\w+):\s?(?P<subject>{ALL_CHAR}+)$",
@@ -282,7 +287,7 @@ class CommitMsg:
         self.subject: CommitSub = extract_subject(
             demojize(content, emojis=get_git_emojis())
         )
-        self.content: str = self.__prepare_content__(self.subject)
+        self.content: str = self.__prepare_content(self.subject)
         if mtype is None:
             self.mtype: str = self.__prepare_mtype(self.subject.prefix)
         else:
@@ -312,7 +317,7 @@ class CommitMsg:
         )  # pragma: no cover
 
     @staticmethod
-    def __prepare_content__(subject: CommitSub) -> str:
+    def __prepare_content(subject: CommitSub) -> str:
         """Prepare string content that receive on post initialize step.
 
         :param subject: A CommitSub dataclass object.
