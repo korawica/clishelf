@@ -2,6 +2,22 @@
 
 ## Latest Changes
 
+## 0.2.22
+
+### :bug: Bug fixes
+
+- :hammer_and_wrench: fixed: commit message does not support for code block (#143)
+
+### :black_nib: Code Changes
+
+- :twisted_rightwards_arrows: merge: branch 'main' of https://github.com/korawica/clishelf
+
+### :tada: Features
+
+- :dart: feat: add support initial message from gh. (#144)
+- :dart: feat: add cli to display all commit prefix values that able to use (#142).
+- :dart: feat: add cli to display all commit prefix values that able to use (#142)
+
 ## 0.2.21
 
 ### :tada: Features
