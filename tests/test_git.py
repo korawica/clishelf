@@ -115,6 +115,14 @@ def test_commit_message_model(make_yaml_conf):
         "https://github.com/korawica"
     ) == str(msg)
 
+    msg = git.CommitMsg(
+        content="hl: add `from_path` construct on the Schedule model"
+    )
+    assert (
+        "Highlight Features: :star: hl: add `from_path` construct on the "
+        "Schedule model"
+    ) == str(msg)
+
 
 @patch("clishelf.utils.load_pyproject")
 def test_commit_message_model_change_format(mock_load_pyproject):
@@ -283,5 +291,16 @@ def test_validate_commit_msg():
     )
     assert rs == (
         ["The commit body should wrap at 72 characters at line: 3."],
+        git.Level.WARNING,
+    )
+
+    rs = git.validate_commit_msg(
+        ["tests: add testcase of `commitmsg` object", ""]
+    )
+    assert rs == (
+        [
+            "There should at least 3 lines in your commit message.",
+            "There should not has dot in the end of commit message.",
+        ],
         git.Level.WARNING,
     )
