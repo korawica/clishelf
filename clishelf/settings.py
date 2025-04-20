@@ -94,8 +94,8 @@ class GitConf:
         ("dependency", "Dependencies", ":pushpin:"),  # 📌, 🔍 :mag:
         ("secure", "Security", ":lock:"),  # 🔒
         ("security", "Security", ":lock:"),  # 🔒
-        ("init", "Features", ":tada:"),  # 🎉
-        ("initial", "Features", ":tada:"),  # 🎉
+        ("init", "Features", ":loudspeaker:"),  # 📢, 🎉 :tada:
+        ("initial", "Features", ":loudspeaker:"),  # 📢, 🎉 :tada:
         ("deprecate", "Deprecate & Clean", ":wastebasket:"),  # 🗑️
         ("clean", "Deprecate & Clean", ":recycle:"),  # ♻️️
         ("drop", "Deprecate & Clean", ":coffin:"),  # ⚰️
@@ -121,7 +121,11 @@ class GitConf:
         ("Build & Workflow", ":package:", 80),  # 📦
         ("Dependencies", ":postbox:", 80),  # 📮
         ("Security", ":closed_lock_with_key:", 70),  # 🔐
-        ("Performance improvements", ":rocket:", 30),  # 🚀, ⚡️ :zap:
+        (
+            "Performance improvements",
+            ":hourglass_flowing_sand:",
+            30,
+        ),  # ⏳, 🚀 :rocket:, ⚡️ :zap:
         ("Other improvements", ":hammer_and_wrench:", 40),  # 🛠️
         ("Enhancements", ":sparkles:", 40),  # ✨
         ("Deprecate & Clean", ":broom:", 40),  # 🧹, ⛔ :no_entry:
