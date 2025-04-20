@@ -8,7 +8,7 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![gh license](https://img.shields.io/github/license/korawica/clishelf)](https://github.com/korawica/clishelf/blob/main/LICENSE)
 
-A CLI tools and hooks on my shelf for my any Python packages.
+A **CLI tools and hooks on my shelf** for my any Python packages.
 This project help me to make Versioning, run Abbreviate of Git CLI.
 
 > [!NOTE]
@@ -48,7 +48,7 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
       stages: [commit-msg]
 ```
 
-## :tada: Features
+## :star: Features
 
 This Utility Package provide some CLI tools for handler development process.
 
