@@ -812,5 +812,16 @@ def tg_clear() -> None:  # pragma: no cov
     sys.exit(0)
 
 
+@cli_git.command()
+def cm_prefix() -> None:
+    """Show the commit prefix that setting in current config."""
+    emojis = {e["alias"]: e["emoji"] for e in get_emojis()}
+    for cp in get_commit_prefix():
+        click.echo(
+            f"- {emojis.get(cp.emoji.strip(':'), 'x')} {cp.name} ({cp.group})"
+        )
+    sys.exit(0)
+
+
 if __name__ == "__main__":
     cli_git.main()

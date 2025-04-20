@@ -10,11 +10,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
 
-try:
-    import tomllib
-except ModuleNotFoundError:  # pragma: no cov
-    import pip._vendor.tomli as tomllib
-
+import rtoml
 import yaml
 
 
@@ -31,8 +27,8 @@ def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
     if not pyproject.exists():
         return {}
 
-    with pyproject.open(mode="rb") as f:
-        return tomllib.load(f)
+    with pyproject.open(mode="rt") as f:
+        return rtoml.load(f)
 
 
 def load_config() -> dict[str, Any]:

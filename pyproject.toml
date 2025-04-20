@@ -25,6 +25,7 @@ classifiers = [
 dependencies = [
     "click==8.1.8",
     "PyYAML==6.0.2",
+    "rtoml==0.12.0",
 ]
 
 [project.optional-dependencies]
@@ -140,7 +141,9 @@ exclude = """
 
 [tool.ruff]
 line-length = 80
-lint.select = [
+
+[tool.ruff.lint]
+select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
@@ -148,13 +151,13 @@ lint.select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
-lint.ignore = [
+ignore = [
     "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
 ]
 # Exclude a variety of commonly ignored directories.
-lint.exclude = [
+exclude = [
     ".git",
     ".mypy_cache",
     ".ruff_cache",
