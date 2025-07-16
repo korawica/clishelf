@@ -28,10 +28,10 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                       |     Supported      |
-|:-----------------|:-----------------------------------|:------------------:|
-| `== 3.8`         | `pip install "clishelf<=0.1.10"`   |        :x:         |
-| `>=3.9.13,<3.14` | `pip install -U clishelf`          | :heavy_check_mark: |
+| Python Version   | Installation                       | Supported |
+|:-----------------|:-----------------------------------|:---------:|
+| `== 3.8`         | `pip install "clishelf<=0.1.10"`   |     ❌     |
+| `>=3.9.13,<3.14` | `pip install -U clishelf`          |     ✅     |
 
 > [!WARNING]
 > This package already installed `pre-commit` with the latest version.
@@ -56,7 +56,7 @@ Auto add emoji and format commit message before commit.
 git commit -am "docs: update readme file"
 # ...
 # shelf prepare commit message.............................................Passed
-# [main dfb229c] :page_facing_up: docs: update readme file.                         <--- 🎉 SUCCESS 🎉
+# [main dfb229c] :page_facing_up: docs: update readme file.  <-- 🎉 SUCCESS 🎉
 # 3 files changed, 10 insertions(+), 3 deletions(-)
 ```
 
