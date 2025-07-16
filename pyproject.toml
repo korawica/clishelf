@@ -32,6 +32,7 @@ dependencies = [
 test = [
     "pytest",
     "clishelf[all]",
+    "requests",
 ]
 all = [
     "pre-commit>=4.0.0",

@@ -48,7 +48,19 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
       stages: [commit-msg]
 ```
 
-## :star: Features
+**Example**:
+
+Auto add emoji and format commit message before commit.
+
+```shell
+git commit -am "docs: update readme file"
+# ...
+# shelf prepare commit message.............................................Passed
+# [main dfb229c] :page_facing_up: docs: update readme file.                         <--- 🎉 SUCCESS 🎉
+# 3 files changed, 10 insertions(+), 3 deletions(-)
+```
+
+## ⭐ Features
 
 This Utility Package provide some CLI tools for handler development process.
 

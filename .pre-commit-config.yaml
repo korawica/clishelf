@@ -110,7 +110,10 @@ repos:
         name: prepare commit message
         stages: [commit-msg]
         types: [python]
-        entry: venv/Scripts/python.exe ./script.py git cm
+        # NOTE: For Windows OS
+        # entry: venv/Scripts/python.exe ./script.py git cm
+        # NOTE: For Mac OS
+        entry: .venv/bin/python ./script.py git cm
         args: ["--edit", "--output-file"]
         language: system
         always_run: true
@@ -123,7 +126,10 @@ repos:
         # NOTE: alternatively you could `core: [python]` so it only runs
         #   when python files change.
         types: [python]
-        entry: venv/Scripts/pytest.exe -v
+        # NOTE: For Windows OS
+        # entry: venv/Scripts/pytest.exe -v
+        # NOTE: For MacOS
+        entry: .venv/bin/pytest -v
         language: system
         # language: script
         pass_filenames: false
