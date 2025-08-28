@@ -2,6 +2,23 @@
 
 ## Latest Changes
 
+## 0.2.23
+
+### :bug: Bug fixes
+
+- :gear: fixed: potential fix for code scanning alert no. 2: Workflow does not contain permissions (#149)
+- :gear: fixed: potential fix for code scanning alert no. 1: Workflow does not contain permissions (#148)
+
+### :book: Documentations
+
+- :page_facing_up: docs: revise emoji on readme file.
+- :page_facing_up: docs: update readme file.
+- :page_facing_up: docs: update readme file.
+
+### :postbox: Dependencies
+
+- :dependabot: dependabot: bump sigstore/gh-action-sigstore-python from 3.0.0 to 3.0.1 (#157)
+
 ## 0.2.22
 
 ### :bug: Bug fixes
