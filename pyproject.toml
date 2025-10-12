@@ -2,7 +2,7 @@
 name = "clishelf"
 description = "A CLI tools and hooks on my shelf"
 readme = "README.md"
-requires-python = ">=3.9.13"
+requires-python = ">=3.10"
 dynamic = ["version"]
 keywords = ['utility', 'cli']
 authors = [
@@ -16,7 +16,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -107,7 +106,7 @@ addopts = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 files = ["clishelf"]
 show_error_codes = true
 pretty = true
@@ -131,7 +130,7 @@ warn_unused_ignores = true
 
 [tool.black]
 line-length = 80
-target-version = ['py39']
+target-version = ['py310']
 exclude = """
 /(
     \\.git

@@ -18,8 +18,7 @@ try:
 except ImportError:  # pragma: no cov
     requests = None
 
-from .__types import DictStr
-
+DictStr = dict[str, str]
 cli_emoji: click.Command
 
 

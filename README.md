@@ -28,10 +28,11 @@ custom message code.
 
 **Dependency supported**:
 
-| Python Version   | Installation                       | Supported |
-|:-----------------|:-----------------------------------|:---------:|
-| `== 3.8`         | `pip install "clishelf<=0.1.10"`   |     ❌     |
-| `>=3.9.13,<3.14` | `pip install -U clishelf`          |     ✅     |
+| Python Version | Installation                     | Supported |
+|:---------------|:---------------------------------|:---------:|
+| `<= 3.8`       | `pip install "clishelf<=0.1.10"` |     ❌     |
+| `<= 3.9`       | `pip install "clishelf<=0.2.23"` |     ❌     |
+| `>=3.10,<3.14` | `pip install -U clishelf`        |     ✅     |
 
 > [!WARNING]
 > This package already installed `pre-commit` with the latest version.

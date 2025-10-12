@@ -18,7 +18,6 @@ from typing import NoReturn, Optional, Union
 
 import click
 
-from .__types import TupleStr
 from .emoji import demojize, get_emojis
 from .settings import GitConf
 from .utils import (
@@ -28,6 +27,8 @@ from .utils import (
     make_color,
     prepare_str,
 )
+
+TupleStr = tuple[str, ...]
 
 cli_git: click.Command
 
