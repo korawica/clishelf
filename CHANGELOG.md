@@ -2,11 +2,19 @@
 
 ## Latest Changes
 
-## 0.2.24
+## 0.3.0
 
 ### :tada: Features
 
 - :dart: feat: drop support for python 3.9.
+
+### :black_nib: Code Changes
+
+- :rewind: revert: drop support workflow for py314.
+
+### :package: Build & Workflow
+
+- :toolbox: build: add py314 for test and pre-commit workflows.
 
 ### :postbox: Dependencies
 
