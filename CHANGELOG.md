@@ -2,6 +2,19 @@
 
 ## Latest Changes
 
+## 0.2.24
+
+### :tada: Features
+
+- :dart: feat: drop support for python 3.9.
+
+### :postbox: Dependencies
+
+- :pushpin: deps: update version and optional for latest version.
+- :package: deps: bump pyyaml from 6.0.2 to 6.0.3 (#171)
+- :dependabot: dependabot: bump actions/checkout from 4 to 5 (#168)
+- :dependabot: dependabot: bump actions/download-artifact from 4 to 5 (#167)
+
 ## 0.2.23
 
 ### :bug: Bug fixes
