@@ -24,13 +24,13 @@ classifiers = [
 dependencies = [
     "click>=8.1.8",
     "PyYAML>=6.0.3",
-    "rtoml>=0.12.0",
+    "pip; python_version <= '3.10'",
 ]
 
 [project.optional-dependencies]
 test = [
-    "pytest",
     "clishelf[all]",
+    "pytest",
     "requests",
 ]
 all = [
@@ -42,7 +42,6 @@ all = [
 latest = [
     "click==8.1.8",
     "PyYAML==6.0.3",
-    "rtoml==0.12.0",
 ]
 
 [project.urls]

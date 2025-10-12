@@ -10,8 +10,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
 
-import rtoml
 import yaml
+
+try:
+    # NOTE: Python v3.11+
+    import tomllib
+except ModuleNotFoundError:
+    # NOTE: Need to install pip if the current venv created from uv.
+    #   >>> uv pip install pip
+    import pip._vendor.tomli as tomllib
 
 
 def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
@@ -27,8 +34,8 @@ def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
     if not pyproject.exists():
         return {}
 
-    with pyproject.open(mode="rt") as f:
-        return rtoml.load(f)
+    with pyproject.open(mode="rb") as f:
+        return tomllib.load(f)
 
 
 def load_config() -> dict[str, Any]:
