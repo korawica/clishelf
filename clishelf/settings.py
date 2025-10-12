@@ -109,6 +109,7 @@ class GitConf:
         ("typos", "Code Changes", ":pencil2:"),  # ✏️
         ("typo", "Code Changes", ":pencil2:"),  # ✏️
         ("ignore", "Deprecate & Clean", ":see_no_evil:"),  # "🙈
+        ("chore", "Code Changes", ":broom:"),  # 🧹
     )
 
     commit_prefix_group: tuple[tuple[str, str, int]] = (
@@ -116,7 +117,7 @@ class GitConf:
         ("Features", ":sparkles:", 10),  # ✨
         ("Code Changes", ":black_nib:", 30),  # ✒️
         # ("Documents", ":card_file_box:"),  # 🗃️, 📑 :bookmark_tabs:
-        ("Documentations", ":book:", 90),  # 📖
+        ("Documentations", ":books:", 90),  # 📚, 📖 :book:
         ("Bug fixes", ":bug:", 20),  # 🐛, 🐞:beetle:
         ("Build & Workflow", ":package:", 80),  # 📦
         ("Dependencies", ":postbox:", 80),  # 📮

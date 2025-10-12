@@ -197,7 +197,7 @@ def test_load_profile(mock_load_pyproject, mock):
 
 
 def test_get_commit_prefix():
-    assert 39 == len(list(git.get_commit_prefix()))
+    assert 40 == len(list(git.get_commit_prefix()))
 
 
 def test_get_commit_prefix_group():
