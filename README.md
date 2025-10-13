@@ -31,7 +31,7 @@ custom message code.
 | Python Version | Installation                     | Supported |
 |:---------------|:---------------------------------|:---------:|
 | `<= 3.8`       | `pip install "clishelf<=0.1.10"` |     ❌     |
-| `<= 3.9`       | `pip install "clishelf<=0.3.0"`  |     ❌     |
+| `<= 3.9`       | `pip install "clishelf<=0.2.23"` |     ❌     |
 | `>=3.10,<3.14` | `pip install -U clishelf`        |     ✅     |
 
 > [!WARNING]
