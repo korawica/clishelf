@@ -20,6 +20,7 @@ from ..emoji import emojize
 from ..git import CommitLog
 from ..settings import BumpVerConf
 from ..utils import Level, load_config, make_color
+from .bump_cli import bump as bump_cli
 
 cli_vs: click.Command
 
@@ -289,7 +290,7 @@ def bump2version(
     )
 
     click.echo("Running the `bump2version` cli with that config file ...")
-    if find_spec("bumpversion") in None:  # pragma: no cov
+    if find_spec("bumpversion") is None:  # pragma: no cov
         subprocess.run(
             ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
         )
@@ -298,14 +299,27 @@ def bump2version(
             "it by `pip install -U bump2version`"
         ) from None
 
-    subprocess.run(
-        [
-            "bump2version",
-            action,
-            "--commit-args=--no-verify",
-        ]
-        + (["--list", "--dry-run"] if dry_run else [])
-    )
+    try:
+        ctx = click.get_current_context()
+        ctx.invoke(
+            bump_cli,
+            part=action,
+            dry_run=dry_run,
+            commit_args="--no-verify",
+        )
+    except Exception:
+        subprocess.run(
+            ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
+        )
+        raise
+    # subprocess.run(
+    #     [
+    #         "bump2version",
+    #         action,
+    #         "--commit-args=--no-verify",
+    #     ]
+    #     + (["--list", "--dry-run"] if dry_run else [])
+    # )
 
     subprocess.run(
         [

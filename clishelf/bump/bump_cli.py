@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Any, Optional
+from typing import Any, Final, Optional
 
 import click
 
@@ -25,6 +25,8 @@ ch = logging.StreamHandler(sys.stderr)
 ch.setFormatter(log_formatter)
 logger.addHandler(ch)
 logger.setLevel(logging.WARNING)
+
+DEFAULT_MESSAGE: Final[str] = "Bump version: {current_version} → {new_version}"
 
 
 @click.group()
@@ -131,19 +133,19 @@ def bump(
     current_version: Optional[str],
     new_version: Optional[str],
     dry_run: bool,
-    no_configured_files: bool,
-    allow_dirty: bool,
-    commit: Optional[bool],
-    tag: Optional[bool],
-    sign_tags: Optional[bool],
-    tag_name: str,
-    tag_message: str,
-    message: str,
-    commit_args: str,
-    parse: Optional[str],
-    serialize: Optional[str],
-    search: Optional[str],
-    replace: Optional[str],
+    no_configured_files: bool = False,
+    allow_dirty: bool = False,
+    commit: Optional[bool] = None,
+    tag: Optional[bool] = None,
+    sign_tags: Optional[bool] = None,
+    tag_name: str = "v{new_version}",
+    tag_message: str = DEFAULT_MESSAGE,
+    message: str = DEFAULT_MESSAGE,
+    commit_args: str = "",
+    parse: Optional[str] = None,
+    serialize: Optional[str] = None,
+    search: Optional[str] = None,
+    replace: Optional[str] = None,
 ):
     """Bump a part of the version and update configured files.
 
@@ -153,12 +155,12 @@ def bump(
 
     If new-version passed with --new-version it will be used as-is.
     """
-    # load configuration
+    # NOTE: load configuration
     defaults, configured_files, part_configs, cfg_path, cfg_format = (
         load_config(config_file)
     )
 
-    # CLI overrides
+    # NOTE: CLI overrides
     if parse:
         defaults["parse"] = parse
     if serialize:
@@ -187,10 +189,11 @@ def bump(
 
     # explicit current_version required (like original) if not in defaults
     if not current_version:
-        current_version = defaults.get("current_version")
+        current_version: str = defaults.get("current_version")
     if not current_version:
         raise click.UsageError(
-            "current_version must be provided via --current-version or config file"
+            "The current_version must be provided via --current-version or "
+            "config file."
         )
 
     # prepare list of files to change
@@ -220,13 +223,13 @@ def bump(
     vcs_info = determine_vcs_usability()
     context.update(vcs_info)
 
-    # Determine new version
+    # NOTE: Determine new version. If new_version_str is None here,
+    #   ``bump_version_by_part_or_literal`` should have raised earlier.
     current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
         vc, current_version, part, new_version, context
     )
-    # If new_version_str is None here, bump_version_by_part_or_literal should have raised earlier
 
-    # verify each file contains the current version
+    # NOTE: verify each file contains the current version
     check_files_contain_version(final_files, current_version, context)
 
     # NOTE: replace in files
@@ -234,17 +237,16 @@ def bump(
         final_files, current_version, new_version_str, dry_run, context
     )
 
-    # write updated config
     try:
         save_config(
             cfg_path, cfg_format, defaults, new_version_str, dry_run=dry_run
         )
     except Exception as exc:
-        # if saving fails for missing file, still continue; mirror original prints
-        logger.info("Unable to update config file: %s", exc)
+        logger.info(f"Unable to update config file: {exc}")
 
-    # commit and tag if requested
+    # NOTE: Commit and tag if requested
     selected_vcs = determine_vcs_dirty(allow_dirty=allow_dirty)
+
     # Build args mapping to satisfy commit_and_tag_if_required
     args_map: dict[str, Any] = {
         "commit": (
@@ -274,7 +276,7 @@ def bump(
                 dry_run,
             )
         except Exception as exc:
-            logger.error("VCS commit/tag failed: %s", exc)
+            logger.error(f"VCS commit/tag failed: {exc}")
             raise
 
     # NOTE: print list if requested (old behavior used logger_list).

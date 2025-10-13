@@ -16,6 +16,17 @@ def vs_conf():
     )
 
 
+@pytest.fixture(scope="function")
+def vs_conf_changelog():
+    return VersionConfig(
+        parse=r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)",
+        serialize=["{major}.{minor}.{patch}"],
+        search="{#}{#} Latest Changes",
+        replace="{#}{#} Latest Changes\n\n\t{#}{#} {new_version}",
+        part_configs={},
+    )
+
+
 def test_replace_updates_file(tmp_path, vs_conf):
     p = tmp_path / "file.txt"
     p.write_text("version = 1.2.3\n")
@@ -40,10 +51,17 @@ def test_should_contain_version_raises(tmp_path, vs_conf):
     p.write_text("version = 0.0.1\n")
     cf = ConfFile(p, vs_conf)
     ctx = assemble_context()
-    import pytest
 
     with pytest.raises(ValueError):
         cf.should_contain_version("1.0.0", ctx)
+
+
+def test_should_contain_version_changelog(tmp_path, vs_conf_changelog):
+    p = tmp_path / "file3.txt"
+    p.write_text("## Latest Changes\n")
+    cf = ConfFile(p, vs_conf_changelog)
+    ctx = assemble_context()
+    cf.should_contain_version("1.0.0", ctx)
 
 
 def test_kv_str():

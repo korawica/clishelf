@@ -19,7 +19,7 @@ time_context: dict[str, datetime] = {
     "now": datetime.now(),
     "utcnow": datetime.now(timezone.utc),
 }
-special_char_context: dict[str, str] = {c: c for c in ("#", ";")}
+special_char_context: dict[str, str] = {"#": "#", ";": ";"}
 VCS_HANDLERS = [Git, Mercurial]
 
 
@@ -57,7 +57,7 @@ def determine_vcs_dirty(allow_dirty: bool = False):
 
 
 def assemble_context(extra: dict[str, Any] | None = None) -> dict[str, Any]:
-    ctx = {**time_context, **prefixed_env()}
+    ctx: dict[str, Any] = {**time_context, **prefixed_env()}
     if extra:
         ctx.update(extra)
     ctx.update(special_char_context)
@@ -126,7 +126,9 @@ def bump_version_by_part_or_literal(
 
 
 def check_files_contain_version(
-    files: Iterable[ConfFile], current_version_str: str, context: dict[str, Any]
+    files: Iterable[ConfFile],
+    current_version_str: str,
+    context: dict[str, Any],
 ):
     for f in files:
         f.should_contain_version(current_version_str, context)

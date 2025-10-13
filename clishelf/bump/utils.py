@@ -33,10 +33,16 @@ class ConfFile:
         return f"{self.path}"
 
     def should_contain_version(
-        self, current_version: str, context: dict[str, Any]
+        self,
+        current_version: str,
+        context: dict[str, Any],
     ) -> None:
         """Confirm that the file contains the templated search string for current_version.
         Raises ValueError if not found, matching original behavior.
+
+        Args:
+            current_version (str): The current version string.
+            context:
         """
         if not self.path.exists():
             raise FileNotFoundError(
