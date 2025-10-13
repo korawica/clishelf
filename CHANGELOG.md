@@ -2,6 +2,16 @@
 
 ## Latest Changes
 
+## 0.3.2
+
+### :book: Documentations
+
+- :page_facing_up: docs: update readme file.
+
+### :package: Build & Workflow
+
+- :construction_worker: ci: update python version 314 and revise extra install.
+
 ## 0.3.1
 
 ### :bug: Bug fixes
