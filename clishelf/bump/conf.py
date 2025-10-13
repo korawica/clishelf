@@ -4,7 +4,7 @@ import glob
 import logging
 import re
 import warnings
-from configparser import RawConfigParser
+from configparser import NoOptionError, RawConfigParser
 from pathlib import Path
 from re import Pattern
 from typing import Any
@@ -52,48 +52,55 @@ def _read_ini_file(path: Path) -> dict[str, Any]:
 
     # NOTE: bumpversion section: default/flat mapping
     if cp.has_section("bumpversion"):
-        section_dict: dict[str, Any] = dict(cp.items("bumpversion"))
+        defaults: dict[str, Any] = dict(cp.items("bumpversion"))
 
-        # Handle serialize -> list
-        if "serialize" in section_dict:
-            raw = section_dict["serialize"]
-            section_dict["serialize"] = [
-                x.strip() for x in raw.splitlines() if x.strip()
+        # Handle serialize → list
+        if "serialize" in defaults:
+            value = defaults["serialize"]
+            defaults["serialize"] = [
+                x.strip() for x in value.splitlines() if x.strip()
             ]
 
-        # Handle boolean conversions
-        for key in ("commit", "tag", "dry_run"):
-            if key in section_dict:
-                val = section_dict[key].strip().lower()
-                if val in {"true", "yes", "1"}:
-                    section_dict[key] = True
-                elif val in {"false", "no", "0"}:
-                    section_dict[key] = False
-                # else leave as string if malformed
+        # Handle boolean options
+        for bool_name in ("commit", "tag", "dry_run"):
+            try:
+                defaults[bool_name] = cp.getboolean("bumpversion", bool_name)
+            except NoOptionError:
+                pass  # skip missing
+            except ValueError:
+                # not a valid boolean, keep as string
+                pass
 
-        out["bumpversion"] = section_dict
+        out["bumpversion"] = defaults
     else:
         out["bumpversion"] = {}
 
+    # --- other sections (part/file) ---
     for section in cp.sections():
         if section == "bumpversion":
             continue
-
         m = RE_DETECT_SECTION_TYPE.match(section)
         if not m:
             continue
 
         items: dict[str, Any] = dict(cp.items(section))
-        for listkey in ("values", "serialize"):
-            if listkey in items:
-                raw = items[listkey]
-                items[listkey] = [
-                    x.strip().replace("\\n", "\n")
-                    for x in raw.splitlines()
-                    if x.strip()
-                ]
+
+        # values → list
+        if "values" in items:
+            items["values"] = [
+                x.strip() for x in items["values"].splitlines() if x.strip()
+            ]
+
+        # serialize → list
+        if "serialize" in items:
+            items["serialize"] = [
+                x.strip().replace("\\n", "\n")
+                for x in items["serialize"].splitlines()
+                if x.strip()
+            ]
 
         out[section] = items
+
     return out
 
 

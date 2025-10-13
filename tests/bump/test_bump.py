@@ -7,6 +7,8 @@ from clishelf.bump.bump import (
     bump_version_by_part_or_literal,
     replace_version_in_files,
 )
+from clishelf.bump.cli import write_bump_file
+from clishelf.bump.conf import load_config
 from clishelf.bump.utils import ConfFile
 from clishelf.bump.version_part import VersionConfig
 
@@ -67,3 +69,58 @@ def test_replace_dry_run_does_not_modify(tmp_path, vc):
     content = p.read_text()
     assert "1.2.3" in content
     assert "1.2.4" not in content
+
+
+def test_bump_from_old_format(tmp_path: Path):
+    bump_filepath = tmp_path / ".bumpversion.cfg"
+    write_bump_file(
+        param={
+            "changelog": "CHANGELOG.md",
+            "version": "0.0.1",
+            "action": "minor",
+            "file": "__about__.py",
+        },
+        version=1,
+        is_dt=False,
+        override_filepath=bump_filepath,
+    )
+    defaults, files, part_configs, cfg_path, cfg_format = load_config(
+        str(bump_filepath)
+    )
+    # print(defaults)
+    # print(bump_filepath.read_text())
+    vc = VersionConfig(
+        parse=defaults.get(
+            "parse", r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
+        ),
+        serialize=defaults.get("serialize", ["{major}.{minor}.{patch}"]),
+        search=defaults.get("search", "{current_version}"),
+        replace=defaults.get("replace", "{new_version}"),
+        part_configs=part_configs,
+    )
+    current_version: str = defaults.get("current_version")
+    context = assemble_context()
+    current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
+        vc, current_version, "minor", None, context
+    )
+    print(new_version_str)
+
+    current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
+        vc, current_version, "prekind", None, context
+    )
+    print(new_version_str)
+    #
+    current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
+        vc, "0.0.1.a0", "patch", None, context
+    )
+    print(new_version_str)
+
+    current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
+        vc, "0.0.1.a0", "pre", None, context
+    )
+    print(new_version_str)
+
+    current_obj, new_obj, new_version_str = bump_version_by_part_or_literal(
+        vc, "0.0.1.a0", "postkind", None, context
+    )
+    print(new_version_str)

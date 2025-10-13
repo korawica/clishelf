@@ -38,6 +38,10 @@ class PartConf:
     def optional_value(self) -> str:
         return str(self.function.optional_value)
 
+    @property
+    def independent(self):
+        return self.function.independent
+
     def bump(self, value: str) -> str:
         """Increment or otherwise transform the given version value."""
         return self.function.bump(value)
@@ -88,6 +92,9 @@ class VersionPart:
     def is_optional(self) -> bool:
         return self.value == self.config.optional_value
 
+    def is_independent(self):
+        return self.config.independent
+
     def __repr__(self) -> str:
         return f"<VersionPart {self.config.__class__.__name__}:{self.value}>"
 
@@ -136,7 +143,7 @@ class Version:
             if label == part_name:
                 new_values[label] = part.bump()
                 bumped = True
-            elif bumped:
+            elif bumped and not part.is_independent():
                 new_values[label] = part.null()
             else:
                 new_values[label] = part.copy()
@@ -216,13 +223,12 @@ class VersionConfig:
             k: VersionPart(v, self.part_configs.get(k))
             for k, v in match.groupdict().items()
         }
-
         version = Version(parts, original=version_string)
         logger.debug(f"Parsed version: {kv_str(version.values)}")
         return version
 
-    @staticmethod
     def _serialize(
+        self,
         version: Version,
         serialize_format: str,
         context: dict[str, Any],
@@ -241,7 +247,9 @@ class VersionConfig:
         if raise_if_incomplete:
             required_labels = set(labels_for_format(serialize_format))
             present_labels = {
-                k for k, v in values.items() if isinstance(v, VersionPart)
+                k
+                for k, v in values.items()
+                if isinstance(v, VersionPart) and v.value != "_"
             }
             missing = required_labels - present_labels
             if missing:

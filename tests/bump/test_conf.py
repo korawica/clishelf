@@ -67,6 +67,7 @@ def test_load_toml_config_from_old_format(tmp_path: Path):
     defaults, files, part_configs, cfg_path, cfg_format = load_config(
         str(bump_filepath)
     )
+    print(part_configs)
     assert defaults == {
         "current_version": "0.0.1",
         "commit": True,

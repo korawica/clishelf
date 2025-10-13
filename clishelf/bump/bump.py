@@ -169,12 +169,12 @@ def commit_and_tag_if_required(
         )
 
     do_commit: bool = args.get("commit", False) and not dry_run
-    print(
+    logger.debug(
         f'{"Would prepare" if not do_commit else "Preparing"} '
         f"{vcs.__name__} commit"
     )
     for path in commit_files:
-        print(
+        logger.debug(
             f'{"Would add" if not do_commit else "Adding"} changes in file '
             f"{path!r} to {vcs.__name__}"
         )
@@ -229,6 +229,5 @@ def commit_and_tag_if_required(
         vcs.__name__,
         "signing" if sign_tags else "not signing",
     )
-    print(f"Start do tag or not: {do_tag}")
     if do_tag:
         vcs.tag(sign_tags, tag_name, tag_message)
