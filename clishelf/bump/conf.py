@@ -46,41 +46,53 @@ def _read_ini_file(path: Path) -> dict[str, Any]:
     cp = RawConfigParser()
     cp.optionxform = lambda option: option  # preserve case
     with path.open("rt", encoding="utf-8") as f:
-        content = f.read()
-    cp.read_string(content)
+        cp.read_string(f.read())
 
     out: dict[str, Any] = {}
+
     # NOTE: bumpversion section: default/flat mapping
     if cp.has_section("bumpversion"):
-        out["bumpversion"] = dict(cp.items("bumpversion"))
-        # for serialize multiline -> list
-        if "serialize" in out["bumpversion"]:
-            value = out["bumpversion"]["serialize"]
-            out["bumpversion"]["serialize"] = [
-                x.strip() for x in value.splitlines() if x.strip()
+        section_dict: dict[str, Any] = dict(cp.items("bumpversion"))
+
+        # Handle serialize -> list
+        if "serialize" in section_dict:
+            raw = section_dict["serialize"]
+            section_dict["serialize"] = [
+                x.strip() for x in raw.splitlines() if x.strip()
             ]
+
+        # Handle boolean conversions
+        for key in ("commit", "tag", "dry_run"):
+            if key in section_dict:
+                val = section_dict[key].strip().lower()
+                if val in {"true", "yes", "1"}:
+                    section_dict[key] = True
+                elif val in {"false", "no", "0"}:
+                    section_dict[key] = False
+                # else leave as string if malformed
+
+        out["bumpversion"] = section_dict
     else:
         out["bumpversion"] = {}
 
-    # Translate part/file sections
     for section in cp.sections():
         if section == "bumpversion":
             continue
+
         m = RE_DETECT_SECTION_TYPE.match(section)
         if not m:
             continue
-        items: dict = dict(cp.items(section))
-        # NOTE: normalize values/use lists where appropriate
-        if "values" in items:
-            items["values"] = [
-                x.strip() for x in items["values"].splitlines() if x.strip()
-            ]
-        if "serialize" in items:
-            items["serialize"] = [
-                x.strip().replace("\\n", "\n")
-                for x in items["serialize"].splitlines()
-                if x.strip()
-            ]
+
+        items: dict[str, Any] = dict(cp.items(section))
+        for listkey in ("values", "serialize"):
+            if listkey in items:
+                raw = items[listkey]
+                items[listkey] = [
+                    x.strip().replace("\\n", "\n")
+                    for x in raw.splitlines()
+                    if x.strip()
+                ]
+
         out[section] = items
     return out
 

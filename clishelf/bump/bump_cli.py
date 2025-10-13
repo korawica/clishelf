@@ -265,8 +265,6 @@ def bump(
     }
     if selected_vcs:
         try:
-            print("Args Map:", args_map)
-            print("Dry-run:", dry_run)
             commit_and_tag_if_required(
                 vcs=selected_vcs,
                 files=final_files,

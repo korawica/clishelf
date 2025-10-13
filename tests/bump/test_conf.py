@@ -69,8 +69,8 @@ def test_load_toml_config_from_old_format(tmp_path: Path):
     )
     assert defaults == {
         "current_version": "0.0.1",
-        "commit": "True",
-        "tag": "False",
+        "commit": True,
+        "tag": False,
         "parse": "^\n(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.(?P<prekind>a|alpha|b|beta|d|dev|rc)(?P<pre>\\d+))?(\\.(?P<postkind>post)(?P<post>\\d+))?",
         "serialize": [
             "{major}.{minor}.{patch}.{prekind}{pre}.{postkind}{post}",
@@ -85,3 +85,29 @@ def test_load_toml_config_from_old_format(tmp_path: Path):
 
     defaults, _, _, cfg_path, cfg_format = load_config(str(bump_filepath))
     save_config(cfg_path, cfg_format, defaults, "0.1.1", dry_run=False)
+
+
+def test_ini_config_type_conversions(tmp_path):
+    ini_path = tmp_path / ".bumpversion.cfg"
+    ini_path.write_text(
+        """
+[bumpversion]
+current_version = 1.0.0
+serialize =
+    {major}.{minor}.{patch}
+commit = true
+tag = no
+dry_run = 1
+
+[bumpversion:part:minor]
+values = 0,1,2
+"""
+    )
+    defaults, files, parts, path, fmt = load_config(str(ini_path))
+    assert fmt == "ini"
+    assert isinstance(defaults["serialize"], list)
+    assert defaults["serialize"] == ["{major}.{minor}.{patch}"]
+    assert defaults["commit"] is True
+    assert defaults["tag"] is False
+    assert defaults["dry_run"] is True
+    assert "minor" in parts

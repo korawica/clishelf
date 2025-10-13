@@ -259,7 +259,6 @@ def bump2version(
     :param version:
     :param is_dt: A datetime mode flag
     """
-    from importlib.util import find_spec
 
     # Start writing ``.bump2version.cfg`` file on current path.
     click.echo("Start write '.bump2version.cfg' config file ...")
@@ -291,14 +290,15 @@ def bump2version(
     )
 
     click.echo("Running the `bump2version` cli with that config file ...")
-    if find_spec("bumpversion") is None:  # pragma: no cov
-        subprocess.run(
-            ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
-        )
-        raise ImportError(
-            "The bump function need `bump2version` package. You should install "
-            "it by `pip install -U bump2version`"
-        ) from None
+    # ARCHIVE: Keep the old code version.
+    # if find_spec("bumpversion") is None:  # pragma: no cov
+    #     subprocess.run(
+    #         ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
+    #     )
+    #     raise ImportError(
+    #         "The bump function need `bump2version` package. You should install "
+    #         "it by `pip install -U bump2version`"
+    #     ) from None
 
     try:
         ctx = click.get_current_context()
@@ -315,6 +315,7 @@ def bump2version(
         )
         logging.error(f"Raise error from click.invoke: {err}")
         raise
+    # ARCHIVE: Keep the old code version.
     # subprocess.run(
     #     [
     #         "bump2version",
