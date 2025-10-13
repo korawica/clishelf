@@ -4,8 +4,9 @@ import logging
 import re
 import string
 from collections.abc import Iterator
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
+
+from typing_extensions import Self
 
 from ..errors import (
     IncompleteVersionRepresentationException,
@@ -17,7 +18,7 @@ from .incremeters import NumericIncrementer, ValuesIncrementer
 logger = logging.getLogger(__name__)
 
 
-class PartConfiguration:
+class PartConf:
     """Base class for version part behavior configuration."""
 
     function_cls = NumericIncrementer
@@ -38,41 +39,45 @@ class PartConfiguration:
         return self.function.bump(value)
 
 
-class ConfiguredVersionPartConfiguration(PartConfiguration):
+class ConfiguredPartConf(PartConf):
     """Configuration using a predefined set of values."""
 
     function_cls = ValuesIncrementer
 
 
-class NumericVersionPartConfiguration(PartConfiguration):
+class NumericPartConf(PartConf):
     """Configuration using numeric increment logic."""
 
     function_cls = NumericIncrementer
 
 
-@dataclass
 class VersionPart:
     """Represents a single part of a version (e.g., major, minor, patch)."""
 
-    _value: Optional[str]
-    config: PartConfiguration = field(
-        default_factory=NumericVersionPartConfiguration
-    )
+    __slots__ = ("_value", "config")
+
+    def __init__(
+        self,
+        value: str | None,
+        config: PartConf | None,
+    ) -> None:
+        self._value: str | None = value
+        self.config: PartConf = config or NumericPartConf()
 
     @property
     def value(self) -> str:
         """Return value, using the optional fallback if not set."""
         return self._value or self.config.optional_value
 
-    def bump(self) -> VersionPart:
+    def bump(self) -> Self:
         """Return a new VersionPart incremented according to its configuration."""
         return VersionPart(self.config.bump(self.value), self.config)
 
-    def null(self) -> VersionPart:
+    def null(self) -> Self:
         """Reset the part to its first value."""
         return VersionPart(self.config.first_value, self.config)
 
-    def copy(self) -> VersionPart:
+    def copy(self) -> Self:
         """Return a shallow copy."""
         return VersionPart(self._value, self.config)
 
@@ -83,7 +88,7 @@ class VersionPart:
         return f"<VersionPart {self.config.__class__.__name__}:{self.value}>"
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, VersionPart):
+        if not isinstance(other, self.__class__):
             return False
         return self.value == other.value
 
@@ -95,10 +100,12 @@ class Version:
     """Represents an entire version composed of multiple parts."""
 
     def __init__(
-        self, values: dict[str, VersionPart], original: Optional[str] = None
+        self,
+        values: dict[str, VersionPart],
+        original: str | None = None,
     ):
         self.values: dict[str, VersionPart] = dict(values)
-        self.original = original
+        self.original: str | None = original
 
     def __getitem__(self, key: str) -> VersionPart:
         return self.values[key]
@@ -112,9 +119,9 @@ class Version:
     def __repr__(self) -> str:
         return f"<Version {kv_str(self.values)}>"
 
-    def bump(self, part_name: str, order: Iterator[str]) -> Version:
+    def bump(self, part_name: str, order: Iterator[str] | list[str]) -> Self:
         """Return a new Version with the specified part bumped."""
-        bumped = False
+        bumped: bool = False
         new_values: dict[str, VersionPart] = {}
 
         for label in order:
@@ -134,7 +141,15 @@ class Version:
 
 
 def labels_for_format(serialize_format: str) -> list[str]:
-    """Extract field names from a format string."""
+    """Extract field names from a format string.
+
+    Examples:
+        >>> labels_for_format("{major}.{minor}.{patch}")
+        ['major', 'minor', 'patch']
+
+    Returns:
+        list[str]: A list of format label name.
+    """
     return [
         label
         for _, label, _, _ in string.Formatter().parse(serialize_format)
@@ -151,40 +166,44 @@ class VersionConfig:
         serialize: list[str],
         search: str,
         replace: str,
-        part_configs: Optional[dict[str, PartConfiguration]] = None,
+        part_configs: dict[str, PartConf] | None = None,
     ) -> None:
         try:
             self.parse_regex = re.compile(parse, re.VERBOSE)
-        except re.error as e:
+        except re.error as err:
             logger.error("Invalid regex in --parse: %s", parse)
-            raise e
+            raise err
 
-        self.serialize_formats = serialize
-        self.part_configs = part_configs or {}
-        self.search = search
-        self.replace = replace
+        self.serialize_formats: list[str] = serialize
+        self.part_configs: dict[str, PartConf] = part_configs or {}
+        self.search: str = search
+        self.replace: str = replace
 
     def order(self) -> list[str]:
-        """Return the order of version labels based on the first serialize format."""
+        """Return the order of version labels based on the first serialize
+        format.
+
+        Returns:
+            list[str]: A result for a labels_for_format function.
+        """
         return labels_for_format(self.serialize_formats[0])
 
-    def parse(self, version_string: str) -> Optional[Version]:
+    def parse(self, version_string: str) -> Version | None:
         """Parse a version string into VersionParts."""
         if not version_string:
             return None
 
-        match = self.parse_regex.search(version_string)
-        if not match:
-            logger.warning("Failed to parse version: '%s'", version_string)
+        if not (match := self.parse_regex.search(version_string)):
+            logger.warning(f"Failed to parse version: '{version_string}'")
             return None
 
-        parts = {
-            key: VersionPart(value, self.part_configs.get(key))
-            for key, value in match.groupdict().items()
+        parts: dict[str, VersionPart] = {
+            k: VersionPart(v, self.part_configs.get(k))
+            for k, v in match.groupdict().items()
         }
 
         version = Version(parts, original=version_string)
-        logger.debug("Parsed version: %s", kv_str(version.values))
+        logger.debug(f"Parsed version: {kv_str(version.values)}")
         return version
 
     @staticmethod
@@ -231,7 +250,7 @@ class VersionConfig:
 
     def serialize(self, version: Version, context: dict[str, Any]) -> str:
         """Serialize the version into a string."""
-        fmt = self._choose_serialize_format(version, context)
+        fmt: str = self._choose_serialize_format(version, context)
         serialized = self._serialize(version, fmt, context)
         logger.debug("Serialized version to '%s'", serialized)
         return serialized

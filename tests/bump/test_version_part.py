@@ -1,9 +1,10 @@
 import pytest
 
 from clishelf.bump.version_part import (
-    ConfiguredVersionPartConfiguration,
-    NumericVersionPartConfiguration,
+    ConfiguredPartConf,
+    NumericPartConf,
     VersionPart,
+    labels_for_format,
 )
 
 
@@ -11,9 +12,9 @@ from clishelf.bump.version_part import (
 def conf_vs_part(request):
     """Return a three-part and a two-part version part configuration."""
     if request.param is None:
-        return NumericVersionPartConfiguration()
+        return NumericPartConf()
     else:
-        return ConfiguredVersionPartConfiguration(*request.param)
+        return ConfiguredPartConf(*request.param)
 
 
 def test_version_part_init(conf_vs_part):
@@ -65,3 +66,18 @@ def test_version_part_null(conf_vs_part):
     assert VersionPart(
         conf_vs_part.first_value, conf_vs_part
     ).null() == VersionPart(conf_vs_part.first_value, conf_vs_part)
+
+
+def test_labels_for_format():
+    assert labels_for_format("{major}.{minor}.{patch}") == [
+        "major",
+        "minor",
+        "patch",
+    ]
+
+    assert labels_for_format("{major}.{minor}.{patch}{release}") == [
+        "major",
+        "minor",
+        "patch",
+        "release",
+    ]
