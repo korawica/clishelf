@@ -2,6 +2,37 @@
 
 ## Latest Changes
 
+## 0.3.1
+
+### :bug: Bug fixes
+
+- :gear: fixed: version bump does not valid.
+- :gear: fixed: config does not convert type.
+- :gear: fixed: context pass duplicate.
+- :gear: fixed: test import tomli that does not install.
+
+### :black_nib: Code Changes
+
+- :construction: refactored: change version module to bump.
+
+### :tada: Features
+
+- :dart: feat: migrate cli to manual bump cli.
+- :dart: feat: add read ini file for legacy config.
+- :dart: feat: migrate bump2version to this package.
+- :dart: feat: add version part on the bump module.
+- :dart: feat: add incrementer to bump module.
+- :dart: feat: update chore commit message prefix.
+
+### :postbox: Dependencies
+
+- :pushpin: deps: add typing_extensions for python version less than 3.11.
+- :pushpin: deps: add tomli-w on test dependencies.
+- :package: deps: bump click from 8.1.8 to 8.3.0 (#175)
+- :pushpin: deps: remove rtoml package.
+- :dependabot: dependabot: bump pypa/gh-action-pypi-publish from 1.12.4 to 1.13.0 (#173)
+- :dependabot: dependabot: bump actions/setup-python from 5 to 6 (#172)
+
 ## 0.3.0
 
 ### :tada: Features
