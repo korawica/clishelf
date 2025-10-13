@@ -110,6 +110,7 @@ class GitConf:
         ("typo", "Code Changes", ":pencil2:"),  # ✏️
         ("ignore", "Deprecate & Clean", ":see_no_evil:"),  # "🙈
         ("chore", "Code Changes", ":broom:"),  # 🧹
+        ("ci", "Build & Workflow", ":construction_worker:"),  # 👷
     )
 
     commit_prefix_group: tuple[tuple[str, str, int]] = (
