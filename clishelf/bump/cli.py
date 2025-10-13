@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 from __future__ import annotations
 
+import logging
 import os
 import re
 import subprocess
@@ -306,11 +307,13 @@ def bump2version(
             part=action,
             dry_run=dry_run,
             commit_args="--no-verify",
+            allow_dirty=True,
         )
-    except Exception:
+    except Exception as err:
         subprocess.run(
             ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
         )
+        logging.error(f"Raise error from click.invoke: {err}")
         raise
     # subprocess.run(
     #     [

@@ -133,19 +133,19 @@ def bump(
     current_version: Optional[str],
     new_version: Optional[str],
     dry_run: bool,
-    no_configured_files: bool = False,
-    allow_dirty: bool = False,
-    commit: Optional[bool] = None,
-    tag: Optional[bool] = None,
-    sign_tags: Optional[bool] = None,
-    tag_name: str = "v{new_version}",
-    tag_message: str = DEFAULT_MESSAGE,
-    message: str = DEFAULT_MESSAGE,
-    commit_args: str = "",
-    parse: Optional[str] = None,
-    serialize: Optional[str] = None,
-    search: Optional[str] = None,
-    replace: Optional[str] = None,
+    no_configured_files: bool,
+    allow_dirty: bool,
+    commit: Optional[bool],
+    tag: Optional[bool],
+    sign_tags: Optional[bool],
+    tag_name: str,
+    tag_message: str,
+    message: str,
+    commit_args: str,
+    parse: Optional[str],
+    serialize: Optional[str],
+    search: Optional[str],
+    replace: Optional[str],
 ):
     """Bump a part of the version and update configured files.
 
@@ -265,15 +265,17 @@ def bump(
     }
     if selected_vcs:
         try:
+            print("Args Map:", args_map)
+            print("Dry-run:", dry_run)
             commit_and_tag_if_required(
-                selected_vcs,
-                final_files,
-                cfg_path,
-                cfg_path is not None,
-                args_map,
-                current_version,
-                new_version_str,
-                dry_run,
+                vcs=selected_vcs,
+                files=final_files,
+                config_file=cfg_path,
+                config_file_exists=cfg_path is not None,
+                args=args_map,
+                current_version_str=current_version,
+                new_version_str=new_version_str,
+                dry_run=dry_run,
             )
         except Exception as exc:
             logger.error(f"VCS commit/tag failed: {exc}")
@@ -281,7 +283,7 @@ def bump(
 
     # NOTE: print list if requested (old behavior used logger_list).
     #   We'll print key-values if requested.
-    if obj.get("show_list"):
+    if (obj or {}).get("show_list"):
         # mimic original config listing style
         kv = defaults.copy()
         kv["new_version"] = new_version_str

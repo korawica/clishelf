@@ -168,18 +168,15 @@ def commit_and_tag_if_required(
             f"Did find '{vcs.__name__}' unusable, unable to commit."
         )
 
-    do_commit = args.get("commit", False) and not dry_run
-    logger.info(
-        "%s %s commit",
-        "Would prepare" if not do_commit else "Preparing",
-        vcs.__name__,
+    do_commit: bool = args.get("commit", False) and not dry_run
+    print(
+        f'{"Would prepare" if not do_commit else "Preparing"} '
+        f"{vcs.__name__} commit"
     )
     for path in commit_files:
-        logger.info(
-            "%s changes in file '%s' to %s",
-            "Would add" if not do_commit else "Adding",
-            path,
-            vcs.__name__,
+        print(
+            f'{"Would add" if not do_commit else "Adding"} changes in file '
+            f"{path!r} to {vcs.__name__}"
         )
         if do_commit:
             vcs.add_path(path)
@@ -232,5 +229,6 @@ def commit_and_tag_if_required(
         vcs.__name__,
         "signing" if sign_tags else "not signing",
     )
+    print(f"Start do tag or not: {do_tag}")
     if do_tag:
         vcs.tag(sign_tags, tag_name, tag_message)

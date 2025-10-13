@@ -4,7 +4,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from bumpversion.exceptions import (
+from ..errors import (
     MercurialDoesNotSupportSignedTagsException,
     WorkingDirectoryIsDirtyException,
 )

@@ -53,9 +53,8 @@ class ConfFile:
         search_template = self.version_config.search
 
         try:
-            search = search_template.format(
-                current_version=current_version, **context
-            )
+            _ctx = context.copy() | {"current_version": current_version}
+            search = search_template.format(**_ctx)
         except Exception as err:
             logger.warning(f"Fallback search: {err}")
             # NOTE: fallback: try replacing {current_version} only
@@ -94,14 +93,13 @@ class ConfFile:
         replace_template = self.version_config.replace
 
         try:
-            search = search_template.format(
-                current_version=current_version, **context
-            )
-            replace = replace_template.format(
-                new_version=new_version, **context
-            )
+            _ctx = context.copy() | {"current_version": current_version}
+            search = search_template.format(**_ctx)
+
+            _ctx = context.copy() | {"new_version": new_version}
+            replace = replace_template.format(**_ctx)
         except Exception:
-            # best-effort fallback
+            # NOTE: best-effort fallback
             search = search_template.replace(
                 "{current_version}", current_version
             )
