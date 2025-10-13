@@ -27,6 +27,7 @@ dependencies = [
     "PyYAML>=6.0.3",
     # NOTE: Need pip package for the tomllib package.
     "pip; python_version <= '3.10'",
+    "typing_extensions; python_version <= '3.10'",
 ]
 
 [project.optional-dependencies]

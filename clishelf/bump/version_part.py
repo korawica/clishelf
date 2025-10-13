@@ -6,7 +6,10 @@ import string
 from collections.abc import Iterator
 from typing import Any
 
-from typing_extensions import Self
+try:  # pragma: no cov
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 from ..errors import (
     IncompleteVersionRepresentationException,
