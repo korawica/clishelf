@@ -16,10 +16,10 @@ from typing import Any, NoReturn, Optional, TextIO, Union
 
 import click
 
-from .emoji import emojize
-from .git import CommitLog
-from .settings import BumpVerConf
-from .utils import Level, load_config, make_color
+from ..emoji import emojize
+from ..git import CommitLog
+from ..settings import BumpVerConf
+from ..utils import Level, load_config, make_color
 
 cli_vs: click.Command
 
@@ -45,7 +45,7 @@ def map_group_commit_logs(
 
     :rtype: GroupCommitLog
     """
-    from .git import get_commit_logs
+    from ..git import get_commit_logs
 
     tag_group_logs: TagGroupCommitLog = defaultdict(lambda: defaultdict(list))
     for log in get_commit_logs(
@@ -107,7 +107,7 @@ def write_group_log(
     :param group_logs:
     :param tag_value:
     """
-    from .git import get_commit_prefix_group
+    from ..git import get_commit_prefix_group
 
     linesep: str = LINESEP
     if not group_logs or any(
@@ -254,6 +254,8 @@ def bump2version(
     :param version:
     :param is_dt: A datetime mode flag
     """
+    from importlib.util import find_spec
+
     # Start writing ``.bump2version.cfg`` file on current path.
     click.echo("Start write '.bump2version.cfg' config file ...")
     write_bump_file(
@@ -284,9 +286,7 @@ def bump2version(
     )
 
     click.echo("Running the `bump2version` cli with that config file ...")
-    try:  # pragma: no cov
-        import bumpversion
-    except ImportError:
+    if find_spec("bumpversion") in None:  # pragma: no cov
         subprocess.run(
             ["git", "reset", "--hard", "HEAD~1"], stdout=subprocess.DEVNULL
         )
@@ -294,6 +294,7 @@ def bump2version(
             "The bump function need `bump2version` package. You should install "
             "it by `pip install -U bump2version`"
         ) from None
+
     subprocess.run(
         [
             "bump2version",

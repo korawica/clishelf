@@ -14,10 +14,10 @@ from typing import NoReturn, Optional
 
 import click
 
+from .bump.cli import cli_vs
 from .emoji import cli_emoji
 from .git import cli_git
 from .utils import load_config
-from .version import cli_vs
 
 cli: click.Command
 

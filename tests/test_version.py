@@ -9,8 +9,7 @@ from pathlib import Path
 from textwrap import dedent
 from unittest.mock import DEFAULT, patch
 
-from clishelf.git import CommitLog, CommitMsg, Profile
-from clishelf.version import (
+from clishelf.bump.cli import (
     create_changelog,
     current_version,
     get_changelog,
@@ -18,6 +17,7 @@ from clishelf.version import (
     write_bump_file,
     write_group_log,
 )
+from clishelf.git import CommitLog, CommitMsg, Profile
 
 
 def side_effect_func(*args, **kwargs):
@@ -88,7 +88,7 @@ def test_get_changelog(test_path: Path):
     changelog_file.unlink()
 
 
-@patch("clishelf.version.map_group_commit_logs")
+@patch("clishelf.bump.cli.map_group_commit_logs")
 def test_create_changelog(mock_map_group_commit_logs):
     commit_logs: list[CommitLog] = [
         CommitLog(
@@ -257,7 +257,7 @@ def test_write_group_log_with_change_format(mock_load_pyproject):
     test_file_path.unlink()
 
 
-@patch("clishelf.version.Path", side_effect=side_effect_func)
+@patch("clishelf.bump.cli.Path", side_effect=side_effect_func)
 def test_write_bump_file(mock_path):
     bump_file_path: Path = Path(__file__).parent / ".bumpversion.cfg"
 
@@ -274,7 +274,7 @@ def test_write_bump_file(mock_path):
     bump_file_path.unlink()
 
 
-@patch("clishelf.version.Path", side_effect=side_effect_func)
+@patch("clishelf.bump.cli.Path", side_effect=side_effect_func)
 def test_current_version(mock_path):
     version_file_path: Path = Path(__file__).parent / "__version__.py"
 

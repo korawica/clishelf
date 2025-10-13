@@ -12,8 +12,8 @@ from typing import Any, Optional
 
 import yaml
 
-try:
-    # NOTE: Python v3.11+
+try:  # pragma: no cov
+    # NOTE: This package already provided at core package for Python v3.11+
     import tomllib
 except ModuleNotFoundError:
     # NOTE: Need to install pip if the current venv created from uv.
@@ -28,9 +28,7 @@ def load_pyproject(file: Optional[str] = None) -> dict[str, Any]:
 
     :rtype: dict[str, Any]
     """
-    f: str = file or "./pyproject.toml"
-    pyproject: Path = Path(f)
-
+    pyproject: Path = Path(file or "./pyproject.toml")
     if not pyproject.exists():
         return {}
 

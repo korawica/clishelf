@@ -9,7 +9,7 @@ import json
 from collections.abc import Iterator
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Final, Optional, Union
 
 import click
 
@@ -25,7 +25,7 @@ cli_emoji: click.Command
 # NOTE:
 #   The Emoji dataset that provide by GitHub.
 #   (refs: https://github.com/github/gemoji/blob/master/db/emoji.json)
-GH_EMOJI_URL: str = (
+GH_EMOJI_URL: Final[str] = (
     "https://raw.githubusercontent.com/github/gemoji/master/db/emoji.json"
 )
 
