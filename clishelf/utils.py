@@ -108,3 +108,7 @@ class Profile:
 
 def prepare_str(context: str) -> str:
     return context.strip().strip("\n").strip("\r")
+
+
+def kv_str(d: dict) -> str:
+    return ", ".join(f"{k}={v}" for k, v in sorted(d.items()))
