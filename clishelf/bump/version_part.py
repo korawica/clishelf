@@ -4,6 +4,7 @@ import logging
 import re
 import string
 from collections.abc import Iterator
+from re import Pattern
 from typing import Any
 
 try:  # pragma: no cov
@@ -172,7 +173,8 @@ class VersionConfig:
         part_configs: dict[str, PartConf] | None = None,
     ) -> None:
         try:
-            self.parse_regex = re.compile(parse, re.VERBOSE)
+            self.parse_regex: Pattern[str] = re.compile(parse, re.VERBOSE)
+            self._parse: str = parse
         except re.error as err:
             logger.error("Invalid regex in --parse: %s", parse)
             raise err
@@ -181,6 +183,16 @@ class VersionConfig:
         self.part_configs: dict[str, PartConf] = part_configs or {}
         self.search: str = search
         self.replace: str = replace
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            # f"parse={self._parse}, "
+            # f"serialize={self.serialize_formats}, "
+            f"search={self.search!r}, "
+            f"replace={self.replace!r}"
+            f")"
+        )
 
     def order(self) -> list[str]:
         """Return the order of version labels based on the first serialize

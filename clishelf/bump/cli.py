@@ -204,15 +204,18 @@ def write_bump_file(
     *,
     version: int = 1,
     is_dt: bool = False,
+    override_filepath: Path | None = None,
 ) -> None:
     """Writing the ``.bump2version.cfg`` config file at current path.
 
     :param param:
     :param version:
     :param is_dt:
+    :param override_filepath:
     """
     files: list[str] = load_config().get("version", {}).get("files", [])
-    with Path(".bumpversion.cfg").open(mode="w", encoding=UTF8) as f:
+    filepath: Path = override_filepath or Path(".bumpversion.cfg")
+    with filepath.open(mode="w", encoding=UTF8) as f:
         f.write(
             BumpVerConf.get_version(
                 version,

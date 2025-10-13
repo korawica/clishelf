@@ -277,7 +277,8 @@ def bump(
             logger.error("VCS commit/tag failed: %s", exc)
             raise
 
-    # print list if requested (old behavior used logger_list). We'll print key-values if requested.
+    # NOTE: print list if requested (old behavior used logger_list).
+    #   We'll print key-values if requested.
     if obj.get("show_list"):
         # mimic original config listing style
         kv = defaults.copy()

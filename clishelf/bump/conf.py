@@ -3,6 +3,8 @@ from __future__ import annotations
 import glob
 import logging
 import re
+import warnings
+from configparser import RawConfigParser
 from pathlib import Path
 from re import Pattern
 from typing import Any
@@ -36,20 +38,55 @@ def _read_toml_file(path: Path) -> dict[str, Any]:
         return tomllib.load(f)
 
 
-def _write_toml(data: dict[str, Any], path: Path) -> None:
-    try:  # pragma: no cov
-        import tomli_w
-    except ImportError as err:
-        raise RuntimeError(
-            "tomli-w is required for writing TOML on Python <3.11"
-        ) from err
+def _read_ini_file(path: Path) -> dict[str, Any]:
+    """
+    Read .bumpversion.cfg / setup.cfg-like files into a toml-like dict shape.
+    This keeps compatibility with old configparser-based setups (DEPRECATED).
+    """
+    cp = RawConfigParser()
+    cp.optionxform = lambda option: option  # preserve case
+    with path.open("rt", encoding="utf-8") as f:
+        content = f.read()
+    cp.read_string(content)
 
-    with path.open("wb") as f:
-        tomli_w.dump(data, f)
+    out: dict[str, Any] = {}
+    # NOTE: bumpversion section: default/flat mapping
+    if cp.has_section("bumpversion"):
+        out["bumpversion"] = dict(cp.items("bumpversion"))
+        # for serialize multiline -> list
+        if "serialize" in out["bumpversion"]:
+            value = out["bumpversion"]["serialize"]
+            out["bumpversion"]["serialize"] = [
+                x.strip() for x in value.splitlines() if x.strip()
+            ]
+    else:
+        out["bumpversion"] = {}
+
+    # Translate part/file sections
+    for section in cp.sections():
+        if section == "bumpversion":
+            continue
+        m = RE_DETECT_SECTION_TYPE.match(section)
+        if not m:
+            continue
+        items: dict = dict(cp.items(section))
+        # NOTE: normalize values/use lists where appropriate
+        if "values" in items:
+            items["values"] = [
+                x.strip() for x in items["values"].splitlines() if x.strip()
+            ]
+        if "serialize" in items:
+            items["serialize"] = [
+                x.strip().replace("\\n", "\n")
+                for x in items["serialize"].splitlines()
+                if x.strip()
+            ]
+        out[section] = items
+    return out
 
 
 def _discover_config_file(
-    explicit: str | None = None,
+    explicit: str | Path | None = None,
 ) -> tuple[Path | None, str]:
     """Determine config file location.
 
@@ -73,28 +110,30 @@ def _discover_config_file(
         return Path("setup.cfg"), "ini"
     if Path(".bumpversion.cfg").exists():
         return Path(".bumpversion.cfg"), "ini"
-    # no config file
     return None, "none"
 
 
 def load_config(
-    explicit_config: str | None = None, defaults: dict[str, Any] | None = None
+    explicit_config: str | Path | None = None,
+    defaults: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], list[ConfFile], dict[str, Any], Path | None, str]:
-    """
-    Loads configuration and returns:
+    """Loads configuration.
+
+    Returns:
       (defaults_map, configured_files, part_configs, config_path, config_format)
-    - defaults_map: mapping of bumpversion defaults (serialize, search, replace, etc)
-    - configured_files: list of ConfFile objects (may be empty)
-    - part_configs: dict mapping part name -> VersionPartConfiguration objects
-    - config_path: path to the config file used (or None)
-    - config_format: 'toml', 'ini', or 'none'
+        - defaults_map: mapping of bumpversion defaults (serialize, search, replace, etc.)
+        - configured_files: list of ConfFile objects (maybe empty)
+        - part_configs: dict mapping part name -> VersionPartConfiguration objects
+        - config_path: path to the config file used (or None)
+        - config_format: 'toml', 'ini', or 'none'
     """
-    defaults = dict(defaults or {})
+    defaults: dict[str, Any] = defaults or {}
     config_path, config_format = _discover_config_file(explicit_config)
 
     if config_path is None or config_format == "none":
         logger.info(
-            "No configuration file found (looked for bumpversion.toml, .bumpversion.cfg, setup.cfg)."
+            "No configuration file found (looked for bumpversion.toml, "
+            ".bumpversion.cfg, setup.cfg)."
         )
         return defaults, [], {}, None, "none"
 
@@ -106,18 +145,23 @@ def load_config(
                 f"Failed to read TOML config {config_path}: {exc}"
             ) from exc
     else:
-        raise NotImplementedError("This load config support only toml file.")
+        warnings.warn(
+            "INI-style bumpversion config (.bumpversion.cfg or setup.cfg) is deprecated. "
+            "Please migrate to bumpversion.toml",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        raw = _read_ini_file(config_path)
 
-    bumproot = raw.get("bumpversion", {})
-    defaults.update(bumproot.copy())
+    defaults.update(raw.get("bumpversion", {}).copy())
 
-    # normalize certain keys
+    # NOTE: normalize certain keys
     if isinstance(defaults.get("serialize"), str):
         defaults["serialize"] = [
             s for s in defaults["serialize"].splitlines() if s.strip()
         ]
 
-    # build part_configs and files
+    # NOTE: build part_configs and files
     part_configs: dict[str, Any] = {}
     files: list[ConfFile] = []
 
@@ -133,7 +177,7 @@ def load_config(
         section_config = (
             dict(section_value) if isinstance(section_value, dict) else {}
         )
-        # If it's a part
+        # NOTE: If it's a part
         if gd.get("part"):
             vs_part_conf = NumericPartConf
             if "values" in section_config:
@@ -151,7 +195,6 @@ def load_config(
             part_configs[section_val] = vs_part_conf(**section_config)
         elif gd.get("file"):
             filename = section_val
-            # set defaults
             if "parse" not in section_config:
                 section_config["parse"] = defaults.get(
                     "parse", r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
@@ -169,7 +212,7 @@ def load_config(
                     "replace", "{new_version}"
                 )
 
-            # ensure serialize is list
+            # NOTE: ensure serialize is list
             if isinstance(section_config.get("serialize"), str):
                 section_config["serialize"] = [
                     line
@@ -177,7 +220,7 @@ def load_config(
                     if line.strip()
                 ]
 
-            # include part_configs reference
+            # NOTE: include part_configs reference
             section_config["part_configs"] = part_configs
 
             version_config = VersionConfig(**section_config)
@@ -225,11 +268,23 @@ def save_config(
         return
 
     if config_format != "toml":
-        raise NotImplementedError("This save config support only toml file.")
+        # NOTE: legacy INI write: read current file and write updated
+        #   bumpversion.current_version
+        cp = RawConfigParser()
+        cp.optionxform = lambda option: option
+        with config_path.open("rt", encoding="utf-8") as fh:
+            data = fh.read()
+        cp.read_string(data)
+        if not cp.has_section("bumpversion"):
+            cp.add_section("bumpversion")
+        cp.set("bumpversion", "current_version", new_version)
+        # NOTE: write back using the original newline behavior
+        with config_path.open("wt", encoding="utf-8", newline="") as fh:
+            cp.write(fh)
 
-    # Build a minimal bumpversion table and write it; preserve any unknown top-level keys is out-of-scope.
+    # NOTE: Build a minimal bumpversion table and write it; preserve any unknown
+    #   top-level keys is out-of-scope.
     toml_obj = {"bumpversion": dict(defaults or {})}
     toml_obj["bumpversion"]["current_version"] = new_version
-    # write
     with config_path.open("wb") as f:
         tomli_w.dump(toml_obj, f)
