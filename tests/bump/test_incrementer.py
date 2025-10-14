@@ -6,11 +6,16 @@ from clishelf.bump.incremeters import NumericIncrementer, ValuesIncrementer
 def test_numeric_init_wo_first_value():
     func = NumericIncrementer()
     assert func.first_value == "0"
+    assert repr(func) == "NumericIncrementer(first_value='0')"
 
 
 def test_numeric_init_w_first_value():
     func = NumericIncrementer(first_value="5")
     assert func.first_value == "5"
+    assert repr(func) == "NumericIncrementer(first_value='5')"
+
+    with pytest.raises(ValueError):
+        func.bump("a1")
 
 
 def test_numeric_init_non_numeric_first_value():
@@ -30,10 +35,21 @@ def test_numeric_bump_prefix_and_suffix():
     assert func.bump("r3-001") == "r4-001"
 
 
+def test_numeric_bump_invalid_format():
+    func = NumericIncrementer()
+
+    with pytest.raises(ValueError):
+        func.bump("foo")
+
+
 def test_values_init():
     func = ValuesIncrementer([0, 1, 2])
     assert func.optional_value == 0
     assert func.first_value == 0
+    assert (
+        repr(func)
+        == "ValuesIncrementer(values=[0, 1, 2], first_value=0, optional_value=0)"
+    )
 
 
 def test_values_init_w_correct_optional_value():
@@ -81,3 +97,7 @@ def test_values_bump_raise():
 
     with pytest.raises(ValueError):
         func.bump(11)
+
+    func = ValuesIncrementer(["alpha", "beta", "rc", "final"])
+    with pytest.raises(ValueError):
+        func.bump("final")

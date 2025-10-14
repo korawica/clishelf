@@ -1,6 +1,6 @@
 [project]
 name = "clishelf"
-description = "A CLI tools and hooks on my shelf"
+description = "cli tools and hooks on my shelf"
 readme = "README.md"
 requires-python = ">=3.10"
 dynamic = ["version"]
@@ -25,7 +25,8 @@ classifiers = [
 dependencies = [
     "click>=8.1.8",
     "PyYAML>=6.0.3",
-    # NOTE: Need pip package for the tomllib package.
+    # NOTE: Need pip package for the tomllib module and typing_extensions for
+    #   Self typed-check that already provide on Python 3.11+.
     "pip; python_version <= '3.10'",
     "typing_extensions; python_version <= '3.10'",
 ]
