@@ -67,7 +67,11 @@ class GitConf:
             "Code Changes",
             ":lipstick:",
         ),  # 💄, 📝 :memo:, ✒️ :black_nib:
-        ("style", "Code Changes", ":lipstick:"),  # 💄, 📝 :memo:, ✒️ :black_nib:
+        (
+            "style",
+            "Code Changes",
+            ":lipstick:",
+        ),  # 💄, 📝 :memo:, ✒️ :black_nib:
         ("format", "Code Changes", ":art:"),  # 🎨
         (
             "refactored",
@@ -157,8 +161,7 @@ class GitConf:
 class BumpVerConf:
     """Bump Version Config."""
 
-    main: str = dedent(
-        r"""
+    main: str = dedent(r"""
     [bumpversion]
     current_version = {version}
     commit = True
@@ -187,11 +190,9 @@ class BumpVerConf:
         post
 
     [bumpversion:file:{file}]
-    """
-    ).strip()
+    """).strip()
 
-    main_dt: str = dedent(
-        r"""
+    main_dt: str = dedent(r"""
     [bumpversion]
     current_version = {version}
     new_version = {new_version}
@@ -205,8 +206,7 @@ class BumpVerConf:
     message = {msg}
 
     [bumpversion:file:{file}]
-    """
-    )
+    """)
 
     msg: str = (
         # 🏷️ :label:, 🔖 :bookmark:
@@ -221,8 +221,7 @@ class BumpVerConf:
 
     regex_dt: str = r"(?P<date>\d{4}\d{2}\d{2})(\.(?P<pre>\d+))?"
 
-    v1: str = dedent(
-        r"""
+    v1: str = dedent(r"""
     {main}
 
     [bumpversion:file:{changelog}]
@@ -230,11 +229,9 @@ class BumpVerConf:
     replace = {{#}}{{#}} Latest Changes
 
         {{#}}{{#}} {{new_version}}
-    """
-    ).strip()
+    """).strip()
 
-    v2: str = dedent(
-        r"""
+    v2: str = dedent(r"""
     {main}
 
     [bumpversion:file:{changelog}]
@@ -244,8 +241,7 @@ class BumpVerConf:
         {{#}}{{#}} {{new_version}}
 
         Released: {{utcnow:%Y-%m-%d}}
-    """
-    ).strip()
+    """).strip()
 
     commit_subject_format: str = "{emoji} {prefix}: {subject}"
     commit_msg_format: str = "- {subject} (_{datetime:%Y-%m-%d}_)"

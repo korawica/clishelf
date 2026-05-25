@@ -90,8 +90,7 @@ def test_load_toml_config_from_old_format(tmp_path: Path):
 
 def test_ini_config_type_conversions(tmp_path):
     ini_path = tmp_path / ".bumpversion.cfg"
-    ini_path.write_text(
-        """
+    ini_path.write_text("""
 [bumpversion]
 current_version = 1.0.0
 serialize =
@@ -102,8 +101,7 @@ dry_run = 1
 
 [bumpversion:part:minor]
 values = 0,1,2
-"""
-    )
+""")
     defaults, files, parts, path, fmt = load_config(str(ini_path))
     assert fmt == "ini"
     assert isinstance(defaults["serialize"], list)
