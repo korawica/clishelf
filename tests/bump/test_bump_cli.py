@@ -152,9 +152,7 @@ def test_create_changelog(mock_map_group_commit_logs):
 
         This line should comment for EOF
 
-        """.replace(
-            " ", ""
-        )
+        """.replace(" ", "")
     )
     write_changelog_file.unlink()
 
@@ -176,17 +174,13 @@ def test_write_group_log():
         write_group_log(f, group_log, "HEAD")
 
     assert test_file_path.exists()
-    assert test_file_path.read_text().replace(" ", "") == dedent(
-        """## HEAD
+    assert test_file_path.read_text().replace(" ", "") == dedent("""## HEAD
 
         ### :package: Build & Workflow
 
         - :toolbox: build: add coverage workflow
 
-        """.replace(
-            " ", ""
-        )
-    )
+        """.replace(" ", ""))
 
     test_file_path.unlink()
 
@@ -242,17 +236,13 @@ def test_write_group_log_with_change_format(mock_load_pyproject):
         write_group_log(f, group_log, "HEAD")
 
     assert test_file_path.exists()
-    assert test_file_path.read_text().replace(" ", "") == dedent(
-        """## HEAD
+    assert test_file_path.read_text().replace(" ", "") == dedent("""## HEAD
 
         ### :package: Build & Workflow
 
         - :toolbox: add coverage workflow (_20240102_)
 
-        """.replace(
-            " ", ""
-        )
-    )
+        """.replace(" ", ""))
 
     test_file_path.unlink()
 
