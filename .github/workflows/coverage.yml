@@ -94,7 +94,7 @@ jobs:
           python-version: '3.9'
 
       - name: Get coverage files
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         id: download
         with:
           pattern: coverage-*
